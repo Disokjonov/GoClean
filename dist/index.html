@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Goclean.uz — Toshkentda uy va biznes uchun professional tozalash xizmati. Narxni onlayn hisoblang va qulay vaqtga buyurtma bering." />
+    <meta name="theme-color" content="#0b6b62" />
+    <title>Goclean.uz — toza uy, xotirjam kun</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="announcement">
+      <span>Toshkent bo‘ylab har kuni 08:00–21:00</span>
+      <a href="tel:+998555000700">+998 55 500 07 00</a>
+    </div>
+
+    <header class="site-header">
+      <div class="nav-wrap container">
+        <a class="brand" href="#top" aria-label="Goclean bosh sahifa">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><path d="M14 30c9 0 16-7 16-16 7 6 10 13 7 20-3 7-12 11-20 8-5-2-8-6-9-11 2 0 4-1 6-1Z"/><path d="M15 13l1.7 4.3L21 19l-4.3 1.7L15 25l-1.7-4.3L9 19l4.3-1.7L15 13Z"/></svg>
+          </span>
+          <span>Go<span>clean</span><small>.uz</small></span>
+        </a>
+
+        <nav id="mainNav" class="main-nav" aria-label="Asosiy navigatsiya">
+          <a href="#home-services" data-i18n="navHome">Uy uchun</a>
+          <a href="#business" data-i18n="navBusiness">Biznes uchun</a>
+          <a href="#how" data-i18n="navHow">Qanday ishlaydi</a>
+          <a href="#trust" data-i18n="navAbout">Biz haqimizda</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+        <div class="nav-actions">
+          <button class="lang" id="langToggle" type="button" aria-label="Tilni almashtirish">RU</button>
+          <a class="outline-button desktop-cta" href="#calculator" data-i18n="calculate">Narxni hisoblash</a>
+          <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Menyuni ochish">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow"><span></span><span data-i18n="eyebrow">Toshkentda professional tozalash</span></div>
+            <h1 data-i18n="heroTitle">Toza uy — bir necha bosishda</h1>
+            <p data-i18n="heroText">Tekshirilgan mutaxassislar, oldindan ma’lum narx va sifat kafolati. Siz vaqtni tanlaysiz — qolganini biz bajaramiz.</p>
+            <div class="hero-points">
+              <span><b>✓</b> <span data-i18n="checked">Tekshirilgan ijrochilar</span></span>
+              <span><b>✓</b> <span data-i18n="guarantee">Sifat kafolati</span></span>
+            </div>
+            <div class="hero-proof">
+              <div class="avatar-stack" aria-hidden="true"><i>A</i><i>M</i><i>S</i></div>
+              <div><strong>4.9 <span>★★★★★</span></strong><small data-i18n="reviews">Mijozlar bahosi asosida</small></div>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-hidden="true">
+            <img src="public/assets/goclean-hero.png" alt="" />
+            <div class="floating-card verified"><span>✓</span><div><b data-i18n="verified">Shaxs tasdiqlangan</b><small data-i18n="trained">O‘qitilgan mutaxassis</small></div></div>
+            <div class="floating-card guarantee"><span>♢</span><div><b data-i18n="quality">Sifat nazorati</b><small data-i18n="support">Har bir buyurtmada</small></div></div>
+          </div>
+
+          <form class="calculator-card" id="calculator">
+            <div class="card-head">
+              <div><span data-i18n="calcLabel">Narx kalkulyatori</span><h2 data-i18n="calcTitle">Uyingizni tanlang</h2></div>
+              <span class="live-dot"><i></i> <span data-i18n="online">Onlayn</span></span>
+            </div>
+
+            <div class="property-tabs" role="group" aria-label="Obyekt turi">
+              <button class="active" type="button" data-property="apartment">🏢 <span data-i18n="apartment">Kvartira</span></button>
+              <button type="button" data-property="house">🏠 <span data-i18n="house">Hovli</span></button>
+              <button type="button" data-property="office">💼 <span data-i18n="office">Ofis</span></button>
+            </div>
+
+            <div class="counter-row">
+              <div><b data-i18n="rooms">Xonalar soni</b><small data-i18n="livingRooms">Yashash xonalari</small></div>
+              <div class="counter"><button type="button" data-action="room-minus">−</button><output id="roomsValue">2</output><button type="button" data-action="room-plus">+</button></div>
+            </div>
+            <div class="counter-row">
+              <div><b data-i18n="bathrooms">Sanuzellar soni</b><small data-i18n="bathSub">Hammom va hojatxona</small></div>
+              <div class="counter"><button type="button" data-action="bath-minus">−</button><output id="bathsValue">1</output><button type="button" data-action="bath-plus">+</button></div>
+            </div>
+
+            <label class="field-label" data-i18n="cleaningType">Tozalash turi</label>
+            <div class="cleaning-types">
+              <button class="active" type="button" data-type="standard"><span data-i18n="standard">Qo‘llab turuvchi</span><small data-i18n="from2h">2 soatdan</small></button>
+              <button type="button" data-type="general"><span data-i18n="general">General</span><small data-i18n="from4h">4 soatdan</small></button>
+              <button type="button" data-type="repair"><span data-i18n="repair">Ta’mirdan keyin</span><small data-i18n="from6h">6 soatdan</small></button>
+            </div>
+
+            <div class="price-line"><span data-i18n="estimate">Taxminiy narx</span><strong id="totalPrice">249 000 so‘m</strong></div>
+            <button class="primary-button full" id="orderButton" type="button"><span data-i18n="order">Buyurtma berish</span><span>→</span></button>
+            <p class="microcopy" data-i18n="noPrepay">Oldindan to‘lov talab qilinmaydi</p>
+          </form>
+        </div>
+      </section>
+
+      <section class="trust-strip">
+        <div class="container trust-items">
+          <div><strong>3+</strong><span data-i18n="years">yillik tajriba</span></div>
+          <div><strong>12 000+</strong><span data-i18n="ordersDone">bajarilgan buyurtma</span></div>
+          <div><strong>180+</strong><span data-i18n="specialists">tekshirilgan mutaxassis</span></div>
+          <div><strong>98%</strong><span data-i18n="happy">mamnun mijozlar</span></div>
+        </div>
+      </section>
+
+      <section class="section services" id="home-services">
+        <div class="container">
+          <div class="section-heading split">
+            <div><span class="kicker" data-i18n="servicesKicker">Uy uchun xizmatlar</span><h2 data-i18n="servicesTitle">Sizga qaysi tozalik kerak?</h2></div>
+            <p data-i18n="servicesText">Har bir paketda professional vositalar, inventar va sifat nazorati mavjud.</p>
+          </div>
+          <div class="service-grid">
+            <article class="service-card mint">
+              <div class="service-icon">✦</div><span class="tag" data-i18n="popular">Eng ommabop</span>
+              <h3 data-i18n="standardClean">Qo‘llab turuvchi tozalash</h3><p data-i18n="standardDesc">Uyda muntazam tozalik va tartibni saqlash uchun.</p>
+              <ul><li data-i18n="dust">Chang va yuzalarni artish</li><li data-i18n="floors">Polni changyutish va yuvish</li><li data-i18n="bathClean">Sanuzelni tozalash</li></ul>
+              <div class="card-footer"><strong><small data-i18n="from">dan</small> 199 000 so‘m</strong><a href="#calculator" data-i18n="select">Tanlash →</a></div>
+            </article>
+            <article class="service-card peach">
+              <div class="service-icon">⌂</div>
+              <h3 data-i18n="generalClean">General tozalash</h3><p data-i18n="generalDesc">Butun uy bo‘ylab chuqur va batafsil tozalash.</p>
+              <ul><li data-i18n="allSurfaces">Barcha ochiq yuzalar</li><li data-i18n="kitchenBath">Oshxona va sanuzel chuqur tozaligi</li><li data-i18n="doors">Eshik, plintus va yoritgichlar</li></ul>
+              <div class="card-footer"><strong><small data-i18n="from">dan</small> 449 000 so‘m</strong><a href="#calculator" data-i18n="select">Tanlash →</a></div>
+            </article>
+            <article class="service-card blue">
+              <div class="service-icon">◈</div>
+              <h3 data-i18n="afterRepair">Ta’mirdan keyin</h3><p data-i18n="repairDesc">Qurilish changi va murakkab izlarni to‘liq bartaraf etish.</p>
+              <ul><li data-i18n="constructionDust">Qurilish changini yo‘qotish</li><li data-i18n="paintMarks">Bo‘yoq va yelim izlari</li><li data-i18n="equipment">Professional uskuna va kimyo</li></ul>
+              <div class="card-footer"><strong><small data-i18n="from">dan</small> 699 000 so‘m</strong><a href="#calculator" data-i18n="select">Tanlash →</a></div>
+            </article>
+          </div>
+          <div class="extra-services">
+            <span data-i18n="also">Shuningdek:</span><a href="#">Oyna yuvish</a><a href="#">Mebel kimyoviy tozalash</a><a href="#">Gilam tozalash</a><a href="#">Dazmollash</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section business" id="business">
+        <div class="container business-panel">
+          <div class="business-copy">
+            <span class="kicker light" data-i18n="businessKicker">Biznes uchun</span>
+            <h2 data-i18n="businessTitle">Ofisingiz ishlasin, tozaligiga biz qaraymiz</h2>
+            <p data-i18n="businessText">Muntazam tozalash, kimyoviy tozalash va texnik xizmat — bitta menejer va bitta nazorat nuqtasi.</p>
+            <div class="business-benefits">
+              <div><span>01</span><b data-i18n="personalManager">Shaxsiy menejer</b></div>
+              <div><span>02</span><b data-i18n="trainedStaff">O‘qitilgan xodimlar</b></div>
+              <div><span>03</span><b data-i18n="qualityControl">Doimiy sifat nazorati</b></div>
+              <div><span>04</span><b data-i18n="documents">Barcha yopuvchi hujjatlar</b></div>
+            </div>
+          </div>
+          <form class="business-form" id="businessForm">
+            <span class="form-number">24/7</span><h3 data-i18n="getOffer">Individual taklif oling</h3><p data-i18n="managerCall">Menejerimiz 15 daqiqa ichida bog‘lanadi.</p>
+            <label><span data-i18n="name">Ismingiz</span><input name="name" required placeholder="Masalan, Aziz" /></label>
+            <label><span data-i18n="phone">Telefon raqam</span><input name="phone" required type="tel" placeholder="+998 90 123 45 67" /></label>
+            <button class="primary-button full coral" type="submit" data-i18n="leaveRequest">Ariza qoldirish</button>
+            <small data-i18n="privacy">Tugmani bosib, ma’lumotlarni qayta ishlashga rozilik bildirasiz.</small>
+          </form>
+        </div>
+      </section>
+
+      <section class="section process" id="how">
+        <div class="container">
+          <div class="section-heading centered"><span class="kicker" data-i18n="howKicker">Hammasi juda oddiy</span><h2 data-i18n="howTitle">Tozalik sari 3 qadam</h2></div>
+          <div class="steps">
+            <article><span>1</span><div class="step-icon">▤</div><h3 data-i18n="step1">Parametrlarni tanlang</h3><p data-i18n="step1Text">Xonalar soni, xizmat turi va qulay vaqtni belgilang.</p></article>
+            <article><span>2</span><div class="step-icon">♙</div><h3 data-i18n="step2">Mutaxassis keladi</h3><p data-i18n="step2Text">Tekshirilgan ijrochi barcha kerakli vositalar bilan keladi.</p></article>
+            <article><span>3</span><div class="step-icon">♡</div><h3 data-i18n="step3">Tozalikdan zavqlaning</h3><p data-i18n="step3Text">Ishni qabul qiling va faqat natija yoqqanidan keyin to‘lang.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section subscription">
+        <div class="container subscription-panel">
+          <div><span class="kicker" data-i18n="subscriptionKicker">Muntazam tozalik</span><h2 data-i18n="subscriptionTitle">Har safar buyurtma berish shart emas</h2><p data-i18n="subscriptionText">Haftalik yoki oylik jadvalni bir marta tanlang. Biz tashriflarni rejalashtiramiz, siz esa har buyurtmada tejaysiz.</p><a class="primary-button inline" href="#calculator" data-i18n="choosePlan">Rejani tanlash →</a></div>
+          <div class="save-card"><span data-i18n="saveUpTo">Gacha tejang</span><strong>15%</strong><small data-i18n="weekly">haftalik tozalashda</small></div>
+        </div>
+      </section>
+
+      <section class="section trust" id="trust">
+        <div class="container trust-grid">
+          <div class="trust-copy"><span class="kicker" data-i18n="trustKicker">Ishonch birinchi o‘rinda</span><h2 data-i18n="trustTitle">Uyingizni kimga topshirayotganingizni bilasiz</h2><p data-i18n="trustText">Har bir mutaxassis shaxsini tasdiqlaydi, suhbat va amaliy sinovdan o‘tadi. Ishlar yagona standart bo‘yicha tekshiriladi.</p><a href="#faq" class="text-link" data-i18n="learnMore">Qanday tekshiramiz? →</a></div>
+          <div class="trust-cards">
+            <article><span>✓</span><div><b data-i18n="idCheck">Shaxs va hujjatlar tekshiruvi</b><small data-i18n="idText">Faqat tasdiqlangan ijrochilar</small></div></article>
+            <article><span>◎</span><div><b data-i18n="training">O‘qitish va amaliy sinov</b><small data-i18n="trainingText">Yagona xizmat standarti</small></div></article>
+            <article><span>↺</span><div><b data-i18n="redo">Bepul qayta tozalash kafolati</b><small data-i18n="redoText">Natija sizni qoniqtirmasa</small></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section faq" id="faq">
+        <div class="container faq-grid">
+          <div><span class="kicker">FAQ</span><h2 data-i18n="faqTitle">Ko‘p so‘raladigan savollar</h2><p data-i18n="faqText">Javob topilmadimi? Bizga Telegram yoki telefon orqali yozing.</p></div>
+          <div class="accordion">
+            <details open><summary data-i18n="q1">Tozalash narxiga nimalar kiradi?<span>+</span></summary><p data-i18n="a1">Mutaxassis ishi, professional tozalash vositalari va inventar narxga kiritilgan. Qo‘shimcha xizmatlar buyurtma vaqtida alohida ko‘rsatiladi.</p></details>
+            <details><summary data-i18n="q2">To‘lov qachon amalga oshiriladi?<span>+</span></summary><p data-i18n="a2">To‘lov ish yakunlanib, natijani qabul qilganingizdan keyin amalga oshiriladi.</p></details>
+            <details><summary data-i18n="q3">Uyda bo‘lishim shartmi?<span>+</span></summary><p data-i18n="a3">Shart emas. Kalitni xavfsiz topshirish va ish yakunini masofadan qabul qilish imkoniyatini kelishib olamiz.</p></details>
+            <details><summary data-i18n="q4">Natija yoqmasa nima bo‘ladi?<span>+</span></summary><p data-i18n="a4">24 soat ichida murojaat qilsangiz, kamchiliklarni bepul bartaraf etamiz.</p></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="final-cta">
+        <div class="container"><div><span data-i18n="ready">Toza uyga tayyormisiz?</span><h2 data-i18n="finalTitle">Bugun buyurtma bering — ertaga vaqtingizni o‘zingizga sarflang</h2></div><a class="primary-button coral" href="#calculator" data-i18n="calculatePrice">Narxni hisoblash →</a></div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-grid">
+        <div><a class="brand footer-brand" href="#top"><span class="brand-mark"><svg viewBox="0 0 48 48"><path d="M14 30c9 0 16-7 16-16 7 6 10 13 7 20-3 7-12 11-20 8-5-2-8-6-9-11 2 0 4-1 6-1Z"/></svg></span><span>Go<span>clean</span><small>.uz</small></span></a><p data-i18n="footerText">Uy va biznes uchun professional tozalash xizmati.</p></div>
+        <div><b data-i18n="servicesFooter">Xizmatlar</b><a href="#home-services" data-i18n="homeCleanFooter">Uy tozalash</a><a href="#business" data-i18n="officeCleanFooter">Ofis tozalash</a><a href="#home-services" data-i18n="dryCleanFooter">Kimyoviy tozalash</a></div>
+        <div><b data-i18n="companyFooter">Kompaniya</b><a href="#trust" data-i18n="aboutFooter">Biz haqimizda</a><a href="#how" data-i18n="howFooter">Qanday ishlaydi</a><a href="#faq">FAQ</a></div>
+        <div><b data-i18n="contactFooter">Bog‘lanish</b><a href="tel:+998555000700">+998 55 500 07 00</a><a href="mailto:hello@goclean.uz">hello@goclean.uz</a><span>Toshkent, O‘zbekiston</span></div>
+      </div>
+      <div class="container footer-bottom"><span>© 2026 Goclean.uz</span><div><a href="#">Maxfiylik siyosati</a><a href="#">Foydalanish shartlari</a></div></div>
+    </footer>
+
+    <div class="mobile-bar"><a href="tel:+998555000700">☎ <span data-i18n="call">Qo‘ng‘iroq</span></a><a href="#calculator">✦ <span data-i18n="orderShort">Buyurtma</span></a></div>
+
+    <dialog id="orderModal">
+      <button class="modal-close" type="button" aria-label="Yopish">×</button>
+      <div class="modal-icon">✓</div><h2 data-i18n="modalTitle">Buyurtmani yakunlaymiz</h2><p id="modalSummary"></p>
+      <form id="orderForm"><label><span data-i18n="name">Ismingiz</span><input required name="customerName" placeholder="Ismingiz" /></label><label><span data-i18n="phone">Telefon raqam</span><input required name="customerPhone" type="tel" placeholder="+998 90 123 45 67" /></label><button class="primary-button full" type="submit" data-i18n="confirmOrder">Buyurtmani tasdiqlash</button></form>
+    </dialog>
+
+    <div class="toast" id="toast"><b>✓</b><span data-i18n="success">Rahmat! Tez orada siz bilan bog‘lanamiz.</span></div>
+    <script src="app.js"></script>
+  </body>
+</html>
