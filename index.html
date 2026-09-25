@@ -96,8 +96,9 @@
               <button type="button" data-type="repair"><span data-i18n="repair">Ta’mirdan keyin</span><small data-i18n="from6h">6 soatdan</small></button>
             </div>
 
-            <div class="price-line"><span data-i18n="estimate">Taxminiy narx</span><strong id="totalPrice">249 000 so‘m</strong></div>
-            <button class="primary-button full" id="orderButton" type="button"><span data-i18n="order">Buyurtma berish</span><span>→</span></button>
+            <strong id="totalPrice" class="sr-only">249 000 so‘m</strong>
+            <button class="primary-button full calc-order" id="orderButton" type="button"><span id="orderLabel">Buyurtma berish — 249 000 so‘m</span><span>→</span></button>
+            <button class="callback-button full" id="calculatorCallback" type="button">☎ Raqam qoldirish</button>
             <p class="microcopy" data-i18n="noPrepay">Oldindan to‘lov talab qilinmaydi</p>
           </form>
         </div>
@@ -227,11 +228,12 @@
 
     <dialog id="orderModal">
       <button class="modal-close" type="button" aria-label="Yopish">×</button>
-      <div class="modal-icon">✓</div><h2 data-i18n="modalTitle">Buyurtmani yakunlaymiz</h2><p id="modalSummary"></p>
-      <form id="orderForm"><label><span data-i18n="name">Ismingiz</span><input required name="customerName" placeholder="Ismingiz" /></label><label><span data-i18n="phone">Telefon raqam</span><input required name="customerPhone" type="tel" placeholder="+998 90 123 45 67" /></label><button class="primary-button full" type="submit" data-i18n="confirmOrder">Buyurtmani tasdiqlash</button></form>
+      <div class="modal-icon">☎</div><h2>Sizga qo‘ng‘iroq qilamiz</h2><p id="modalSummary">Raqamingizni qoldiring — menejerimiz xizmat va narx bo‘yicha yordam beradi.</p>
+      <form id="orderForm"><label><span data-i18n="name">Ismingiz</span><input required name="customerName" placeholder="Ismingiz" /></label><label><span data-i18n="phone">Telefon raqam</span><input required name="customerPhone" type="tel" placeholder="+998 90 123 45 67" /></label><button class="primary-button full" type="submit">Qo‘ng‘iroqni so‘rash</button></form>
     </dialog>
 
     <div class="toast" id="toast"><b>✓</b><span data-i18n="success">Rahmat! Tez orada siz bilan bog‘lanamiz.</span></div>
+    <script src="shared.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
