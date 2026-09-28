@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=6" />
   </head>
   <body>
     <div class="announcement">
@@ -44,7 +44,7 @@
         <div class="hero-glow"></div>
         <div class="container hero-grid">
           <div class="hero-copy">
-            <h1 data-i18n="heroTitle">Toshkentda uy va biznes uchun professional tozalash</h1>
+            <h1 data-i18n="heroTitle">Uy va biznes uchun professional tozalash</h1>
             <p data-i18n="heroText">Kvartira, hovli, ofis va tijorat obyektlarini professional xodimlar bilan tozalaymiz. Narxni hisoblang yoki bepul konsultatsiya oling.</p>
             <div class="hero-points">
               <span><b>✓</b> <span data-i18n="checked">Professional xodimlar</span></span>
@@ -134,7 +134,7 @@
               <div class="service-icon">◈</div>
               <h3 data-i18n="afterRepair">Ta’mirdan keyin</h3><p data-i18n="repairDesc">Qurilish changi va murakkab izlarni to‘liq bartaraf etish.</p>
               <ul><li data-i18n="constructionDust">Qurilish changini yo‘qotish</li><li data-i18n="paintMarks">Bo‘yoq va yelim izlari</li><li data-i18n="equipment">Professional uskuna va kimyo</li></ul>
-              <div class="card-footer"><strong><small data-i18n="from">hisob</small> asosida</strong><a href="service.html?slug=after-renovation" data-i18n="select">Batafsil →</a></div>
+              <div class="card-footer"><strong data-i18n="quoteBased">Hisob asosida</strong><a href="service.html?slug=after-renovation" data-i18n="select">Batafsil →</a></div>
             </article>
           </div>
           <div class="extra-services">
@@ -146,7 +146,7 @@
       <section class="section business consultation" id="business">
         <div class="container business-panel">
           <div class="business-copy">
-            <span class="kicker light">Mutaxassis yordami</span>
+            <span class="kicker light" data-i18n="consultationKicker">Mutaxassis yordami</span>
             <h2>Ish hajmi va aniq narxni birga hisoblaymiz</h2>
             <p>Mutaxassis obyektga borib maydon, ish murakkabligi va kerakli xizmatlarni baholaydi. Sizga aniq narx va bajariladigan ishlar rejasini tushuntiradi.</p>
             <div class="business-benefits">
@@ -158,7 +158,7 @@
             <h3>Narxni aniqlash uchun konsultatsiya</h3><p>Ism va raqamingizni qoldiring — mutaxassis tashrif vaqtini kelishadi.</p>
             <label><span data-i18n="name">Ismingiz</span><input name="name" required placeholder="Masalan, Aziz" /></label>
             <label><span data-i18n="phone">Telefon raqam</span><input name="phone" required type="tel" placeholder="+998 90 123 45 67" /></label>
-            <button class="primary-button full coral" type="submit">Konsultatsiya olish</button>
+            <button class="primary-button full coral" type="submit" data-i18n="consultationButton">Konsultatsiya olish</button>
           </form>
         </div>
       </section>
@@ -228,7 +228,7 @@
     </dialog>
 
     <div class="toast" id="toast"><b>✓</b><span data-i18n="success">Rahmat! Tez orada siz bilan bog‘lanamiz.</span></div>
-    <script src="shared.js?v=5"></script>
-    <script src="app.js?v=4"></script>
+    <script src="shared.js?v=6"></script>
+    <script src="app.js?v=5"></script>
   </body>
 </html>
