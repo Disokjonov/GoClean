@@ -54,7 +54,7 @@
   }
   initDrawer();window.initGoCleanDrawer=initDrawer;
   const leadErrorText=()=>currentLanguage==='ru'?'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.':'Arizani yuborib bo‘lmadi. Qayta urinib ko‘ring yoki bizga qo‘ng‘iroq qiling.';
-  function addHoneypot(form){if(!form||form.querySelector('[name="website"]'))return;const label=document.createElement('label');label.className='hp-field';label.setAttribute('aria-hidden','true');label.innerHTML='<span>Website</span><input name="website" tabindex="-1" autocomplete="off">';form.append(label)}
+  function addHoneypot(form){if(!form||form.querySelector('[name="website"]'))return;const input=document.createElement('input');input.type='text';input.name='website';input.className='hp-field';input.hidden=true;input.tabIndex=-1;input.autocomplete='off';input.setAttribute('aria-hidden','true');input.style.display='none';form.append(input)}
   document.querySelectorAll('form').forEach(addHoneypot);
   async function sendLead(type,data,form){
     const button=form?.querySelector('[type="submit"]'),original=button?.textContent;
