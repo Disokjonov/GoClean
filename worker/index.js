@@ -32,6 +32,26 @@ function json(data, status = 200, extraHeaders = {}) {
   });
 }
 
+function allowedOrigin(request, env) {
+  const origin = request.headers.get("origin");
+  if (!origin) return null;
+  const requestOrigin = new URL(request.url).origin;
+  if (origin === requestOrigin) return origin;
+  const configured = String(env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map(value => value.trim())
+    .filter(Boolean);
+  return configured.includes(origin) ? origin : null;
+}
+
+function withCors(response, origin) {
+  if (!origin) return response;
+  const headers = new Headers(response.headers);
+  headers.set("access-control-allow-origin", origin);
+  headers.set("vary", "Origin");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
 function clean(value, max = 240) {
   if (Array.isArray(value)) return value.map(item => clean(item, 80)).filter(Boolean).slice(0, 12).join(", ");
   return String(value ?? "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
@@ -63,9 +83,8 @@ function rateLimited(request) {
 }
 
 async function submitLead(request, env) {
-  const requestUrl = new URL(request.url);
-  const origin = request.headers.get("origin");
-  if (!origin || origin !== requestUrl.origin) return json({ ok: false, message: "So‘rov manbasi tasdiqlanmadi." }, 403);
+  const origin = allowedOrigin(request, env);
+  if (!origin) return json({ ok: false, message: "So‘rov manbasi tasdiqlanmadi." }, 403);
   if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) return json({ ok: false, message: "Noto‘g‘ri so‘rov turi." }, 415);
   if (Number(request.headers.get("content-length") || 0) > 12_000) return json({ ok: false, message: "So‘rov juda katta." }, 413);
   if (rateLimited(request)) return json({ ok: false, message: "Juda ko‘p urinish. Bir daqiqadan keyin qayta urinib ko‘ring." }, 429);
@@ -124,11 +143,24 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/lead") {
-      if (request.method !== "POST") return json({ ok: false, message: "Faqat POST so‘rovi qabul qilinadi." }, 405, { allow: "POST" });
-      return submitLead(request, env);
+      const origin = allowedOrigin(request, env);
+      if (request.method === "OPTIONS") {
+        if (!origin) return new Response(null, { status: 403 });
+        return new Response(null, {
+          status: 204,
+          headers: {
+            "access-control-allow-origin": origin,
+            "access-control-allow-methods": "POST, OPTIONS",
+            "access-control-allow-headers": "content-type",
+            "access-control-max-age": "86400",
+            "vary": "Origin"
+          }
+        });
+      }
+      if (request.method !== "POST") return withCors(json({ ok: false, message: "Faqat POST so‘rovi qabul qilinadi." }, 405, { allow: "POST" }), origin);
+      return withCors(await submitLead(request, env), origin);
     }
-    if (!env.ASSETS) return new Response("Static assets binding is missing", { status: 500 });
+    if (!env.ASSETS) return json({ ok: false, message: "Not found" }, 404);
     return secureStatic(await env.ASSETS.fetch(request));
   }
 };
-

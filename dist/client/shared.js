@@ -61,7 +61,9 @@
     if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent=currentLanguage==='ru'?'Отправляем…':'Yuborilmoqda…'}
     try{
       const payload={type,...data,website:form?.querySelector('[name="website"]')?.value||'',language:currentLanguage,page:`${location.pathname}${location.search}`};
-      const response=await fetch('/api/lead',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+      const sameOriginApi=location.hostname.endsWith('.chatgpt.site')||location.hostname==='localhost'||location.hostname==='127.0.0.1';
+      const endpoint=sameOriginApi?'/api/lead':'https://goclean-leads.bositkhans01.workers.dev/api/lead';
+      const response=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
       const result=await response.json().catch(()=>({}));
       if(!response.ok||!result.ok)throw new Error(currentLanguage==='ru'?leadErrorText():(result.message||leadErrorText()));
       return result;
