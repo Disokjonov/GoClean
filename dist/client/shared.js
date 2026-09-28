@@ -18,6 +18,10 @@
     'Onlayn buyurtma':'Онлайн-заказ','Tozalashni rasmiylashtiring':'Оформите уборку','Xizmat ma’lumotlari':'Данные услуги','Obyekt va xizmat turini tanlang':'Выберите объект и услугу','Kottej':'Коттедж','Xizmat':'Услуга','Maydon (m²)':'Площадь (м²)','Sanuzel soni':'Количество санузлов','Takrorlanish':'Периодичность','Bir marta':'Один раз','chegirmasiz':'без скидки','Har hafta':'Каждую неделю','Har 2 hafta':'Каждые 2 недели','Har oy':'Каждый месяц','Qo‘shimcha xizmatlar':'Дополнительные услуги','Muzlatgich ichi':'Внутри холодильника','Duxovka':'Духовка','Oshxona shkaflari':'Кухонные шкафы','Ichki oynalar':'Внутренние окна','Davom etish →':'Продолжить →','Kontakt va manzil':'Контакты и адрес','Mutaxassis qayerga va kim bilan bog‘lanib boradi?':'Куда приехать специалисту и с кем связаться?','Tuman, ko‘cha, uy va xonadon':'Район, улица, дом и квартира','Mo‘ljal yoki izoh':'Ориентир или комментарий','Domofon, qavat yoki boshqa ma’lumot':'Домофон, этаж или другая информация','← Orqaga':'← Назад','Sana va vaqt':'Дата и время','O‘zingizga qulay vaqtni tanlang':'Выберите удобное время','Sana':'Дата','Vaqt':'Время','To‘lov va tasdiqlash':'Оплата и подтверждение','Buyurtma ma’lumotlarini tekshiring':'Проверьте данные заказа','Naqd yoki karta':'Наличные или карта','Ish yakunlangandan keyin':'После завершения работ','To‘lov havolasi orqali':'По платёжной ссылке','Promokod':'Промокод','Qo‘llash':'Применить','Buyurtmani tasdiqlash →':'Подтвердить заказ →','Buyurtmangiz':'Ваш заказ','Obyekt':'Объект','Maydon':'Площадь','Davomiyligi':'Продолжительность','Mutaxassislar':'Специалисты','Taxminiy jami':'Примерный итог','Yakuniy narx obyekt va vazifa tasdiqlangandan keyin o‘zgarmaydi.':'Итоговая цена не изменится после подтверждения объекта и задачи.','Buyurtma qabul qilindi':'Заказ принят','Operator tafsilotlarni tasdiqlash uchun siz bilan bog‘lanadi.':'Оператор свяжется с вами для подтверждения деталей.','Bosh sahifaga':'На главную','Buyurtmalarim':'Мои заказы',
     'Shaxsiy kabinet':'Личный кабинет','Telefon orqali kirish':'Вход по телефону','Tasdiqlash kodi yuboriladigan telefon raqamingizni kiriting.':'Введите номер телефона, на который придёт код подтверждения.','Kodni yuborish →':'Отправить код →','Tasdiqlash':'Подтверждение','SMS kodni kiriting':'Введите SMS-код','4 xonali kod':'4-значный код','Tasdiqlash →':'Подтвердить →','Raqamni o‘zgartirish':'Изменить номер','Kabinetga kirdingiz':'Вы вошли в кабинет','Ushbu brauzerda saqlangan buyurtmalaringiz:':'Ваши заказы, сохранённые в этом браузере:','Yangi buyurtma':'Новый заказ','Hozircha buyurtmalar yo‘q.':'Заказов пока нет.'
   };
+  Object.assign(translations,{
+    'Ma’lumotlaringiz faqat murojaatga javob berish uchun ishlatiladi.':'Ваши данные используются только для ответа на обращение.',
+    'Ism, telefon, manzil va buyurtma parametrlari arizani qabul qilish hamda xizmatni ko‘rsatish uchun xavfsiz server orqali Goclean menejerlariga yuboriladi. Bot tokeni brauzerda saqlanmaydi.':'Имя, телефон, адрес и параметры заказа передаются менеджерам Goclean через защищённый сервер для обработки заявки и оказания услуги. Токен бота не хранится в браузере.'
+  });
   const originalText=new WeakMap(),originalAttrs=new WeakMap();
   Object.assign(translations,{
     'Kvartira':'Квартира','Hovli':'Дом','Ofis':'Офис','Buyurtma':'Заказ','Xizmat':'Услуга','Kirish':'Вход','3 bosqich':'3 этапа','Balandlikdagi xavfsiz yuvish ishlari.':'Безопасная мойка на высоте.','so‘m':'сум','soat':'часа','kishi':'человек','m²':'м²',
@@ -49,4 +53,20 @@
     drawer.querySelectorAll('[data-menu-mode]').forEach(btn=>btn.addEventListener('click',()=>{const mode=btn.dataset.menuMode;drawer.querySelectorAll('[data-menu-mode]').forEach(x=>x.classList.toggle('active',x===btn));drawer.querySelectorAll('[data-menu-panel]').forEach(p=>p.hidden=p.dataset.menuPanel!==mode);const cta=drawer.querySelector('[data-menu-cta]');cta.href=mode==='home'?'booking.html':'business-request.html';cta.textContent=mode==='home'?'Uy tozalashni buyurtma qilish →':'Biznes uchun hisob olish →';translateWithCurrent(cta)}));
   }
   initDrawer();window.initGoCleanDrawer=initDrawer;
+  const leadErrorText=()=>currentLanguage==='ru'?'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.':'Arizani yuborib bo‘lmadi. Qayta urinib ko‘ring yoki bizga qo‘ng‘iroq qiling.';
+  function addHoneypot(form){if(!form||form.querySelector('[name="website"]'))return;const label=document.createElement('label');label.className='hp-field';label.setAttribute('aria-hidden','true');label.innerHTML='<span>Website</span><input name="website" tabindex="-1" autocomplete="off">';form.append(label)}
+  document.querySelectorAll('form').forEach(addHoneypot);
+  async function sendLead(type,data,form){
+    const button=form?.querySelector('[type="submit"]'),original=button?.textContent;
+    if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent=currentLanguage==='ru'?'Отправляем…':'Yuborilmoqda…'}
+    try{
+      const payload={type,...data,website:form?.querySelector('[name="website"]')?.value||'',language:currentLanguage,page:`${location.pathname}${location.search}`};
+      const response=await fetch('/api/lead',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok||!result.ok)throw new Error(currentLanguage==='ru'?leadErrorText():(result.message||leadErrorText()));
+      return result;
+    }finally{if(button){button.disabled=false;button.removeAttribute('aria-busy');button.textContent=original}}
+  }
+  function showLeadToast(message,error=false){const toast=document.querySelector('#toast');if(!toast)return;toast.classList.toggle('error',error);const text=toast.querySelector('span');if(text)text.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),5000)}
+  window.GoCleanLeads={send:sendLead,showToast:showLeadToast,errorText:leadErrorText};
 })();
