@@ -4,6 +4,6 @@
   "main": "worker/index.js",
   "compatibility_date": "2026-09-01",
   "vars": {
-    "ALLOWED_ORIGINS": "https://goclean-uz.onrender.com,https://goclean.uz,https://www.goclean.uz"
+    "ALLOWED_ORIGINS": "https://goclean-uz.onrender.com,https://go-clean.uz,https://www.go-clean.uz"
   }
 }
