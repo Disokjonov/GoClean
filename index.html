@@ -63,7 +63,11 @@
           </div>
 
           <div class="hero-visual" aria-hidden="true">
-            <img src="public/assets/goclean-hero.png" alt="" />
+            <picture>
+              <source srcset="public/assets/goclean-hero.avif" type="image/avif" />
+              <source srcset="public/assets/goclean-hero.webp" type="image/webp" />
+              <img src="public/assets/goclean-hero.png" alt="" fetchpriority="high" />
+            </picture>
             <div class="floating-card verified"><span>✓</span><div><b data-i18n="verified">Shaxs tasdiqlangan</b><small data-i18n="trained">O‘qitilgan mutaxassis</small></div></div>
             <div class="floating-card guarantee"><span>♢</span><div><b data-i18n="quality">Sifat nazorati</b><small data-i18n="support">Har bir buyurtmada</small></div></div>
           </div>
