@@ -77,6 +77,7 @@ function calc(){
   if(profile.kind==='home')total=profile.base+Math.max(0,quantity-50)*profile.rate+Math.max(0,bathrooms-1)*50000;
   else if(profile.kind!=='consultation')total=profile.rate*quantity;
   document.querySelectorAll('[data-extra]:checked').forEach(input=>{if(total!==null)total+=+input.dataset.extra});
+  const originalTotal=total;
   if(total!==null&&booking.firstOrderDiscount)total*=.85;
 
   document.querySelector('#summaryService').textContent=service.name;
@@ -89,10 +90,17 @@ function calc(){
     document.querySelector('#summaryDuration').textContent='~'+Math.max(2,Math.ceil(quantity/20)+Math.max(0,bathrooms-1))+' soat';
     document.querySelector('#summaryWorkers').textContent=(quantity>100?3:quantity>55?2:1)+' kishi';
   }
+  const showDiscount=total!==null&&booking.firstOrderDiscount;
+  document.querySelector('#summaryOriginalRow').hidden=!showDiscount;
+  document.querySelector('#summarySavingsRow').hidden=!showDiscount;
+  if(showDiscount){
+    document.querySelector('#summaryOriginal').textContent=money(originalTotal);
+    document.querySelector('#summarySavings').textContent='−'+money(originalTotal-total);
+  }
+  document.querySelector('#summaryTotalLabel').textContent=total===null?'Aniq narx':showDiscount?'Chegirmali narx':'Taxminiy jami';
   document.querySelector('#summaryTotal').textContent=total===null?'Konsultatsiyadan so‘ng':money(total);
   document.querySelector('#summaryNote').textContent=total===null?'Aniq narx mutaxassis baholashidan keyin tasdiqlanadi.':'Bu dastlabki hisob. Yakuniy narx material, holat va vazifa tasdiqlangandan keyin aniqlashtiriladi.';
   const extras=[...document.querySelectorAll('[data-extra]:checked')].map(input=>`<span>+ ${input.parentElement.querySelector('b').textContent}</span>`);
-  if(booking.firstOrderDiscount)extras.push('<span class="summary-discount">− 15% birinchi buyurtma chegirmasi</span>');
   document.querySelector('#summaryExtras').innerHTML=extras.join('');
   translate();
   return total;

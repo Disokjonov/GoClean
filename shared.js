@@ -59,7 +59,8 @@
     'Sanuzel':'Санузел','Konsultatsiyadan so‘ng':'После консультации',
     'Aniq narx mutaxassis baholashidan keyin tasdiqlanadi.':'Точная цена подтверждается после оценки специалистом.',
     'Bu dastlabki hisob. Yakuniy narx material, holat va vazifa tasdiqlangandan keyin aniqlashtiriladi.':'Это предварительный расчёт. Итоговая цена уточняется после подтверждения материала, состояния и задачи.',
-    'Yakuniy narx obyekt va vazifa tasdiqlangandan keyin aniqlashtiriladi.':'Итоговая цена уточняется после подтверждения объекта и задачи.'
+    'Yakuniy narx obyekt va vazifa tasdiqlangandan keyin aniqlashtiriladi.':'Итоговая цена уточняется после подтверждения объекта и задачи.',
+    'Asl narx':'Исходная цена','Birinchi buyurtma uchun −15%':'Скидка на первый заказ −15%','Chegirmali narx':'Цена со скидкой','Aniq narx':'Точная стоимость'
   });
   const translationKeys=Object.keys(translations).sort((a,b)=>b.length-a.length);
   const translateString=value=>translations[value]||translationKeys.reduce((text,key)=>text.includes(key)?text.split(key).join(translations[key]):text,value);
