@@ -42,6 +42,25 @@
     'Maydon, zonalar, davriylik, ish vaqti va kerakli xodimlar soniga qarab konsultatsiyadan keyin aniq smeta beriladi.':'После консультации составляется точная смета с учётом площади, зон, периодичности, времени работ и числа сотрудников.','Ha. Ertalab, kechqurun yoki tungi grafikni obyektingiz ish tartibiga moslaymiz.':'Да. Подберём утренний, вечерний или ночной график под режим работы вашего объекта.','Kelishuvga ko‘ra barcha professional kimyo, inventar va texnikani Goclean ta’minlaydi.':'По договорённости Goclean предоставляет всю профессиональную химию, инвентарь и технику.','Ha, korporativ mijozlar uchun shartnoma, hisob va zarur yopuvchi hujjatlar taqdim etiladi.':'Да, корпоративным клиентам предоставляются договор, счёт и необходимые закрывающие документы.',
     'Huquqiy ma’lumot':'Правовая информация','Ma’lumotlarni qayta ishlash':'Обработка данных','Foydalanish maqsadi':'Цель использования','Xizmat shartlari':'Условия оказания услуг','Buyurtma va bekor qilish':'Заказ и отмена','Murojaatingiz qabul qilindi.':'Ваше обращение принято.','Arizangiz qabul qilindi. Menejer tez orada bog‘lanadi.':'Заявка принята. Менеджер скоро свяжется с вами.'
   });
+  Object.assign(translations,{
+    'Xizmat va kerakli parametrlarni tanlang':'Выберите услугу и нужные параметры',
+    'O‘rindiqlar soni':'Количество посадочных мест',
+    'Divan o‘rindiqlari, kreslo va yumshoq stullarni jami kiriting.':'Укажите общее количество мест дивана, кресел и мягких стульев.',
+    'Marmar maydoni (m²)':'Площадь мрамора (м²)','Gilam maydoni (m²)':'Площадь ковра (м²)','Bruschatka maydoni (m²)':'Площадь брусчатки (м²)','Oynalar maydoni (m²)':'Площадь окон (м²)','Fasad maydoni (m²)':'Площадь фасада (м²)','Taxminiy maydon (m²)':'Примерная площадь (м²)','Ta’sirlangan maydon (m²)':'Площадь обработки (м²)',
+    'Parda eni (metr)':'Ширина штор (метры)','Pled soni':'Количество пледов',
+    'Dastlabki hisob 15 000 so‘mlik minimal tarif bo‘yicha.':'Предварительный расчёт выполнен по минимальному тарифу 15 000 сум.',
+    'Gilamning eni va bo‘yini ko‘paytirib taxminiy maydonni kiriting.':'Умножьте ширину ковра на длину и укажите примерную площадь.',
+    'Yuviladigan umumiy maydonni kiriting.':'Укажите общую площадь мойки.',
+    'Barcha oynalarning taxminiy umumiy maydonini kiriting.':'Укажите примерную общую площадь всех окон.',
+    'Barcha pardalarning umumiy enini kiriting.':'Укажите общую ширину всех штор.',
+    'Balandlik va kirlanish darajasi yakuniy narxga ta’sir qiladi.':'Высота и степень загрязнения влияют на итоговую цену.',
+    'Yuviladigan pledlar sonini kiriting.':'Укажите количество пледов для стирки.',
+    'Bu xizmat uchun saytda sun’iy narx chiqarmaymiz. Mutaxassis holatni baholab, aniq narxni aytadi.':'Для этой услуги мы не показываем искусственную цену. Специалист оценит состояние и назовёт точную стоимость.',
+    'Sanuzel':'Санузел','Konsultatsiyadan so‘ng':'После консультации',
+    'Aniq narx mutaxassis baholashidan keyin tasdiqlanadi.':'Точная цена подтверждается после оценки специалистом.',
+    'Bu dastlabki hisob. Yakuniy narx material, holat va vazifa tasdiqlangandan keyin aniqlashtiriladi.':'Это предварительный расчёт. Итоговая цена уточняется после подтверждения материала, состояния и задачи.',
+    'Yakuniy narx obyekt va vazifa tasdiqlangandan keyin aniqlashtiriladi.':'Итоговая цена уточняется после подтверждения объекта и задачи.'
+  });
   const translationKeys=Object.keys(translations).sort((a,b)=>b.length-a.length);
   const translateString=value=>translations[value]||translationKeys.reduce((text,key)=>text.includes(key)?text.split(key).join(translations[key]):text,value);
   const reverseTranslations=Object.fromEntries(Object.entries(translations).map(([uz,ru])=>[ru,uz]));
@@ -53,6 +72,7 @@
   function translateWithCurrent(root){const lang=currentLanguage;document.title=lang==='ru'?translateString(document.title):restoreString(document.title);const walk=node=>{if(node.nodeType===3){const raw=originalText.has(node)?originalText.get(node):node.nodeValue;originalText.set(node,raw);const value=raw.trim();if(!value)return;const localized=lang==='ru'?translateString(value):restoreString(value);const next=raw.replace(value,localized);if(node.nodeValue!==next)node.nodeValue=next;return}if(node.nodeType!==1||node.matches('script,style,[data-i18n]'))return;['placeholder','title','aria-label','alt'].forEach(attr=>{if(!node.hasAttribute(attr))return;let originals=originalAttrs.get(node);if(!originals){originals={};originalAttrs.set(node,originals)}if(!(attr in originals))originals[attr]=node.getAttribute(attr);const source=originals[attr],next=lang==='ru'?translateString(source):restoreString(source);if(node.getAttribute(attr)!==next)node.setAttribute(attr,next)});[...node.childNodes].forEach(walk)};walk(root)}
   window.getGoCleanLanguage=()=>currentLanguage;window.setGoCleanLanguage=applyLanguage;window.translateGoCleanPage=()=>translateWithCurrent(document.body);
   document.documentElement.lang=currentLanguage;
+  const initialLanguageToggle=document.querySelector('#globalLangToggle');if(initialLanguageToggle)initialLanguageToggle.textContent=currentLanguage==='ru'?'UZ':'RU';
   document.querySelector('#globalLangToggle')?.addEventListener('click',()=>applyLanguage(currentLanguage==='uz'?'ru':'uz'));
   translateWithCurrent(document.body);new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>translateWithCurrent(node)))).observe(document.body,{childList:true,subtree:true});
   function initStyledSelect(select){

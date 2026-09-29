@@ -480,6 +480,7 @@ Mobil:
 - mobil ekranda o‘ng pastda ixcham Telegram va telefon floating tugmalari;
 - kalkulyator sarlavhasi ixcham;
 - barcha `select` maydonlari bir xil, sodda va o‘qilishi qulay GoClean uslubidagi bottom-sheet/dialog orqali ochiladi; qidiruv va icon yo‘q, shuning uchun mobil klaviatura avtomatik chiqmaydi;
+- checkout parametrlari xizmatga qarab dinamik: general tozalashda obyekt/maydon/sanuzel, mebelda o‘rindiqlar soni, gilam/marmar/bruschatka/oyna/fasadda m², pardada metr, pledda dona; individual baholanadigan murakkab xizmatlarda esa soxta narx o‘rniga konsultatsiya oqimi ishlaydi;
 - kabinet funksiyasi saqlangan prototip bo‘lsa-da, hozircha sayt navigatsiyasi va buyurtma tasdiqlash oynasidan uning barcha kirish tugmalari yashirilgan;
 - kartalar va jarayon bloklari scrollni kamaytirish uchun zich.
 

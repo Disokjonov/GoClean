@@ -11,7 +11,7 @@ const labels = {
 
 const fieldLabels = {
   id: "Buyurtma raqami", name: "Ism", phone: "Telefon", service: "Xizmat",
-  object: "Obyekt", area: "Maydon", bathrooms: "Sanuzel", frequency: "Takrorlanish",
+  object: "Obyekt", area: "Maydon", parameter: "Hisob parametri", bathrooms: "Sanuzel", frequency: "Takrorlanish",
   extras: "Qo‘shimcha xizmatlar", address: "Manzil", comment: "Izoh", date: "Sana",
   time: "Vaqt", total: "Taxminiy narx", payment: "To‘lov", message: "Savol",
   property: "Joy turi", cleaningType: "Tozalash turi", rooms: "Xonalar", page: "Sahifa"
@@ -22,7 +22,7 @@ const allowedFields = {
   consultation: ["name", "phone", "page"],
   business: ["object", "area", "service", "name", "phone", "page"],
   contact: ["name", "phone", "message", "page"],
-  order: ["id", "service", "object", "area", "bathrooms", "frequency", "extras", "name", "phone", "address", "comment", "date", "time", "total", "payment", "page"]
+  order: ["id", "service", "object", "parameter", "bathrooms", "frequency", "extras", "name", "phone", "address", "comment", "date", "time", "total", "payment", "page"]
 };
 
 function json(data, status = 200, extraHeaders = {}) {
