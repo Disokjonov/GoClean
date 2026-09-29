@@ -4,6 +4,27 @@ const qs=new URLSearchParams(location.search),preselect=qs.get('service');
 const serviceSelect=document.querySelector('#serviceSelect');
 GOCLEAN_SERVICES.forEach(s=>serviceSelect.add(new Option(`${s.name} — ${s.price}`,s.slug)));
 if(preselect&&GOCLEAN_SERVICES.some(s=>s.slug===preselect))serviceSelect.value=preselect;
+function initServicePicker(){
+  serviceSelect.hidden=true;serviceSelect.tabIndex=-1;serviceSelect.setAttribute('aria-hidden','true');serviceSelect.classList.add('native-service-select');
+  const trigger=document.createElement('button');
+  trigger.type='button';trigger.id='servicePickerButton';trigger.className='service-picker-trigger';trigger.setAttribute('aria-haspopup','dialog');
+  serviceSelect.insertAdjacentElement('afterend',trigger);
+  const dialog=document.createElement('dialog');dialog.id='servicePickerDialog';dialog.className='service-picker-dialog';
+  dialog.innerHTML=`<div class="service-picker-head"><div><span class="kicker">GoClean xizmatlari</span><h2>Xizmatni tanlang</h2><p>Narx xizmat hajmi va holatiga qarab aniqlanadi.</p></div><button class="service-picker-close" type="button" aria-label="Yopish">×</button></div><label class="service-picker-search"><span>⌕</span><input type="search" placeholder="Xizmatni qidiring" autocomplete="off"></label><div class="service-picker-list"></div>`;
+  document.body.append(dialog);
+  const list=dialog.querySelector('.service-picker-list'),search=dialog.querySelector('input');
+  const updateTrigger=()=>{const service=findService(serviceSelect.value);trigger.innerHTML=`<span class="service-picker-icon">${service.icon}</span><span class="service-picker-current"><b>${service.name}</b><small>${service.price} · ${service.unit}</small></span><span class="service-picker-chevron">⌄</span>`;window.translateGoCleanPage?.()};
+  const renderOptions=()=>{list.innerHTML=GOCLEAN_SERVICES.map(service=>`<button type="button" class="service-picker-option${service.slug===serviceSelect.value?' selected':''}" data-service-slug="${service.slug}"><span class="service-picker-icon">${service.icon}</span><span><b>${service.name}</b><small>${service.price} · ${service.unit}</small></span><i aria-hidden="true">✓</i></button>`).join('');window.translateGoCleanPage?.()};
+  const filterOptions=()=>{const query=search.value.trim().toLocaleLowerCase();list.querySelectorAll('.service-picker-option').forEach(option=>option.hidden=query&&!option.textContent.toLocaleLowerCase().includes(query))};
+  trigger.addEventListener('click',()=>{renderOptions();search.value='';dialog.showModal();requestAnimationFrame(()=>search.focus())});
+  dialog.querySelector('.service-picker-close').addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
+  list.addEventListener('click',event=>{const option=event.target.closest('[data-service-slug]');if(!option)return;serviceSelect.value=option.dataset.serviceSlug;serviceSelect.dispatchEvent(new Event('input',{bubbles:true}));updateTrigger();dialog.close();trigger.focus()});
+  search.addEventListener('input',filterOptions);
+  addEventListener('goclean:languagechange',()=>setTimeout(()=>{updateTrigger();renderOptions()},0));
+  updateTrigger();renderOptions();
+}
+initServicePicker();
 if(qs.get('object'))document.querySelector('#objectType').value=qs.get('object');
 if(qs.get('baths'))document.querySelector('#bathrooms').value=qs.get('baths');
 const objectNames={apartment:'Kvartira',cottage:'Kottej',office:'Ofis',store:'Do‘kon',mall:'Savdo markazi',production:'Ishlab chiqarish',warehouse:'Ombor',building:'Ko‘p qavatli uy',other:'Boshqa'};

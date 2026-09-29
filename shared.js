@@ -26,7 +26,8 @@
     'Bepul konsultatsiya':'Бесплатная консультация',
     'Joyida aniq hisob':'Точный расчёт на объекте',
     'Narxni aniqlash uchun konsultatsiya':'Консультация для точного расчёта',
-    'Ism va raqamingizni qoldiring — mutaxassis tashrif vaqtini kelishadi.':'Оставьте имя и номер — специалист согласует время выезда.'
+    'Ism va raqamingizni qoldiring — mutaxassis tashrif vaqtini kelishadi.':'Оставьте имя и номер — специалист согласует время выезда.',
+    'GoClean xizmatlari':'Услуги GoClean','Xizmatni tanlang':'Выберите услугу','Narx xizmat hajmi va holatiga qarab aniqlanadi.':'Цена зависит от объёма и состояния объекта.','Xizmatni qidiring':'Найти услугу'
   });
   const originalText=new WeakMap(),originalAttrs=new WeakMap();
   Object.assign(translations,{

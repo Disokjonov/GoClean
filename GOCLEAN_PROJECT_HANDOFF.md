@@ -479,6 +479,7 @@ Mobil:
 - tab o‘zgarsa ichki link va pastki CTA ham o‘zgaradi;
 - sticky pastki qo‘ng‘iroq/buyurtma paneli;
 - kalkulyator sarlavhasi ixcham;
+- checkoutdagi xizmat tanlovi native mobil `select` emas: qidiruvli, narx va birlikni alohida ko‘rsatadigan GoClean uslubidagi bottom-sheet/dialog;
 - kartalar va jarayon bloklari scrollni kamaytirish uchun zich.
 
 ## 13. Logo va tasvirlar
