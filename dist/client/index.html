@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=6" />
+    <link rel="stylesheet" href="styles.css?v=7" />
   </head>
   <body>
     <div class="announcement">
@@ -31,7 +31,7 @@
 
         <div class="nav-actions">
           <button class="lang" id="langToggle" type="button" aria-label="Tilni almashtirish">RU</button>
-          <a class="outline-button desktop-cta" href="booking.html" data-i18n="calculate">Buyurtma berish</a>
+          <button class="outline-button desktop-cta discount-cta" type="button" data-i18n="calculate">15% chegirmani olish</button>
           <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Menyuni ochish">
             <span></span><span></span><span></span>
           </button>
@@ -44,6 +44,7 @@
         <div class="hero-glow"></div>
         <div class="container hero-grid">
           <div class="hero-copy">
+            <button class="hero-offer discount-cta" type="button"><strong>−15%</strong><span data-i18n="firstOfferBadge">Birinchi buyurtmangizga chegirma</span><i>→</i></button>
             <h1 data-i18n="heroTitle">Uy va biznes uchun professional tozalash</h1>
             <p data-i18n="heroText">Kvartira, hovli, ofis va tijorat obyektlarini professional xodimlar bilan tozalaymiz. Narxni hisoblang yoki bepul konsultatsiya oling.</p>
             <div class="hero-points">
@@ -97,7 +98,7 @@
             <strong id="totalPrice" class="sr-only">249 000 so‘m</strong>
             <button class="primary-button full calc-order" id="orderButton" type="button"><span id="orderLabel">Buyurtma berish — 249 000 so‘m</span><span>→</span></button>
             <button class="callback-button full" id="calculatorCallback" type="button" data-i18n="callback">☎ Raqam qoldirish</button>
-            <p class="microcopy" data-i18n="noPrepay">Oldindan to‘lov talab qilinmaydi</p>
+            <p class="microcopy"><b data-i18n="firstOrderMicrocopy">Birinchi buyurtmaga 15% chegirma</b> · <span data-i18n="noPrepay">Oldindan to‘lov talab qilinmaydi</span></p>
           </form>
         </div>
       </section>
@@ -174,10 +175,10 @@
         </div>
       </section>
 
-      <section class="section subscription">
-        <div class="container subscription-panel">
-          <div><span class="kicker" data-i18n="subscriptionKicker">Muntazam tozalik</span><h2 data-i18n="subscriptionTitle">Har safar buyurtma berish shart emas</h2><p data-i18n="subscriptionText">Haftalik yoki oylik jadvalni bir marta tanlang. Biz tashriflarni rejalashtiramiz, siz esa har buyurtmada tejaysiz.</p><a class="primary-button inline" href="booking.html?frequency=weekly" data-i18n="choosePlan">Rejani tanlash →</a></div>
-          <div class="save-card"><span data-i18n="saveUpTo">Gacha tejang</span><strong>15%</strong><small data-i18n="weekly">haftalik tozalashda</small></div>
+      <section class="section first-order-offer" id="first-order-offer">
+        <div class="container first-order-panel">
+          <div><span class="kicker" data-i18n="firstOfferKicker">Yangi mijozlar uchun</span><h2 data-i18n="firstOfferTitle">Birinchi buyurtmangizga 15% chegirma</h2><p data-i18n="firstOfferText">Ism va telefon raqamingizni qoldiring. Chegirmani band qilamiz va mos xizmatni tanlashga yordam beramiz.</p><button class="primary-button inline discount-cta" type="button" data-i18n="firstOfferCta">15% chegirmani olish →</button></div>
+          <div class="save-card"><span data-i18n="firstOrderOnly">Faqat birinchi buyurtmaga</span><strong>15%</strong><small data-i18n="discountReserved">Chegirmani hozir band qiling</small></div>
         </div>
       </section>
 
@@ -205,7 +206,7 @@
       </section>
 
       <section class="final-cta">
-        <div class="container"><div><span data-i18n="ready">Toza uyga tayyormisiz?</span><h2 data-i18n="finalTitle">Bugun buyurtma bering — ertaga vaqtingizni o‘zingizga sarflang</h2></div><a class="primary-button coral" href="booking.html" data-i18n="calculatePrice">Narxni hisoblash →</a></div>
+        <div class="container"><div><span data-i18n="ready">Toza uyga tayyormisiz?</span><h2 data-i18n="finalTitle">Birinchi buyurtmangiz uchun 15% chegirmani band qiling</h2></div><button class="primary-button coral discount-cta" type="button" data-i18n="calculatePrice">Chegirmani olish →</button></div>
       </section>
     </main>
 
@@ -219,7 +220,7 @@
       <div class="container footer-bottom"><span>© 2026 Goclean.uz</span><div><a href="legal.html?doc=privacy">Maxfiylik siyosati</a><a href="legal.html?doc=terms">Foydalanish shartlari</a></div></div>
     </footer>
 
-    <div class="mobile-bar"><a href="tel:+998977071515">☎ <span data-i18n="call">Qo‘ng‘iroq</span></a><a href="booking.html">✦ <span data-i18n="orderShort">Buyurtma</span></a></div>
+    <div class="mobile-bar"><a href="tel:+998977071515">☎ <span data-i18n="call">Qo‘ng‘iroq</span></a><button class="discount-cta" type="button">✦ <span data-i18n="orderShort">−15% chegirma</span></button></div>
 
     <dialog id="orderModal">
       <button class="modal-close" type="button" aria-label="Yopish">×</button>
@@ -227,8 +228,22 @@
       <form id="orderForm"><label><span data-i18n="name">Ismingiz</span><input required name="customerName" placeholder="Ismingiz" /></label><label><span data-i18n="phone">Telefon raqam</span><input required name="customerPhone" type="tel" placeholder="+998 90 123 45 67" /></label><button class="primary-button full" type="submit">Raqam qoldirish</button></form>
     </dialog>
 
+    <dialog id="discountModal" class="discount-modal">
+      <button class="modal-close discount-modal-close" type="button" aria-label="Yopish">×</button>
+      <div class="discount-modal-badge">−15%</div>
+      <span class="kicker" data-i18n="firstOfferKicker">Yangi mijozlar uchun</span>
+      <h2 data-i18n="discountPopupTitle">Birinchi buyurtmangizga 15% chegirmani oling</h2>
+      <p data-i18n="discountPopupText">Hozir ro‘yxatdan o‘ting — chegirmani band qilamiz va buyurtmani rasmiylashtirishga yordam beramiz.</p>
+      <form id="discountForm">
+        <label><span data-i18n="name">Ismingiz</span><input required name="name" placeholder="Ismingiz" /></label>
+        <label><span data-i18n="phone">Telefon raqam</span><input required name="phone" type="tel" placeholder="+998 90 123 45 67" /></label>
+        <button class="primary-button full coral" type="submit" data-i18n="getDiscount">15% chegirmani olish</button>
+        <small data-i18n="discountConsent">Raqamingiz faqat buyurtmani tasdiqlash uchun ishlatiladi.</small>
+      </form>
+    </dialog>
+
     <div class="toast" id="toast"><b>✓</b><span data-i18n="success">Rahmat! Tez orada siz bilan bog‘lanamiz.</span></div>
-    <script src="shared.js?v=6"></script>
-    <script src="app.js?v=5"></script>
+    <script src="shared.js?v=7"></script>
+    <script src="app.js?v=6"></script>
   </body>
 </html>

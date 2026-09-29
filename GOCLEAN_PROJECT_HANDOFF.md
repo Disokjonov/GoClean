@@ -185,7 +185,7 @@ Mobil versiyada “Uyingizni tanlang” sarlavhasi yashirilgan. “Narx kalkulya
 
 `booking.html` 4 bosqichdan iborat:
 
-1. xizmat, obyekt, maydon, sanuzel, takrorlanish va qo‘shimcha xizmatlar;
+1. xizmat, obyekt, maydon, sanuzel va qo‘shimcha xizmatlar;
 2. ism, telefon, manzil, izoh;
 3. sana va vaqt;
 4. to‘lov usuli va tasdiqlash.
@@ -198,7 +198,7 @@ To‘lov variantlari hozir UI/prototip:
 
 Real payment gateway ulanmagan.
 
-Promokod: `GO5` — 5% chegirma.
+Asosiy aksiyasi: yangi mijozning birinchi buyurtmasiga 15% chegirma. Chegirma checkout hisobiga avtomatik qo‘llanadi; eski haftalik/oylik obuna chegirmalari olib tashlangan.
 
 Buyurtma muvaffaqiyatli yuborilganda:
 
@@ -317,8 +317,8 @@ Tozalash koeffitsiyenti:
 
 - general base: 500 000;
 - kimyoviy: 100 000;
-- oyna: 12 000/m²;
-- maxsus: 20 000/m²;
+- oyna: 14 000/m² dan;
+- maxsus: 15 000/m² dan;
 - fasad: 18 000/m²;
 - ta’mirdan keyin: 16 000/m²;
 - favqulodda: 22 000/m²;
@@ -326,11 +326,16 @@ Tozalash koeffitsiyenti:
 - mog‘or: 25 000/m²;
 - dezinfeksiya: 10 000/m².
 
-Chastota chegirmalari:
+Xizmat katalogidagi tasdiqlangan diapazonlar:
 
-- haftalik: 15%;
-- har 2 hafta: 10%;
-- oylik: 5%.
+- marmar: 15 000–20 000 so‘m/m²;
+- gilam: 15 000–30 000 so‘m/m²;
+- bruschatka: 15 000 so‘mdan/m²;
+- oyna: 14 000–16 000 so‘m/m²;
+- parda: 25 000–30 000 so‘m/metr;
+- pled: 100 000–150 000 so‘m/dona.
+
+Birinchi buyurtma chegirmasi: 15%.
 
 Muhim: bu formulalar biznes tomonidan tasdiqlangan production pricing emas. App qurishda narx qoidalarini frontenddan chiqarib, backend pricing engine va admin panelga o‘tkazish kerak.
 
@@ -628,4 +633,3 @@ Handoff yozilgan paytda:
 - Sites remote: `sites`
 - oxirgi asosiy UI/i18n commit: `a597ba3 Fix bilingual UI and responsive hero layout`
 - source worktree handoffdan oldin clean edi.
-
