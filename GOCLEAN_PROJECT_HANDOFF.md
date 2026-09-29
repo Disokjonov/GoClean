@@ -477,9 +477,10 @@ Mobil:
 
 - burger menyu uy/biznes tablariga ega;
 - tab o‘zgarsa ichki link va pastki CTA ham o‘zgaradi;
-- sticky pastki qo‘ng‘iroq/buyurtma paneli;
+- mobil ekranda o‘ng pastda ixcham Telegram va telefon floating tugmalari;
 - kalkulyator sarlavhasi ixcham;
-- checkoutdagi xizmat tanlovi native mobil `select` emas: qidiruvli, narx va birlikni alohida ko‘rsatadigan GoClean uslubidagi bottom-sheet/dialog;
+- barcha `select` maydonlari bir xil, sodda va o‘qilishi qulay GoClean uslubidagi bottom-sheet/dialog orqali ochiladi; qidiruv va icon yo‘q, shuning uchun mobil klaviatura avtomatik chiqmaydi;
+- kabinet funksiyasi saqlangan prototip bo‘lsa-da, hozircha sayt navigatsiyasi va buyurtma tasdiqlash oynasidan uning barcha kirish tugmalari yashirilgan;
 - kartalar va jarayon bloklari scrollni kamaytirish uchun zich.
 
 ## 13. Logo va tasvirlar
