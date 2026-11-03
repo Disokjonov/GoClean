@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=13" />
+    <link rel="stylesheet" href="styles.css?v=14" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml"></head>
   <body>
     <div class="announcement">
@@ -74,9 +74,9 @@
             </div>
 
             <div class="property-tabs" role="group" aria-label="Obyekt turi">
-              <button class="active" type="button" data-property="apartment">🏢 <span data-i18n="apartment">Kvartira</span></button>
-              <button type="button" data-property="house">🏠 <span data-i18n="house">Hovli</span></button>
-              <button type="button" data-property="office">💼 <span data-i18n="office">Ofis</span></button>
+              <button class="active" type="button" data-property="apartment"><img class="property-icon-3d" src="public/assets/icons-3d/standard-cleaning.webp" alt="" aria-hidden="true"> <span data-i18n="apartment">Kvartira</span></button>
+              <button type="button" data-property="house"><img class="property-icon-3d" src="public/assets/icons-3d/general-cleaning.webp" alt="" aria-hidden="true"> <span data-i18n="house">Hovli</span></button>
+              <button type="button" data-property="office"><img class="property-icon-3d" src="public/assets/icons-3d/office-cleaning.webp" alt="" aria-hidden="true"> <span data-i18n="office">Ofis</span></button>
             </div>
 
             <div class="counter-row">
@@ -120,19 +120,19 @@
           </div>
           <div class="service-grid">
             <article class="service-card mint">
-              <div class="service-icon">✦</div><span class="tag" data-i18n="popular">Eng ommabop</span>
+              <div class="service-icon"><img src="public/assets/icons-3d/general-cleaning.webp" alt="" aria-hidden="true"></div><span class="tag" data-i18n="popular">Eng ommabop</span>
               <h3 data-i18n="standardClean">General tozalash</h3><p data-i18n="standardDesc">Uyda chuqur tozalik va tartibni tiklash uchun.</p>
               <ul><li data-i18n="dust">Chang va yuzalarni artish</li><li data-i18n="floors">Polni changyutish va yuvish</li><li data-i18n="bathClean">Sanuzelni tozalash</li></ul>
               <div class="card-footer"><strong><small data-i18n="from">dan</small> 500 000 so‘m</strong><a href="service.html?slug=general-cleaning" data-i18n="select">Batafsil →</a></div>
             </article>
             <article class="service-card peach">
-              <div class="service-icon">⌂</div>
+              <div class="service-icon"><img src="public/assets/icons-3d/furniture-cleaning.webp" alt="" aria-hidden="true"></div>
               <h3 data-i18n="generalClean">Mebel kimyoviy tozalash</h3><p data-i18n="generalDesc">Divan, kreslo va yumshoq mebelni chuqur tozalash.</p>
               <ul><li>Mato diagnostikasi</li><li>Dog‘larga ishlov</li><li>Chuqur ekstraksiya</li><li>Quritish bo‘yicha tavsiya</li></ul>
               <div class="card-footer"><strong><small data-i18n="from">dan</small> 100 000 so‘m</strong><a href="service.html?slug=furniture-cleaning" data-i18n="select">Batafsil →</a></div>
             </article>
             <article class="service-card blue">
-              <div class="service-icon">◈</div>
+              <div class="service-icon"><img src="public/assets/icons-3d/after-renovation.webp" alt="" aria-hidden="true"></div>
               <h3 data-i18n="afterRepair">Ta’mirdan keyin</h3><p data-i18n="repairDesc">Qurilish changi va murakkab izlarni to‘liq bartaraf etish.</p>
               <ul><li data-i18n="constructionDust">Qurilish changini yo‘qotish</li><li data-i18n="paintMarks">Bo‘yoq va yelim izlari</li><li data-i18n="equipment">Professional uskuna va kimyo</li></ul>
               <div class="card-footer"><strong data-i18n="quoteBased">Hisob asosida</strong><a href="service.html?slug=after-renovation" data-i18n="select">Batafsil →</a></div>
@@ -178,7 +178,7 @@
       <section class="section first-order-offer" id="first-order-offer">
         <div class="container first-order-panel">
           <div><span class="kicker" data-i18n="firstOfferKicker">Yangi mijozlar uchun</span><h2 data-i18n="firstOfferTitle">Birinchi buyurtmangiz uchun maxsus chegirmani qo‘lga kiriting</h2><p data-i18n="firstOfferText">Maxsus chegirmani qo‘lga kiritish uchun hoziroq ro‘yxatdan o‘ting. Mos xizmatni tanlash va buyurtmani rasmiylashtirishga yordam beramiz.</p><button class="primary-button inline discount-cta" type="button" data-i18n="firstOfferCta">Maxsus chegirmani olish →</button></div>
-          <div class="save-card"><span data-i18n="firstOrderOnly">Birinchi buyurtmangiz uchun</span><strong>MAXSUS</strong><small data-i18n="discountReserved">Hoziroq ro‘yxatdan o‘ting</small></div>
+          <div class="save-card"><img class="offer-coin" src="public/assets/icons-3d/gocoin.webp" alt="" aria-hidden="true"><span data-i18n="firstOrderOnly">Birinchi buyurtmangiz uchun</span><strong>MAXSUS</strong><small data-i18n="discountReserved">Hoziroq ro‘yxatdan o‘ting</small></div>
         </div>
       </section>
 
