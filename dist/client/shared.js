@@ -62,6 +62,12 @@
     'Yakuniy narx obyekt va vazifa tasdiqlangandan keyin aniqlashtiriladi.':'Итоговая цена уточняется после подтверждения объекта и задачи.',
     'Aniq narx':'Точная стоимость'
   });
+  Object.assign(translations,{
+    'Bir martalik tozalash':'Поддерживающая уборка',
+    'Xonalar soni':'Количество комнат',
+    'Ish tugagach to‘lov':'Оплата после выполнения',
+    'Naqd yoki karta orqali, xizmat yakunlangandan keyin':'Наличными или картой после завершения услуги'
+  });
   const translationKeys=Object.keys(translations).sort((a,b)=>b.length-a.length);
   const translateString=value=>translations[value]||translationKeys.reduce((text,key)=>text.includes(key)?text.split(key).join(translations[key]):text,value);
   const reverseTranslations=Object.fromEntries(Object.entries(translations).map(([uz,ru])=>[ru,uz]));

@@ -11,8 +11,9 @@ await mkdir(resolve(output, "server"), { recursive: true });
 await mkdir(resolve(output, ".openai"), { recursive: true });
 
 const entries = await readdir(root, { withFileTypes: true });
+const excludedClientFiles = new Set(["auth.html"]);
 for (const entry of entries) {
-  if (entry.isFile() && /\.(html|css|js|txt|xml)$/.test(entry.name)) {
+  if (entry.isFile() && !excludedClientFiles.has(entry.name) && /\.(html|css|js|txt|xml|svg)$/.test(entry.name)) {
     await cp(resolve(root, entry.name), resolve(output, "client", entry.name));
   }
 }
@@ -40,11 +41,6 @@ const seoPages = {
     robots: "noindex,follow",
     description: "GoClean biznes tozalash xizmati uchun obyekt ma’lumotlarini qoldirib, bepul konsultatsiya so‘rang."
   },
-  "auth.html": {
-    canonical: "https://go-clean.uz/auth.html",
-    robots: "noindex,nofollow",
-    description: "GoClean shaxsiy kabinetining texnik demo sahifasi."
-  },
   "service.html": { runtime: true },
   "legal.html": { runtime: true }
 };
@@ -53,6 +49,9 @@ for (const [file, metadata] of Object.entries(seoPages)) {
   const path = resolve(output, "client", file);
   let html = await readFile(path, "utf8");
   const tags = [];
+  if (!/<link\s+rel=["']icon["']/i.test(html)) {
+    tags.push('<link rel="icon" href="favicon.svg" type="image/svg+xml">');
+  }
   if (metadata.description && !/<meta\s+name=["']description["']/i.test(html)) {
     tags.push(`<meta name="description" content="${metadata.description}">`);
   }

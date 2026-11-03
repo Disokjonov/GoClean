@@ -24,9 +24,6 @@ for (const page of ["booking.html", "business-request.html"]) {
   assert.match(html, /<meta\s+name=["']robots["']\s+content=["']noindex,follow["']/i, `${page} must be noindex,follow`);
 }
 
-const auth = await read("auth.html");
-assert.match(auth, /<meta\s+name=["']robots["']\s+content=["']noindex,nofollow["']/i, "auth.html must not be indexed");
-
 for (const page of ["service.html", "legal.html"]) {
   assert.match(await read(page), /seo-runtime\.js/, `${page} is missing runtime SEO metadata`);
 }

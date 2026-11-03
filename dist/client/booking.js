@@ -1,15 +1,17 @@
 const booking={step:1,frequency:'once',time:''};
-const qs=new URLSearchParams(location.search),preselect=qs.get('service');
+const qs=new URLSearchParams(location.search),preselect=qs.get('service'),homeFlow=qs.get('flow')==='home';
 const serviceSelect=document.querySelector('#serviceSelect');
 const objectSelect=document.querySelector('#objectType');
 const parameterHost=document.querySelector('#serviceParameters');
 const extrasSection=document.querySelector('#extrasSection');
 
-GOCLEAN_SERVICES.forEach(service=>serviceSelect.add(new Option(`${service.name} — ${service.price}`,service.slug)));
-if(preselect&&GOCLEAN_SERVICES.some(service=>service.slug===preselect))serviceSelect.value=preselect;
-if(qs.get('object'))objectSelect.value=qs.get('object');
-
 const objectNames={apartment:'Kvartira',cottage:'Kottej',office:'Ofis',store:'Do‘kon',mall:'Savdo markazi',production:'Ishlab chiqarish',warehouse:'Ombor',building:'Ko‘p qavatli uy',other:'Boshqa'};
+const homePrices={apartment:{base:99000,room:60000,bath:30000},cottage:{base:149000,room:72000,bath:35000},office:{base:199000,room:45000,bath:40000}};
+const homePackages={
+  'home-standard':{name:'Bir martalik tozalash',price:'2 soatdan',kind:'rooms',object:true,extras:true,label:'Xonalar soni',unit:'xona',value:2,min:1,multiplier:1,hours:2},
+  'home-general':{name:'General tozalash',price:'4 soatdan',kind:'rooms',object:true,extras:true,label:'Xonalar soni',unit:'xona',value:2,min:1,multiplier:1.8,hours:4},
+  'home-repair':{name:'Ta’mirdan keyin tozalash',price:'6 soatdan',kind:'rooms',object:true,extras:false,label:'Xonalar soni',unit:'xona',value:2,min:1,multiplier:2.65,hours:6}
+};
 const profiles={
   'general-cleaning':{kind:'home',object:true,extras:true,label:'Maydon (m²)',unit:'m²',value:50,min:10,rate:6000,base:500000},
   'furniture-cleaning':{kind:'quantity',label:'O‘rindiqlar soni',unit:'o‘rindiq',value:1,min:1,rate:100000,hint:'Divan o‘rindiqlari, kreslo va yumshoq stullarni jami kiriting.'},
@@ -27,9 +29,20 @@ const profiles={
   'disinfection':{kind:'consultation',object:true,label:'Taxminiy maydon (m²)',unit:'m²',value:50,min:1}
 };
 
+if(homeFlow){
+  [...objectSelect.options].forEach(option=>{if(!['apartment','cottage'].includes(option.value))option.remove()});
+  Object.entries(homePackages).forEach(([value,service])=>serviceSelect.add(new Option(`${service.name} — ${service.price}`,value)));
+  const requestedPackage=['standard','general','repair'].includes(qs.get('package'))?qs.get('package'):'standard';
+  serviceSelect.value=`home-${requestedPackage}`;
+}else{
+  GOCLEAN_SERVICES.forEach(service=>serviceSelect.add(new Option(`${service.name} — ${service.price}`,service.slug)));
+  if(preselect&&GOCLEAN_SERVICES.some(service=>service.slug===preselect))serviceSelect.value=preselect;
+}
+if(qs.get('object'))objectSelect.value=qs.get('object');
+
 const money=value=>new Intl.NumberFormat('uz-UZ').format(Math.round(value/1000)*1000)+' so‘m';
-const currentService=()=>findService(serviceSelect.value);
-const currentProfile=()=>profiles[serviceSelect.value]||profiles['general-cleaning'];
+const currentService=()=>homePackages[serviceSelect.value]||findService(serviceSelect.value);
+const currentProfile=()=>homePackages[serviceSelect.value]||profiles[serviceSelect.value]||profiles['general-cleaning'];
 const translate=()=>window.translateGoCleanPage?.();
 
 function renderServiceParameters(){
@@ -37,8 +50,8 @@ function renderServiceParameters(){
   document.querySelector('#objectTypeField').hidden=!profile.object;
   extrasSection.hidden=!profile.extras;
   if(!profile.extras)document.querySelectorAll('[data-extra]').forEach(input=>input.checked=false);
-  const initialValue=profile.kind==='home'?(+qs.get('area')||profile.value):profile.value;
-  if(profile.kind==='home'){
+  const initialValue=profile.kind==='home'?(+qs.get('area')||profile.value):profile.kind==='rooms'?(+qs.get('rooms')||profile.value):profile.value;
+  if(profile.kind==='home'||profile.kind==='rooms'){
     parameterHost.innerHTML=`<div class="form-row service-parameter-grid"><label>${profile.label}<input id="serviceQuantity" type="number" min="${profile.min}" value="${initialValue}"></label><label>Sanuzel soni<input id="bathrooms" type="number" min="0" value="${+qs.get('baths')||1}"></label></div>`;
   }else{
     const note=profile.kind==='consultation'?'Bu xizmat uchun saytda sun’iy narx chiqarmaymiz. Mutaxassis holatni baholab, aniq narxni aytadi.':profile.hint;
@@ -52,12 +65,13 @@ function renderServiceParameters(){
 function parameterData(){
   const profile=currentProfile();
   const quantity=Math.max(profile.min||1,+document.querySelector('#serviceQuantity')?.value||profile.value||1);
-  const bathrooms=profile.kind==='home'?Math.max(0,+document.querySelector('#bathrooms')?.value||0):null;
+  const bathrooms=profile.kind==='home'||profile.kind==='rooms'?Math.max(0,+document.querySelector('#bathrooms')?.value||0):null;
   let unit=profile.unit;
   if(window.getGoCleanLanguage?.()==='ru'){
     if(unit==='o‘rindiq')unit=quantity===1?'посадочное место':quantity>1&&quantity<5?'посадочных места':'посадочных мест';
     else if(unit==='metr')unit=quantity===1?'метр':quantity>1&&quantity<5?'метра':'метров';
     else if(unit==='dona')unit='шт.';
+    else if(unit==='xona')unit=quantity===1?'комната':quantity>1&&quantity<5?'комнаты':'комнат';
   }
   return{profile,quantity,bathrooms,summary:`${quantity} ${unit}`};
 }
@@ -74,17 +88,23 @@ function calc(){
   const service=currentService(),{profile,quantity,bathrooms,summary}=parameterData();
   let total=null;
   if(profile.kind==='home')total=profile.base+Math.max(0,quantity-50)*profile.rate+Math.max(0,bathrooms-1)*50000;
+  else if(profile.kind==='rooms'){
+    const price=homePrices[objectSelect.value]||homePrices.apartment;
+    total=(price.base+quantity*price.room+bathrooms*price.bath)*profile.multiplier;
+  }
   else if(profile.kind!=='consultation')total=profile.rate*quantity;
   document.querySelectorAll('[data-extra]:checked').forEach(input=>{if(total!==null)total+=+input.dataset.extra});
   document.querySelector('#summaryService').textContent=service.name;
   setSummaryRow('summaryObject',!!profile.object,'Obyekt',objectNames[objectSelect.value]);
   setSummaryRow('summaryPrimary',true,profile.label,summary);
-  setSummaryRow('summarySecondary',profile.kind==='home','Sanuzel',String(bathrooms));
+  setSummaryRow('summarySecondary',profile.kind==='home'||profile.kind==='rooms','Sanuzel',String(bathrooms));
   const durationRow=document.querySelector('#summaryDurationRow'),workersRow=document.querySelector('#summaryWorkersRow');
-  durationRow.hidden=profile.kind!=='home';workersRow.hidden=profile.kind!=='home';
-  if(profile.kind==='home'){
-    document.querySelector('#summaryDuration').textContent='~'+Math.max(2,Math.ceil(quantity/20)+Math.max(0,bathrooms-1))+' soat';
-    document.querySelector('#summaryWorkers').textContent=(quantity>100?3:quantity>55?2:1)+' kishi';
+  const homeKind=profile.kind==='home'||profile.kind==='rooms';
+  durationRow.hidden=!homeKind;workersRow.hidden=!homeKind;
+  if(homeKind){
+    const duration=profile.kind==='rooms'?Math.max(profile.hours,Math.ceil((quantity+bathrooms)/2)*profile.multiplier):Math.max(2,Math.ceil(quantity/20)+Math.max(0,bathrooms-1));
+    document.querySelector('#summaryDuration').textContent='~'+Math.ceil(duration)+' soat';
+    document.querySelector('#summaryWorkers').textContent=(profile.kind==='rooms'?(quantity+bathrooms>5?2:1):(quantity>100?3:quantity>55?2:1))+' kishi';
   }
   document.querySelector('#summaryTotalLabel').textContent=total===null?'Aniq narx':'Taxminiy jami';
   document.querySelector('#summaryTotal').textContent=total===null?'Konsultatsiyadan so‘ng':money(total);
@@ -122,7 +142,7 @@ document.querySelector('#checkoutForm').onsubmit=async event=>{
   const form=event.currentTarget,{profile,bathrooms,summary}=parameterData(),calculatedTotal=calc();
   const order={
     id:'GC-'+Date.now().toString().slice(-6),
-    service:serviceSelect.options[serviceSelect.selectedIndex]?.text||serviceSelect.value,
+    service:currentService().name,
     object:profile.object?objectNames[objectSelect.value]:'—',
     area:summary,
     parameter:summary,
