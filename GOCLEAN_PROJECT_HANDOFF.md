@@ -198,7 +198,7 @@ To‘lov variantlari hozir UI/prototip:
 
 Real payment gateway ulanmagan.
 
-Asosiy aksiyasi: yangi mijozning birinchi buyurtmasiga 15% chegirma. Chegirma checkout hisobiga avtomatik qo‘llanadi; eski haftalik/oylik obuna chegirmalari olib tashlangan.
+Asosiy aksiyasi: yangi mijoz birinchi buyurtma uchun maxsus chegirma olish maqsadida ro‘yxatdan o‘tadi. Chegirma miqdori saytda ko‘rsatilmaydi va checkout hisobiga avtomatik qo‘llanmaydi.
 
 Buyurtma muvaffaqiyatli yuborilganda:
 
@@ -335,7 +335,7 @@ Xizmat katalogidagi tasdiqlangan diapazonlar:
 - parda: 25 000–30 000 so‘m/metr;
 - pled: 100 000–150 000 so‘m/dona.
 
-Birinchi buyurtma chegirmasi: 15%.
+Birinchi buyurtma taklifi: ro‘yxatdan o‘tgan yangi mijoz uchun miqdori oldindan belgilanmagan maxsus chegirma.
 
 Muhim: bu formulalar biznes tomonidan tasdiqlangan production pricing emas. App qurishda narx qoidalarini frontenddan chiqarib, backend pricing engine va admin panelga o‘tkazish kerak.
 
