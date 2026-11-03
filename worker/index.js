@@ -1,4 +1,4 @@
-const ALLOWED_TYPES = new Set(["callback", "consultation", "business", "contact", "order"]);
+const ALLOWED_TYPES = new Set(["callback", "consultation", "business", "contact", "order", "meta"]);
 const attempts = new Map();
 
 const labels = {
@@ -6,7 +6,8 @@ const labels = {
   consultation: "Yangi konsultatsiya so‘rovi",
   business: "Yangi biznes arizasi",
   contact: "Yangi murojaat",
-  order: "Yangi buyurtma"
+  order: "Yangi buyurtma",
+  meta: "Meta Ads orqali yangi ariza"
 };
 
 const fieldLabels = {
@@ -22,7 +23,8 @@ const allowedFields = {
   consultation: ["name", "phone", "page"],
   business: ["object", "area", "service", "name", "phone", "page"],
   contact: ["name", "phone", "message", "page"],
-  order: ["id", "service", "object", "parameter", "bathrooms", "frequency", "extras", "name", "phone", "address", "comment", "date", "time", "total", "payment", "page"]
+  order: ["id", "service", "object", "parameter", "bathrooms", "frequency", "extras", "name", "phone", "address", "comment", "date", "time", "total", "payment", "page"],
+  meta: ["service", "name", "phone", "page"]
 };
 
 function json(data, status = 200, extraHeaders = {}) {
@@ -68,6 +70,7 @@ function validate(type, input) {
   if (data.name.length < 2 || data.name.length > 80) return { error: "Ismni to‘g‘ri kiriting." };
   if (digits.length < 9 || digits.length > 15) return { error: "Telefon raqamini to‘g‘ri kiriting." };
   if (type === "business" && (!data.object || !data.area || !data.service)) return { error: "Obyekt ma’lumotlarini to‘ldiring." };
+  if (type === "meta" && !data.service) return { error: "Kerakli xizmatni tanlang." };
   if (type === "order" && (!data.service || !data.object || !data.address || !data.date || !data.time)) return { error: "Buyurtma ma’lumotlarini to‘liq kiriting." };
   return { data };
 }
@@ -142,6 +145,12 @@ function secureStatic(response) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/offer") {
+      if (!env.ASSETS) return json({ ok: false, message: "Not found" }, 404);
+      const assetUrl = new URL(request.url);
+      assetUrl.pathname = "/offer.html";
+      return secureStatic(await env.ASSETS.fetch(new Request(assetUrl, request)));
+    }
     if (url.pathname === "/auth" || url.pathname === "/auth.html") {
       return Response.redirect(new URL("/", url), 302);
     }

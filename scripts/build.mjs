@@ -41,6 +41,11 @@ const seoPages = {
     robots: "noindex,follow",
     description: "GoClean biznes tozalash xizmati uchun obyekt ma’lumotlarini qoldirib, bepul konsultatsiya so‘rang."
   },
+  "offer.html": {
+    canonical: "https://go-clean.uz/offer",
+    robots: "noindex,follow",
+    description: "GoClean xizmatiga birinchi buyurtma uchun maxsus chegirmani band qiling."
+  },
   "service.html": { runtime: true },
   "legal.html": { runtime: true }
 };

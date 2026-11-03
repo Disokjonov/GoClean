@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="description" content="GoClean xizmatiga birinchi buyurtma uchun maxsus chegirmani band qiling." />
+    <meta name="robots" content="noindex,follow" />
+    <title>Maxsus chegirma — Goclean.uz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=17" />
+    <script>const adLang=new URLSearchParams(location.search).get('lang');if(adLang==='uz'||adLang==='ru')localStorage.setItem('gocleanLang',adLang)</script>
+  </head>
+  <body class="ad-lead-page">
+    <header class="ad-lead-header">
+      <div class="container">
+        <a href="index.html" aria-label="Goclean bosh sahifa"><img src="public/assets/goclean-logo.png" alt="GoClean" /></a>
+        <div>
+          <a class="ad-lead-phone" href="tel:+998977071515">+998 97 707 15 15</a>
+          <button class="lang" id="globalLangToggle" type="button" aria-label="Tilni almashtirish">RU</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="ad-lead-main">
+      <section class="ad-lead-hero">
+        <div class="container ad-lead-grid">
+          <div class="ad-lead-copy">
+            <span class="ad-offer-pill">Yangi mijozlar uchun maxsus taklif</span>
+            <h1>Birinchi buyurtmangiz uchun maxsus chegirma</h1>
+            <p>Kerakli xizmatni tanlang va raqamingizni qoldiring. Menejerimiz chegirma, xizmat tarkibi va narx bo‘yicha sizga yordam beradi.</p>
+            <div class="ad-lead-benefits" aria-label="Xizmat afzalliklari">
+              <span><b>✓</b> Professional xodimlar</span>
+              <span><b>✓</b> Sifat kafolati</span>
+              <span><b>✓</b> Oldindan to‘lov yo‘q</span>
+            </div>
+            <div class="ad-lead-photo" aria-hidden="true">
+              <picture>
+                <source srcset="public/assets/goclean-hero.avif" type="image/avif" />
+                <source srcset="public/assets/goclean-hero.webp" type="image/webp" />
+                <img src="public/assets/goclean-hero.png" alt="" />
+              </picture>
+              <div><strong>6+ yil</strong><span>tozalash tajribasi</span></div>
+            </div>
+          </div>
+
+          <div class="ad-lead-form-shell">
+            <form class="ad-lead-form" id="metaLeadForm">
+              <span class="ad-form-badge">MAXSUS CHEGIRMA</span>
+              <h2>Chegirmani band qiling</h2>
+              <p>Formani to‘ldiring — taxminan 30 soniya.</p>
+              <label>Ismingiz
+                <input required name="name" autocomplete="name" placeholder="Ismingiz" maxlength="80" />
+              </label>
+              <label>Telefon raqamingiz
+                <input required name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+998 90 123 45 67" maxlength="24" />
+              </label>
+              <label>Qanday tozalash xizmati kerak?
+                <select required name="service">
+                  <option value="">Xizmatni tanlang</option>
+                  <option value="General tozalash">General tozalash</option>
+                  <option value="Mebel kimyoviy tozalash">Mebel kimyoviy tozalash</option>
+                  <option value="Gilam yuvish">Gilam yuvish</option>
+                  <option value="Oyna yuvish">Oyna yuvish</option>
+                  <option value="Ta’mirdan keyin tozalash">Ta’mirdan keyin tozalash</option>
+                  <option value="Ofis yoki biznes obyekti">Ofis yoki biznes obyekti</option>
+                  <option value="Boshqa xizmat">Boshqa xizmat</option>
+                </select>
+              </label>
+              <button class="primary-button full coral" type="submit">Maxsus chegirmani olish →</button>
+              <small>Ariza bepul. Raqamingiz faqat siz bilan bog‘lanish uchun ishlatiladi.</small>
+            </form>
+
+            <div class="ad-lead-success" id="metaLeadSuccess" hidden>
+              <span>✓</span>
+              <h2>Chegirma siz uchun band qilindi</h2>
+              <p>Menejerimiz tez orada qo‘ng‘iroq qilib, xizmat va narxni aniqlashtiradi.</p>
+              <a href="tel:+998977071515">Hozir qo‘ng‘iroq qilish</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ad-lead-footer">
+      <div class="container"><span>© 2026 Goclean.uz</span><a href="legal.html?doc=privacy">Maxfiylik siyosati</a></div>
+    </footer>
+    <div class="toast" id="toast"><b>✓</b><span>Arizangiz qabul qilindi.</span></div>
+    <script src="shared.js?v=14"></script>
+    <script src="offer.js?v=1"></script>
+  </body>
+</html>

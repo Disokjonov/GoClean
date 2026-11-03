@@ -68,6 +68,33 @@
     'Ish tugagach to‘lov':'Оплата после выполнения',
     'Naqd yoki karta orqali, xizmat yakunlangandan keyin':'Наличными или картой после завершения услуги'
   });
+  Object.assign(translations,{
+    'Maxsus chegirma — Goclean.uz':'Специальная скидка — Goclean.uz',
+    'Yangi mijozlar uchun maxsus taklif':'Специальное предложение для новых клиентов',
+    'Birinchi buyurtmangiz uchun maxsus chegirma':'Специальная скидка на ваш первый заказ',
+    'Kerakli xizmatni tanlang va raqamingizni qoldiring. Menejerimiz chegirma, xizmat tarkibi va narx bo‘yicha sizga yordam beradi.':'Выберите нужную услугу и оставьте номер. Менеджер поможет со скидкой, составом услуги и стоимостью.',
+    'Xizmat afzalliklari':'Преимущества услуги',
+    'Professional xodimlar':'Профессиональные сотрудники',
+    'Sifat kafolati':'Гарантия качества',
+    'Oldindan to‘lov yo‘q':'Без предоплаты',
+    'tozalash tajribasi':'опыта в клининге',
+    'MAXSUS CHEGIRMA':'СПЕЦИАЛЬНАЯ СКИДКА',
+    'Chegirmani band qiling':'Забронируйте скидку',
+    'Formani to‘ldiring — taxminan 30 soniya.':'Заполните форму — это займёт около 30 секунд.',
+    'Ismingiz':'Ваше имя',
+    'Telefon raqamingiz':'Ваш номер телефона',
+    'Qanday tozalash xizmati kerak?':'Какая услуга уборки вам нужна?',
+    'Xizmatni tanlang':'Выберите услугу',
+    'Gilam yuvish':'Стирка ковров',
+    'Ta’mirdan keyin tozalash':'Уборка после ремонта',
+    'Ofis yoki biznes obyekti':'Офис или коммерческий объект',
+    'Boshqa xizmat':'Другая услуга',
+    'Ariza bepul. Raqamingiz faqat siz bilan bog‘lanish uchun ishlatiladi.':'Заявка бесплатна. Номер используется только для связи с вами.',
+    'Arizangiz qabul qilindi.':'Заявка принята.',
+    'Chegirma siz uchun band qilindi':'Скидка забронирована за вами',
+    'Menejerimiz tez orada qo‘ng‘iroq qilib, xizmat va narxni aniqlashtiradi.':'Менеджер скоро позвонит и уточнит услугу и стоимость.',
+    'Hozir qo‘ng‘iroq qilish':'Позвонить сейчас'
+  });
   const translationKeys=Object.keys(translations).sort((a,b)=>b.length-a.length);
   const translateString=value=>translations[value]||translationKeys.reduce((text,key)=>text.includes(key)?text.split(key).join(translations[key]):text,value);
   const reverseTranslations=Object.fromEntries(Object.entries(translations).map(([uz,ru])=>[ru,uz]));
