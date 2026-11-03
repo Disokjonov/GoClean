@@ -1,4 +1,14 @@
 (function(){
+  const analyticsMeasurementId='G-E2XMQ78J2J';
+  window.dataLayer=window.dataLayer||[];
+  window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};
+  window.gtag('js',new Date());
+  window.gtag('config',analyticsMeasurementId);
+  const analyticsScript=document.createElement('script');
+  analyticsScript.async=true;
+  analyticsScript.src=`https://www.googletagmanager.com/gtag/js?id=${analyticsMeasurementId}`;
+  document.head.appendChild(analyticsScript);
+
   const telegramIcon=`<svg class="telegram-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.7 3.2 18.6 20c-.2 1.2-.9 1.5-1.9.9l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.8-8c.4-.3-.1-.5-.6-.2L6.3 14 1.6 12.5c-1-.3-1-1 .2-1.5L20.1 4c.9-.3 1.8.2 1.6 1.2Z"/></svg>`;
   const phoneIcon=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 2.7 9.1 2c.8-.2 1.6.2 1.9 1l1.2 3.8c.2.7 0 1.4-.6 1.8L9.8 10a14.5 14.5 0 0 0 4.3 4.3l1.5-1.8c.4-.5 1.1-.8 1.8-.6l3.8 1.2c.8.3 1.2 1.1 1 1.9l-.7 2.5c-.3 1.1-1.3 1.8-2.4 1.8C10.6 19.3 3.7 12.4 3.7 4c0-1.1.8-2.1 1.9-2.4Z"/></svg>`;
   const floatingContacts=`<div class="floating-contact-actions" aria-label="Tezkor aloqa"><a class="floating-contact telegram" href="https://t.me/gocleanuz" aria-label="Telegram orqali yozish">${telegramIcon}</a><a class="floating-contact phone" href="tel:+998977071515" aria-label="Qo‘ng‘iroq qilish">${phoneIcon}</a></div>`;
