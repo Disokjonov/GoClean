@@ -71,6 +71,6 @@
 @media(max-width:560px){.property-tabs button{flex-direction:column;gap:0;padding:7px 3px}.property-icon-3d{width:29px;height:29px}.service-card .service-icon{width:76px;height:76px;margin-bottom:4px}.catalog-image>.catalog-icon-3d{width:62px;height:62px;left:7px;bottom:4px}.icon-3d-shell{width:58px;height:58px;flex-basis:58px}.offer-coin{width:98px;height:98px;margin:-34px auto 0}.save-card strong{font-size:34px}}
 
 /* Process illustrations use the open visual space without adding more copy. */
-.step-icon img{display:block;width:84px;height:84px;object-fit:contain;transform:rotate(4deg);filter:drop-shadow(0 9px 13px rgba(12,63,59,.13))}.process-row article{align-items:center}.process-icon-3d{display:block;flex:0 0 58px;width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 7px 11px rgba(12,63,59,.12))}
+.step-icon img{display:block;width:98px;height:98px;object-fit:contain;transform:rotate(4deg);filter:drop-shadow(0 9px 13px rgba(12,63,59,.13))}.process-row article{align-items:center}.process-icon-3d{display:block;flex:0 0 72px;width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 7px 11px rgba(12,63,59,.12))}
 
-@media(max-width:560px){.steps .step-icon img{width:54px;height:54px}.process-icon-3d{flex-basis:52px;width:52px;height:52px}.process-row article{padding-block:15px}}
+@media(max-width:560px){.steps .step-icon img{width:62px;height:62px}.process-icon-3d{flex-basis:60px;width:60px;height:60px}.process-row article{padding-block:15px}}
