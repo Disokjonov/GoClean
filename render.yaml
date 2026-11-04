@@ -6,6 +6,10 @@ services:
     autoDeploy: true
     buildCommand: npm run build
     staticPublishPath: ./dist/client
+    routes:
+      - type: redirect
+        source: /our-services/
+        destination: /services.html
     headers:
       - path: /*
         name: X-Content-Type-Options

@@ -14,6 +14,17 @@ if (!worker.default || typeof worker.default.fetch !== "function") {
   throw new Error("Worker default fetch handler is missing");
 }
 
+for (const [source, destination] of [
+  ["/index.html?utm_source=search", "/?utm_source=search"],
+  ["/our-services/?utm_source=search", "/services.html?utm_source=search"]
+]) {
+  const response = await worker.default.fetch(new Request(`https://go-clean.uz${source}`), {});
+  if (response.status !== 301) throw new Error(`${source} must return a permanent redirect`);
+  if (response.headers.get("location") !== `https://go-clean.uz${destination}`) {
+    throw new Error(`${source} redirect destination is incorrect`);
+  }
+}
+
 const source = await readFile("dist/client/shared.js", "utf8");
 if (!source.includes("/api/lead")) throw new Error("Lead endpoint is not wired into the client");
 console.log("Goclean artifact is valid.");

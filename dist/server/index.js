@@ -142,9 +142,17 @@ function secureStatic(response) {
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
+function permanentRedirect(url, pathname) {
+  const destination = new URL(url);
+  destination.pathname = pathname;
+  return Response.redirect(destination, 301);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/index.html") return permanentRedirect(url, "/");
+    if (url.pathname === "/our-services/") return permanentRedirect(url, "/services.html");
     if (url.pathname === "/offer") {
       if (!env.ASSETS) return json({ ok: false, message: "Not found" }, 404);
       const assetUrl = new URL(request.url);
