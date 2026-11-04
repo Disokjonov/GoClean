@@ -65,6 +65,13 @@ for (const required of ['id="serviceSelect"', 'id="customerName"', 'id="customer
 for (const removed of ['id="bathrooms"', 'id="address"', 'id="date"', 'name="payment"', 'id="extrasSection"']) {
   if (booking.includes(removed)) throw new Error(`Removed checkout field is still present: ${removed}`);
 }
+if (!booking.includes("Arizani yuborib bo‘lmadi. Qayta urinib ko‘ring yoki bizga qo‘ng‘iroq qiling.")) {
+  throw new Error("Booking fallback error must use the complete translatable message");
+}
+const bookingScript = await readFile("dist/client/booking.js", "utf8");
+if (!bookingScript.includes("setAreaOpen(false);") || !bookingScript.includes("Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.")) {
+  throw new Error("Optional area label must initialize in the persisted language");
+}
 const general = await readFile("dist/client/general-cleaning.html", "utf8");
 if ((general.match(/public\/assets\/service-details\//g) || []).length !== 4) {
   throw new Error("General cleaning detail page must contain four visual service cards");

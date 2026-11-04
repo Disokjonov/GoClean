@@ -28,6 +28,10 @@ function populateServices() {
 
 function setAreaOpen(open) {
   const russian = window.getGoCleanLanguage?.() === 'ru';
+  const toastText = document.querySelector('#toast span');
+  if (toastText) toastText.textContent = russian
+    ? 'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.'
+    : 'Arizani yuborib bo‘lmadi. Qayta urinib ko‘ring yoki bizga qo‘ng‘iroq qiling.';
   optionalArea.hidden = !open;
   areaToggle.setAttribute('aria-expanded', String(open));
   areaToggle.classList.toggle('active', open);
@@ -80,3 +84,4 @@ form.addEventListener('submit', async event => {
 
 populateServices();
 window.translateGoCleanPage?.();
+setAreaOpen(false);
