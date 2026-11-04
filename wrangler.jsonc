@@ -2,7 +2,14 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "goclean-leads",
   "main": "worker/index.js",
-  "compatibility_date": "2026-09-01",
+  "compatibility_date": "2026-09-28",
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true
+    }
+  },
   "vars": {
     "ALLOWED_ORIGINS": "https://goclean-uz.onrender.com,https://go-clean.uz,https://www.go-clean.uz"
   }

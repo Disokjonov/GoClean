@@ -6,12 +6,12 @@ const labels = {
   consultation: "Yangi konsultatsiya so‘rovi",
   business: "Yangi biznes arizasi",
   contact: "Yangi murojaat",
-  order: "Yangi buyurtma",
+  order: "Yangi xizmat arizasi",
   meta: "Meta Ads orqali yangi ariza"
 };
 
 const fieldLabels = {
-  id: "Buyurtma raqami", name: "Ism", phone: "Telefon", service: "Xizmat",
+  id: "Ariza raqami", name: "Ism", phone: "Telefon", service: "Xizmat",
   object: "Obyekt", area: "Maydon", parameter: "Hisob parametri", bathrooms: "Sanuzel", frequency: "Takrorlanish",
   extras: "Qo‘shimcha xizmatlar", address: "Manzil", comment: "Izoh", date: "Sana",
   time: "Vaqt", total: "Taxminiy narx", payment: "To‘lov", message: "Savol",
@@ -23,7 +23,7 @@ const allowedFields = {
   consultation: ["name", "phone", "page"],
   business: ["object", "area", "service", "name", "phone", "page"],
   contact: ["name", "phone", "message", "page"],
-  order: ["id", "service", "object", "parameter", "bathrooms", "frequency", "extras", "name", "phone", "address", "comment", "date", "time", "total", "payment", "page"],
+  order: ["id", "service", "object", "area", "parameter", "bathrooms", "frequency", "extras", "name", "phone", "address", "comment", "date", "time", "total", "payment", "page"],
   meta: ["service", "name", "phone", "page"]
 };
 
@@ -71,7 +71,7 @@ function validate(type, input) {
   if (digits.length < 9 || digits.length > 15) return { error: "Telefon raqamini to‘g‘ri kiriting." };
   if (type === "business" && (!data.object || !data.area || !data.service)) return { error: "Obyekt ma’lumotlarini to‘ldiring." };
   if (type === "meta" && !data.service) return { error: "Kerakli xizmatni tanlang." };
-  if (type === "order" && (!data.service || !data.object || !data.address || !data.date || !data.time)) return { error: "Buyurtma ma’lumotlarini to‘liq kiriting." };
+  if (type === "order" && !data.service) return { error: "Kerakli xizmatni tanlang." };
   return { data };
 }
 

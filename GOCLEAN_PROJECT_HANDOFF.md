@@ -38,7 +38,7 @@ Bu loyiha:
 - uy va biznes uchun alohida funnel;
 - xizmat katalogi;
 - narx kalkulyatori;
-- 4 bosqichli checkout prototipi;
+- operator qo‘ng‘irog‘i uchun qisqa ariza oqimi;
 - Telegram’ga xavfsiz lead yuboradigan tizim;
 - o‘zbek/rus tilidagi interfeys.
 
@@ -90,7 +90,7 @@ Sayt ataylab frameworksiz yozilgan: hozirgi marketing saytini arzon, tez va stat
 - `index.html` — bosh sahifa, hero, kalkulyator, xizmatlar, konsultatsiya, jarayon, ishonch, FAQ.
 - `services.html` — barcha xizmatlar katalogi va filtrlar.
 - `service.html` — `?slug=` orqali dinamik xizmat tafsiloti.
-- `booking.html` — 4 bosqichli checkout.
+- `booking.html` — xizmat, ism va telefonli qisqa ariza; maydon ixtiyoriy.
 - `business.html` — umumiy B2B sahifa.
 - `office-cleaning.html` — ofis/ombor/ishlab chiqarish uchun alohida funnel.
 - `business-request.html` — biznes konsultatsiya formasi.
@@ -104,7 +104,7 @@ Sayt ataylab frameworksiz yozilgan: hozirgi marketing saytini arzon, tez va stat
 - `app.js` — bosh sahifa kalkulyatori, hero til logikasi, popup va bosh sahifa formasi.
 - `shared.js` — global header/footer, burger menyu, global UZ/RU tarjima, lead API client, honeypot, toast.
 - `data.js` — xizmatlar katalogi, slug, nom, narx, tavsif, tarkib, kategoriya va booking turi.
-- `booking.js` — checkout bosqichlari, narx hisoblash, chegirma, promokod, vaqt va buyurtma yuborish.
+- `booking.js` — xizmat tanlovini saqlash, ixtiyoriy maydon va qisqa lead yuborish.
 - `lead-forms.js` — biznes va kontakt formalarini lead API’ga ulaydi.
 
 ### Backend/build
@@ -152,10 +152,10 @@ Kalkulyatorda uch obyekt bor:
 
 Kvartira va hovli:
 
-1. foydalanuvchi xona va sanuzel sonini tanlaydi;
+1. foydalanuvchi xonalar sonini tanlaydi;
 2. tozalash turini tanlaydi;
 3. narx real vaqtda o‘zgaradi;
-4. “Buyurtma berish” booking sahifasiga parametrlar bilan olib o‘tadi;
+4. “Raqam qoldirish” booking sahifasiga xizmat tanlovi bilan olib o‘tadi;
 5. “Raqam qoldirish” popup form ochadi.
 
 Ofis:
@@ -183,28 +183,17 @@ Mobil versiyada “Uyingizni tanlang” sarlavhasi yashirilgan. “Narx kalkulya
 
 ### Booking
 
-`booking.html` 4 bosqichdan iborat:
+`booking.html` bitta qisqa arizadan iborat:
 
-1. xizmat, obyekt, maydon, sanuzel va qo‘shimcha xizmatlar;
-2. ism, telefon, manzil, izoh;
-3. sana va vaqt;
-4. to‘lov usuli va tasdiqlash.
+1. xizmat tanlovi (oldingi sahifadan kelgan tanlov saqlanadi);
+2. ism va telefon;
+3. xohlovchilar uchun tugma orqali ochiladigan ixtiyoriy tozalash maydoni.
 
-To‘lov variantlari hozir UI/prototip:
-
-- naqd yoki karta;
-- Click;
-- Payme.
-
-Real payment gateway ulanmagan.
+Manzil, sanuzel, qo‘shimcha xizmatlar, sana, vaqt va to‘lov saytda so‘ralmaydi. Operator telefon qilib xizmat tarkibi, manzil, vaqt, yakuniy narx va to‘lovni kelishadi. Ariza yuborilishi hali tasdiqlangan buyurtma emas.
 
 Asosiy aksiyasi: yangi mijoz birinchi buyurtma uchun maxsus chegirma olish maqsadida ro‘yxatdan o‘tadi. Chegirma miqdori saytda ko‘rsatilmaydi va checkout hisobiga avtomatik qo‘llanmaydi.
 
-Buyurtma muvaffaqiyatli yuborilganda:
-
-- Telegram’ga lead yuboriladi;
-- buyurtma lokal `gocleanOrders` ga yoziladi;
-- `GC-xxxxxx` formatida lokal order ID yaratiladi.
+Ariza muvaffaqiyatli yuborilganda Telegram’ga xizmat, ism, telefon va agar kiritilgan bo‘lsa maydon yuboriladi. Brauzerda buyurtma tarixi yoki tasdiqlangan summa yaratilmaydi.
 
 ### Biznes sahifasi
 
@@ -301,8 +290,8 @@ bor.
 
 `app.js` dagi formula:
 
-- Kvartira: base 99 000, har xona 60 000, har sanuzel 30 000.
-- Hovli: base 149 000, har xona 72 000, har sanuzel 35 000.
+- Kvartira: base 99 000, har xona 60 000.
+- Hovli: base 149 000, har xona 72 000.
 - Ofis: kodda qiymat mavjud, lekin UI ofis sahifasiga redirect qiladi.
 
 Tozalash koeffitsiyenti:
@@ -311,20 +300,9 @@ Tozalash koeffitsiyenti:
 - general: `1.8`
 - ta’mirdan keyin: `2.65`
 
-### Booking kalkulyatori
+### Qisqa ariza
 
-`booking.js` da alohida prototip formula bor:
-
-- general base: 500 000;
-- kimyoviy: 100 000;
-- oyna: 14 000/m² dan;
-- maxsus: 15 000/m² dan;
-- fasad: 18 000/m²;
-- ta’mirdan keyin: 16 000/m²;
-- favqulodda: 22 000/m²;
-- hid: 12 000/m²;
-- mog‘or: 25 000/m²;
-- dezinfeksiya: 10 000/m².
+`booking.js` narx hisoblamaydi va xizmatga qarab qo‘shimcha majburiy parametr so‘ramaydi. Barcha xizmatlarda xizmat tanlovi, ism va telefon yuboriladi; tozalash maydoni ixtiyoriy. Yakuniy narx operator bilan suhbatda aniqlanadi.
 
 Xizmat katalogidagi tasdiqlangan diapazonlar:
 
@@ -429,6 +407,8 @@ Asosiy branch: `main`
 
 Har `git push origin main` dan keyin Render avtomatik build/deploy qiladi.
 
+Muhim: Render faqat `dist/client` statik frontendini deploy qiladi. `worker/index.js` dagi lead validatsiyasi Cloudflare’dagi `goclean-leads` Worker’iga alohida deploy qilinishi kerak; `main` push yoki Render auto-deploy Worker’ni yangilamaydi. Qisqa ariza frontendini production’ga chiqarishdan oldin Worker va frontend versiyalari birga rejalashtirilsin.
+
 ### Domen
 
 - `go-clean.uz` Render static site’ga ulangan.
@@ -480,7 +460,7 @@ Mobil:
 - mobil ekranda o‘ng pastda ixcham Telegram va telefon floating tugmalari;
 - kalkulyator sarlavhasi ixcham;
 - barcha `select` maydonlari bir xil, sodda va o‘qilishi qulay GoClean uslubidagi bottom-sheet/dialog orqali ochiladi; qidiruv va icon yo‘q, shuning uchun mobil klaviatura avtomatik chiqmaydi;
-- checkout parametrlari xizmatga qarab dinamik: general tozalashda obyekt/maydon/sanuzel, mebelda o‘rindiqlar soni, gilam/marmar/bruschatka/oyna/fasadda m², pardada metr, pledda dona; individual baholanadigan murakkab xizmatlarda esa soxta narx o‘rniga konsultatsiya oqimi ishlaydi;
+- booking oqimi barcha xizmatlarda bir xil: xizmat, ism, telefon va xohlovchilar uchun ixtiyoriy maydon; qolgan tafsilotlar operator bilan kelishiladi;
 - kabinet funksiyasi saqlangan prototip bo‘lsa-da, hozircha sayt navigatsiyasi va buyurtma tasdiqlash oynasidan uning barcha kirish tugmalari yashirilgan;
 - kartalar va jarayon bloklari scrollni kamaytirish uchun zich.
 
@@ -611,7 +591,7 @@ Frontend faqat server qaytargan quote’ni ko‘rsatadi. Admin pricing rule’la
 
 Quyidagi matnni yangi chatga yuborish mumkin:
 
-> Bizda GoClean uchun ishlaydigan ko‘p sahifali production sayt bor. Repository: https://github.com/Disokjonov/GoClean, live: https://go-clean.uz/. Hozirgi sayt vanilla HTML/CSS/JS, Render Static Site’da host qilingan. Telegram leadlari alohida Cloudflare Worker orqali xavfsiz yuboriladi. Saytda B2C kalkulyator, xizmat katalogi, detail pages, 4 bosqichli checkout prototipi, B2B landing, alohida office-cleaning funnel, konsultatsiya/contact formalar, UZ/RU til persistence va responsive dizayn bor. `GOCLEAN_PROJECT_HANDOFF.md` hujjatini to‘liq o‘qi. Keyingi vazifa: mavjud dizayn va biznes oqimlarini saqlagan holda Next.js + TypeScript + PostgreSQL asosida to‘liq app arxitekturasini qurish. Pricing frontendda hardcode bo‘lmasin; admin boshqaradigan server pricing engine bo‘lsin. Real OTP, Click/Payme, amoCRM, buyurtmalar bazasi, schedule, admin panel va analytics qo‘shilsin. B2C va B2B funnel alohida qolishi, ofis kalkulyator tanlovi office sahifasiga o‘tishi, tanlangan til barcha sahifalarda saqlanishi kerak. Ishni boshlashdan oldin mavjud repo va handoff’dagi cheklovlarni audit qil.
+> Bizda GoClean uchun ishlaydigan ko‘p sahifali production sayt bor. Repository: https://github.com/Disokjonov/GoClean, live: https://go-clean.uz/. Hozirgi sayt vanilla HTML/CSS/JS, Render Static Site’da host qilingan. Telegram leadlari alohida Cloudflare Worker orqali xavfsiz yuboriladi. Saytda B2C kalkulyator, xizmat katalogi, detail pages, operator qo‘ng‘irog‘i uchun qisqa ariza, B2B landing, alohida office-cleaning funnel, konsultatsiya/contact formalar, UZ/RU til persistence va responsive dizayn bor. `GOCLEAN_PROJECT_HANDOFF.md` hujjatini to‘liq o‘qi. Keyingi vazifa: mavjud dizayn va biznes oqimlarini saqlagan holda Next.js + TypeScript + PostgreSQL asosida to‘liq app arxitekturasini qurish. Pricing frontendda hardcode bo‘lmasin; admin boshqaradigan server pricing engine bo‘lsin. Real OTP, Click/Payme, amoCRM, buyurtmalar bazasi, schedule, admin panel va analytics qo‘shilsin. B2C va B2B funnel alohida qolishi, ofis kalkulyator tanlovi office sahifasiga o‘tishi, tanlangan til barcha sahifalarda saqlanishi kerak. Ishni boshlashdan oldin mavjud repo va handoff’dagi cheklovlarni audit qil.
 
 ## 18. Asosiy qarorlarning sababi
 

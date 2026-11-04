@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Goclean.uz — Toshkentda uy va biznes uchun professional tozalash xizmati. Narxni onlayn hisoblang va qulay vaqtga buyurtma bering." />
+    <meta name="description" content="Goclean.uz — Toshkentda uy va biznes uchun professional tozalash xizmati. Narxni onlayn hisoblang va operator qo‘ng‘irog‘i uchun raqamingizni qoldiring." />
     <meta name="google-site-verification" content="nRUkAbXkrQVAs2ih-BTCHyUUJQ1RfvjX8XN4mkdet0k" />
     <link rel="canonical" href="https://go-clean.uz/" />
     <meta name="theme-color" content="#0b6b62" />
@@ -84,11 +84,6 @@
               <div><b data-i18n="rooms">Xonalar soni</b><small data-i18n="livingRooms">Yashash xonalari</small></div>
               <div class="counter"><button type="button" data-action="room-minus">−</button><output id="roomsValue">2</output><button type="button" data-action="room-plus">+</button></div>
             </div>
-            <div class="counter-row">
-              <div><b data-i18n="bathrooms">Sanuzellar soni</b><small data-i18n="bathSub">Hammom va hojatxona</small></div>
-              <div class="counter"><button type="button" data-action="bath-minus">−</button><output id="bathsValue">1</output><button type="button" data-action="bath-plus">+</button></div>
-            </div>
-
             <label class="field-label" data-i18n="cleaningType">Tozalash turi</label>
             <div class="cleaning-types">
               <button class="active" type="button" data-type="standard"><span data-i18n="standard">Bir martalik</span><small data-i18n="from2h">2 soatdan</small></button>
@@ -96,8 +91,8 @@
               <button type="button" data-type="repair"><span data-i18n="repair">Ta’mirdan keyin</span><small data-i18n="from6h">6 soatdan</small></button>
             </div>
 
-            <strong id="totalPrice" class="sr-only">249 000 so‘m</strong>
-            <button class="primary-button full calc-order" id="orderButton" type="button"><span id="orderLabel">Buyurtma berish — 249 000 so‘m</span><span>→</span></button>
+            <strong id="totalPrice" class="sr-only">219 000 so‘m</strong>
+            <button class="primary-button full calc-order" id="orderButton" type="button"><span id="orderLabel">Raqam qoldirish — 219 000 so‘m</span><span>→</span></button>
             <button class="callback-button full" id="calculatorCallback" type="button" data-i18n="callback">☎ Raqam qoldirish</button>
             <p class="microcopy"><b data-i18n="firstOrderMicrocopy">Birinchi buyurtmaga maxsus chegirma</b> · <span data-i18n="noPrepay">Oldindan to‘lov talab qilinmaydi</span></p>
           </form>
@@ -169,9 +164,9 @@
         <div class="container">
           <div class="section-heading centered"><span class="kicker" data-i18n="howKicker">Hammasi juda oddiy</span><h2 data-i18n="howTitle">Tozalik sari 3 qadam</h2></div>
           <div class="steps">
-            <article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true"></div><h3 data-i18n="step1">Parametrlarni tanlang</h3><p data-i18n="step1Text">Xonalar soni, xizmat turi va qulay vaqtni belgilang.</p></article>
-            <article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-specialist-arrival.webp" alt="" aria-hidden="true"></div><h3 data-i18n="step2">Mutaxassis keladi</h3><p data-i18n="step2Text">Professional xodim barcha kerakli vositalar bilan keladi.</p></article>
-            <article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-result-payment.webp" alt="" aria-hidden="true"></div><h3 data-i18n="step3">Tozalikdan zavqlaning</h3><p data-i18n="step3Text">Ishni qabul qiling va faqat natija yoqqanidan keyin to‘lang.</p></article>
+            <article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true"></div><h3 data-i18n="step1">Xizmatni tanlang</h3><p data-i18n="step1Text">Kerakli tozalash xizmatini tanlang.</p></article>
+            <article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true"></div><h3 data-i18n="step2">Raqamingizni qoldiring</h3><p data-i18n="step2Text">Faqat ism va telefon raqamingiz yetarli.</p></article>
+            <article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true"></div><h3 data-i18n="step3">Operator bilan kelishing</h3><p data-i18n="step3Text">Manzil, vaqt, xizmat tarkibi va narxni telefonda aniqlashtiring.</p></article>
           </div>
         </div>
       </section>
@@ -198,8 +193,8 @@
         <div class="container faq-grid">
           <div><span class="kicker">FAQ</span><h2 data-i18n="faqTitle">Ko‘p so‘raladigan savollar</h2><p data-i18n="faqText">Javob topilmadimi? Bizga Telegram yoki telefon orqali yozing.</p></div>
           <div class="accordion">
-            <details open><summary data-i18n="q1">Tozalash narxiga nimalar kiradi?<span>+</span></summary><p data-i18n="a1">Mutaxassis ishi, professional tozalash vositalari va inventar narxga kiritilgan. Qo‘shimcha xizmatlar buyurtma vaqtida alohida ko‘rsatiladi.</p></details>
-            <details><summary data-i18n="q2">To‘lov qachon amalga oshiriladi?<span>+</span></summary><p data-i18n="a2">To‘lov ish yakunlanib, natijani qabul qilganingizdan keyin amalga oshiriladi.</p></details>
+            <details open><summary data-i18n="q1">Tozalash narxiga nimalar kiradi?<span>+</span></summary><p data-i18n="a1">Mutaxassis ishi, professional tozalash vositalari va inventar narxga kiritilgan. Aniq xizmat tarkibi va yakuniy narx operator bilan kelishiladi.</p></details>
+            <details><summary data-i18n="q2">To‘lov qachon amalga oshiriladi?<span>+</span></summary><p data-i18n="a2">To‘lov usuli va shartlarini operator qo‘ng‘iroq qilganda birga kelishasiz.</p></details>
             <details><summary data-i18n="q3">Uyda bo‘lishim shartmi?<span>+</span></summary><p data-i18n="a3">Shart emas. Kalitni xavfsiz topshirish va ish yakunini masofadan qabul qilish imkoniyatini kelishib olamiz.</p></details>
             <details><summary data-i18n="q4">Natija yoqmasa nima bo‘ladi?<span>+</span></summary><p data-i18n="a4">24 soat ichida murojaat qilsangiz, kamchiliklarni bepul bartaraf etamiz.</p></details>
           </div>
@@ -242,7 +237,7 @@
         <label><span data-i18n="name">Ismingiz</span><input required name="name" placeholder="Ismingiz" /></label>
         <label><span data-i18n="phone">Telefon raqam</span><input required name="phone" type="tel" placeholder="+998 90 123 45 67" /></label>
         <button class="primary-button full coral" type="submit" data-i18n="getDiscount">Maxsus chegirmani olish</button>
-        <small data-i18n="discountConsent">Raqamingiz faqat buyurtmani tasdiqlash uchun ishlatiladi.</small>
+        <small data-i18n="discountConsent">Raqamingiz faqat siz bilan bog‘lanish uchun ishlatiladi.</small>
       </form>
     </dialog>
 
