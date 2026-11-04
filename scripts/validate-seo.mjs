@@ -8,6 +8,7 @@ const read = file => readFile(new URL(file, client), "utf8");
 const publicPages = [
   "index.html",
   "services.html",
+  "general-cleaning.html",
   "business.html",
   "office-cleaning.html",
   "contact.html"
@@ -37,10 +38,27 @@ assert.match(sitemap, /<urlset\s+xmlns="http:\/\/www\.sitemaps\.org\/schemas\/si
 const context = { window: {} };
 vm.runInNewContext(await readFile(new URL("../data.js", import.meta.url), "utf8"), context);
 for (const service of context.window.GOCLEAN_SERVICES) {
+  const expectedUrl = service.slug === "general-cleaning"
+    ? "https://go-clean.uz/general-cleaning.html"
+    : `https://go-clean.uz/service.html?slug=${service.slug}`;
   assert.ok(
-    sitemap.includes(`https://go-clean.uz/service.html?slug=${service.slug}`),
+    sitemap.includes(expectedUrl),
     `sitemap is missing ${service.slug}`
   );
 }
+
+const general = await read("general-cleaning.html");
+assert.match(general, /<title>General tozalash Toshkentda — Goclean\.uz<\/title>/);
+assert.match(general, /<meta\s+name="description"\s+content="Toshkentda kvartira, hovli va ofis uchun general tozalash\./);
+assert.match(general, /<link\s+rel="canonical"\s+href="https:\/\/go-clean\.uz\/general-cleaning\.html">/);
+assert.match(general, /<h1>General tozalash<\/h1>/);
+assert.match(general, /Barcha ochiq yuzalar, oshxona, sanuzel, eshiklar, plintuslar/);
+assert.match(general, /booking\.html\?service=general-cleaning/);
+assert.doesNotMatch(general, /<main[^>]*>\s*<\/main>/);
+
+for (const page of ["index.html", "shared.js", "services.html"]) {
+  assert.match(await read(page), /general-cleaning\.html/, `${page} must link to the prerendered general cleaning page`);
+}
+assert.ok(!sitemap.includes("service.html?slug=general-cleaning"), "legacy general cleaning URL must not remain in the sitemap");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);

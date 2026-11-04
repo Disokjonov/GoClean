@@ -25,7 +25,9 @@
     const slug = params.get('slug');
     const service = window.GOCLEAN_SERVICES?.find(item => item.slug === slug);
     if (service) {
-      canonical(`${base}/service.html?slug=${encodeURIComponent(service.slug)}`);
+      canonical(service.slug === 'general-cleaning'
+        ? `${base}/general-cleaning.html`
+        : `${base}/service.html?slug=${encodeURIComponent(service.slug)}`);
       meta('description', `${service.name} — ${service.description} ${service.price}, ${service.unit}.`);
     } else {
       canonical(`${base}/services.html`);
