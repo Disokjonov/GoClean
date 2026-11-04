@@ -58,6 +58,19 @@ if (!telegramMessages[1]?.text.includes("Test manzil") || !telegramMessages[1]?.
 
 const source = await readFile("dist/client/shared.js", "utf8");
 if (!source.includes("/api/lead")) throw new Error("Lead endpoint is not wired into the client");
+if (!source.includes("icon.textContent=error?'!':'✓'")) throw new Error("Lead toast icon must reflect error state");
+if (!source.includes("catch{throw new Error(leadErrorText())}")) throw new Error("Network failures must use the localized lead error");
+const businessLead = await readFile("dist/client/lead-forms.js", "utf8");
+for (const queryValue of ["office", "retail", "warehouse", "regular-office", "general-office"]) {
+  if (!businessLead.includes(`'${queryValue}'`)) throw new Error(`Business preselection is missing ${queryValue}`);
+}
+if (!businessLead.includes("select.dispatchEvent(new Event('change',{bubbles:true}))")) {
+  throw new Error("Business preselection must update the visible styled select");
+}
+const renderBlueprint = await readFile("render.yaml", "utf8");
+for (const authPath of ["/auth", "/auth.html"]) {
+  if (!renderBlueprint.includes(`source: ${authPath}`)) throw new Error(`Render redirect is missing ${authPath}`);
+}
 const booking = await readFile("dist/client/booking.html", "utf8");
 for (const required of ['id="serviceSelect"', 'id="customerName"', 'id="customerPhone"', 'id="optionalArea" hidden']) {
   if (!booking.includes(required)) throw new Error(`Short booking form is missing ${required}`);

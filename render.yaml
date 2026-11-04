@@ -8,6 +8,12 @@ services:
     staticPublishPath: ./dist/client
     routes:
       - type: redirect
+        source: /auth
+        destination: /
+      - type: redirect
+        source: /auth.html
+        destination: /
+      - type: redirect
         source: /our-services/
         destination: /services.html
     headers:
