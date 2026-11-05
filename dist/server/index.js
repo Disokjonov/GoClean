@@ -164,6 +164,9 @@ export default {
     if (url.pathname === "/auth" || url.pathname === "/auth.html") {
       return Response.redirect(new URL("/", url), 302);
     }
+    if (url.pathname === "/booking" || url.pathname === "/booking.html") {
+      return Response.redirect(new URL("/", url), 302);
+    }
     if (url.pathname === "/api/lead") {
       const origin = allowedOrigin(request, env);
       if (request.method === "OPTIONS") {

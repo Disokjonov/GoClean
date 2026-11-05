@@ -22,7 +22,7 @@ for (const page of publicPages) {
   assert.match(html, /<link\s+rel=["']canonical["']/i, `${page} is missing a canonical`);
 }
 
-for (const page of ["booking.html", "business-request.html"]) {
+for (const page of ["business-request.html"]) {
   const html = await read(page);
   assert.match(html, /<meta\s+name=["']robots["']\s+content=["']noindex,follow["']/i, `${page} must be noindex,follow`);
 }

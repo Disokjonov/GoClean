@@ -14,6 +14,12 @@ services:
         source: /auth.html
         destination: /
       - type: redirect
+        source: /booking
+        destination: /
+      - type: redirect
+        source: /booking.html
+        destination: /
+      - type: redirect
         source: /our-services/
         destination: /services.html
     headers:

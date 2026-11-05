@@ -5,7 +5,6 @@ for (const path of [
   "dist/server/wrangler.json",
   "dist/client/index.html",
   "dist/client/shared.js",
-  "dist/client/booking.html",
   "dist/.openai/hosting.json",
   "dist/client/public/assets/service-details/general-surfaces.webp",
   "dist/client/public/assets/service-details/general-floors.webp",
@@ -37,7 +36,7 @@ try {
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   };
   const submit = payload => {
-    const body = JSON.stringify({ type: "order", language: "uz", page: "/booking.html", ...payload });
+    const body = JSON.stringify({ type: "order", language: "uz", page: "/service-lead-test", ...payload });
     return worker.default.fetch(new Request("https://go-clean.uz/api/lead", {
       method: "POST",
       headers: { origin: "https://go-clean.uz", "content-type": "application/json", "content-length": String(body.length) },
@@ -71,19 +70,19 @@ const renderBlueprint = await readFile("render.yaml", "utf8");
 for (const authPath of ["/auth", "/auth.html"]) {
   if (!renderBlueprint.includes(`source: ${authPath}`)) throw new Error(`Render redirect is missing ${authPath}`);
 }
-const booking = await readFile("dist/client/booking.html", "utf8");
-for (const required of ['id="serviceSelect"', 'id="customerName"', 'id="customerPhone"', 'id="optionalArea" hidden']) {
-  if (!booking.includes(required)) throw new Error(`Short booking form is missing ${required}`);
+for (const hiddenPath of ["/booking", "/booking.html"]) {
+  const response = await worker.default.fetch(new Request(`https://go-clean.uz${hiddenPath}`), {});
+  if (response.status !== 302 || response.headers.get("location") !== "https://go-clean.uz/") {
+    throw new Error(`${hiddenPath} must redirect customers to the home page`);
+  }
 }
-for (const removed of ['id="bathrooms"', 'id="address"', 'id="date"', 'name="payment"', 'id="extrasSection"']) {
-  if (booking.includes(removed)) throw new Error(`Removed checkout field is still present: ${removed}`);
-}
-if (!booking.includes("Arizani yuborib bo‘lmadi. Qayta urinib ko‘ring yoki bizga qo‘ng‘iroq qiling.")) {
-  throw new Error("Booking fallback error must use the complete translatable message");
-}
-const bookingScript = await readFile("dist/client/booking.js", "utf8");
-if (!bookingScript.includes("setAreaOpen(false);") || !bookingScript.includes("Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.")) {
-  throw new Error("Optional area label must initialize in the persisted language");
+for (const hiddenFile of ["dist/client/booking.html", "dist/client/booking.js"]) {
+  try {
+    await access(hiddenFile);
+    throw new Error(`${hiddenFile} must not be included in the production artifact`);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
 }
 const general = await readFile("dist/client/general-cleaning.html", "utf8");
 if ((general.match(/public\/assets\/service-details\//g) || []).length !== 4) {
