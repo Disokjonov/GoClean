@@ -1,4 +1,4 @@
-const ALLOWED_TYPES = new Set(["callback", "consultation", "business", "contact", "order", "meta"]);
+const ALLOWED_TYPES = new Set(["callback", "consultation", "business", "contact", "order", "meta", "discount"]);
 const attempts = new Map();
 
 const labels = {
@@ -7,7 +7,8 @@ const labels = {
   business: "Yangi biznes arizasi",
   contact: "Yangi murojaat",
   order: "Yangi xizmat arizasi",
-  meta: "Meta Ads orqali yangi ariza"
+  meta: "Meta Ads orqali yangi ariza",
+  discount: "Maxsus chegirma popupidan yangi lead"
 };
 
 const fieldLabels = {
@@ -15,7 +16,7 @@ const fieldLabels = {
   object: "Obyekt", area: "Maydon", parameter: "Hisob parametri", bathrooms: "Sanuzel", frequency: "Takrorlanish",
   extras: "Qo‘shimcha xizmatlar", address: "Manzil", comment: "Izoh", date: "Sana",
   time: "Vaqt", total: "Taxminiy narx", payment: "To‘lov", message: "Savol",
-  property: "Joy turi", cleaningType: "Tozalash turi", rooms: "Xonalar", page: "Sahifa"
+  property: "Joy turi", cleaningType: "Tozalash turi", rooms: "Xonalar", page: "Sahifa", source: "Lead manbasi"
 };
 
 const allowedFields = {
@@ -24,7 +25,8 @@ const allowedFields = {
   business: ["object", "area", "service", "name", "phone", "page"],
   contact: ["name", "phone", "message", "page"],
   order: ["id", "service", "object", "area", "parameter", "bathrooms", "frequency", "extras", "name", "phone", "address", "comment", "date", "time", "total", "payment", "page"],
-  meta: ["service", "name", "phone", "page"]
+  meta: ["service", "name", "phone", "page"],
+  discount: ["name", "phone", "source", "page"]
 };
 
 function json(data, status = 200, extraHeaders = {}) {

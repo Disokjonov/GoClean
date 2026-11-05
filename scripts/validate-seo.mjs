@@ -9,6 +9,8 @@ const publicPages = [
   "index.html",
   "services.html",
   "general-cleaning.html",
+  "blog.html",
+  "about.html",
   "business.html",
   "office-cleaning.html",
   "contact.html"
@@ -53,7 +55,7 @@ assert.match(general, /<meta\s+name="description"\s+content="Toshkentda kvartira
 assert.match(general, /<link\s+rel="canonical"\s+href="https:\/\/go-clean\.uz\/general-cleaning\.html">/);
 assert.match(general, /<h1>General tozalash<\/h1>/);
 assert.match(general, /Barcha ochiq yuzalar, oshxona, sanuzel, eshiklar, plintuslar/);
-assert.match(general, /booking\.html\?service=general-cleaning/);
+assert.match(general, /data-service-lead="General tozalash"/);
 assert.doesNotMatch(general, /<main[^>]*>\s*<\/main>/);
 
 for (const page of ["index.html", "shared.js", "services.html"]) {

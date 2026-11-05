@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=16" />
+    <link rel="stylesheet" href="styles.css?v=18" />
   </head>
   <body>
     <div class="announcement">
@@ -27,6 +27,7 @@
           <a href="services.html" data-i18n="navHome">Xizmatlar</a>
           <a href="business.html" data-i18n="navBusiness">Biznes uchun</a>
           <a href="#how" data-i18n="navHow">Qanday ishlaydi</a>
+          <a href="blog.html" data-i18n="navBlog">Tavsiyalar</a>
           <a href="contact.html" data-i18n="navAbout">Kontaktlar</a>
         </nav>
 
@@ -70,13 +71,13 @@
 
           <form class="calculator-card" id="calculator">
             <div class="card-head">
-              <div><span data-i18n="calcLabel">Narx kalkulyatori</span><h2 data-i18n="calcTitle">Uyingizni tanlang</h2></div>
+              <div><span data-i18n="calcLabel">Narx kalkulyatori</span></div>
               <span class="live-dot"><i></i> <span data-i18n="online">Onlayn</span></span>
             </div>
 
             <div class="property-tabs" role="group" aria-label="Obyekt turi">
-              <button class="active" type="button" data-property="apartment"><img class="property-icon-3d" src="public/assets/icons-3d/standard-cleaning.webp" alt="" aria-hidden="true"> <span data-i18n="apartment">Kvartira</span></button>
-              <button type="button" data-property="house"><img class="property-icon-3d" src="public/assets/icons-3d/general-cleaning.webp" alt="" aria-hidden="true"> <span data-i18n="house">Hovli</span></button>
+              <button class="active" type="button" data-property="apartment"><img class="property-icon-3d" src="public/assets/ui-3d/apartment.png" alt="" aria-hidden="true"> <span data-i18n="apartment">Kvartira</span></button>
+              <button type="button" data-property="house"><img class="property-icon-3d" src="public/assets/ui-3d/house.png" alt="" aria-hidden="true"> <span data-i18n="house">Hovli</span></button>
               <button type="button" data-property="office"><img class="property-icon-3d" src="public/assets/icons-3d/office-cleaning.webp" alt="" aria-hidden="true"> <span data-i18n="office">Ofis</span></button>
             </div>
 
@@ -86,14 +87,14 @@
             </div>
             <label class="field-label" data-i18n="cleaningType">Tozalash turi</label>
             <div class="cleaning-types">
-              <button class="active" type="button" data-type="standard"><span data-i18n="standard">Bir martalik</span><small data-i18n="from2h">2 soatdan</small></button>
-              <button type="button" data-type="general"><span data-i18n="general">General</span><small data-i18n="from4h">4 soatdan</small></button>
-              <button type="button" data-type="repair"><span data-i18n="repair">Ta’mirdan keyin</span><small data-i18n="from6h">6 soatdan</small></button>
+              <button class="active" type="button" data-type="standard"><span data-i18n="standard">Tozalash uchun yordamchi</span></button>
+              <button type="button" data-type="general"><span data-i18n="general">General tozalash</span></button>
+              <button type="button" data-type="repair"><span data-i18n="repair">Ta’mirdan keyin</span></button>
             </div>
 
-            <strong id="totalPrice" class="sr-only">219 000 so‘m</strong>
-            <button class="primary-button full calc-order" id="orderButton" type="button"><span id="orderLabel">Raqam qoldirish — 219 000 so‘m</span><span>→</span></button>
-            <button class="callback-button full" id="calculatorCallback" type="button" data-i18n="callback">☎ Raqam qoldirish</button>
+            <div class="calculator-total"><span data-i18n="estimate">Taxminiy narx</span><strong id="totalPrice">219 000 so‘m</strong></div>
+            <button class="primary-button full calc-order" id="orderButton" type="button"><span id="orderLabel">Aniq hisob-kitob uchun raqamingizni qoldiring</span><span>→</span></button>
+            <a class="callback-button full" id="calculatorCallback" href="tel:+998977071515" data-i18n="callNow">☎ Hoziroq telefon qilish</a>
             <p class="microcopy"><b data-i18n="firstOrderMicrocopy">Birinchi buyurtmaga maxsus chegirma</b> · <span data-i18n="noPrepay">Oldindan to‘lov talab qilinmaydi</span></p>
           </form>
         </div>
@@ -143,8 +144,7 @@
       <section class="section business consultation" id="business">
         <div class="container business-panel">
           <div class="business-copy">
-            <span class="kicker light" data-i18n="consultationKicker">Mutaxassis yordami</span>
-            <h2>Ish hajmi va aniq narxni birga hisoblaymiz</h2>
+            <h2 data-i18n="consultationTitle">Bepul konsultatsiya: ish hajmi va aniq narxni birga hisoblaymiz</h2>
             <p>Mutaxassis obyektga borib maydon, ish murakkabligi va kerakli xizmatlarni baholaydi. Sizga aniq narx va bajariladigan ishlar rejasini tushuntiradi.</p>
             <div class="business-benefits">
               <div><span>✓</span><b>Bepul konsultatsiya</b></div>
@@ -223,8 +223,9 @@
 
     <dialog id="orderModal">
       <button class="modal-close" type="button" aria-label="Yopish">×</button>
-      <div class="modal-icon">☎</div><h2>Sizga qo‘ng‘iroq qilamiz</h2><p id="modalSummary">Raqamingizni qoldiring — menejerimiz xizmat va narx bo‘yicha yordam beradi.</p>
-      <form id="orderForm"><label><span data-i18n="name">Ismingiz</span><input required name="customerName" placeholder="Ismingiz" /></label><label><span data-i18n="phone">Telefon raqam</span><input required name="customerPhone" type="tel" placeholder="+998 90 123 45 67" /></label><button class="primary-button full" type="submit">Raqam qoldirish</button></form>
+      <div class="modal-icon">☎</div><h2 data-i18n="calcModalTitle">Aniq hisob-kitob uchun bog‘lanamiz</h2><p id="modalSummary" data-i18n="calcModalText">Tanlovingizni oldik. Ism va raqamingizni qoldiring — menejer aniq narxni tushuntiradi.</p>
+      <div class="modal-selection" id="modalSelection" aria-live="polite"></div>
+      <form id="orderForm" novalidate><label><span data-i18n="name">Ismingiz</span><input required name="customerName" autocomplete="name" placeholder="Ismingiz" /></label><label><span data-i18n="phone">Telefon raqam</span><span class="phone-input"><b>+998</b><input required name="customerPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="12" placeholder="90 123 45 67" /></span></label><p class="form-inline-error" id="orderFormError" role="alert" hidden></p><button class="primary-button full" type="submit" data-i18n="callbackSubmit">Raqam qoldirish</button></form>
     </dialog>
 
     <dialog id="discountModal" class="discount-modal">
@@ -242,7 +243,7 @@
     </dialog>
 
     <div class="toast" id="toast"><b>✓</b><span data-i18n="success">Rahmat! Tez orada siz bilan bog‘lanamiz.</span></div>
-    <script src="shared.js?v=13"></script>
-    <script src="app.js?v=8"></script>
+    <script src="shared.js?v=15"></script>
+    <script src="app.js?v=9"></script>
   </body>
 </html>
