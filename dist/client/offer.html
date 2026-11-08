@@ -58,7 +58,7 @@
           </div>
 
           <div class="ad-lead-form-shell">
-            <form class="ad-lead-form" id="metaLeadForm">
+            <form class="ad-lead-form" id="metaLeadForm" novalidate>
               <span class="ad-form-badge">MAXSUS CHEGIRMA</span>
               <h2>Chegirmani band qiling</h2>
               <p>Formani to‘ldiring — taxminan 30 soniya.</p>
@@ -66,7 +66,7 @@
                 <input required name="name" autocomplete="name" placeholder="Ismingiz" maxlength="80" />
               </label>
               <label>Telefon raqamingiz
-                <input required name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+998 90 123 45 67" maxlength="24" />
+                <span class="phone-input"><b>+998</b><input required name="phone" type="tel" autocomplete="tel-national" inputmode="numeric" placeholder="90 123 45 67" maxlength="12" /></span>
               </label>
               <label>Qanday tozalash xizmati kerak?
                 <select required name="service">
@@ -80,6 +80,7 @@
                   <option value="Boshqa xizmat">Boshqa xizmat</option>
                 </select>
               </label>
+              <p class="form-inline-error" role="alert" hidden></p>
               <button class="primary-button full coral" type="submit">Maxsus chegirmani olish →</button>
               <small>Ariza bepul. Raqamingiz faqat siz bilan bog‘lanish uchun ishlatiladi.</small>
             </form>
@@ -99,7 +100,7 @@
       <div class="container"><span>© 2026 Goclean.uz</span><a href="legal.html?doc=privacy">Maxfiylik siyosati</a></div>
     </footer>
     <div class="toast" id="toast"><b>✓</b><span>Arizangiz qabul qilindi.</span></div>
-    <script src="shared.js?v=17"></script>
-    <script src="offer.js?v=1"></script>
+    <script src="shared.js?v=18"></script>
+    <script src="offer.js?v=2"></script>
   </body>
 </html>

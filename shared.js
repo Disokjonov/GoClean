@@ -203,10 +203,20 @@
   }
   initDrawer();window.initGoCleanDrawer=initDrawer;
   const leadErrorText=()=>currentLanguage==='ru'?'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.':'Arizani yuborib bo‘lmadi. Qayta urinib ko‘ring yoki bizga qo‘ng‘iroq qiling.';
+  const validationText=key=>({
+    name:currentLanguage==='ru'?'Введите имя (минимум 2 буквы).':'Ismingizni to‘g‘ri kiriting (kamida 2 harf).',
+    phone:currentLanguage==='ru'?'Введите 9 цифр после +998.':'Telefon raqamni +998 dan keyin 9 ta raqam bilan kiriting.'
+  })[key]||leadErrorText();
+  const normalizeUzPhone=value=>{const digits=String(value||'').replace(/\D/g,'').replace(/^998/,'');return digits.length===9?`+998${digits}`:''};
+  const validationError=(field,message)=>{const error=new Error(message);error.field=field;return error};
+  function normalizeLeadData(data){const normalized={...data};if(Object.hasOwn(normalized,'name')){normalized.name=String(normalized.name||'').trim();const letters=[...normalized.name].filter(char=>/\p{L}/u.test(char)).length;if(letters<2)throw validationError('name',validationText('name'))}if(Object.hasOwn(normalized,'phone')){normalized.phone=normalizeUzPhone(normalized.phone);if(!normalized.phone)throw validationError('phone',validationText('phone'))}return normalized}
+  function clearFormError(form){const box=form?.querySelector('.form-inline-error');if(!box)return;box.hidden=true;box.textContent=''}
+  function showFormError(form,error){const message=error?.message||String(error||leadErrorText()),box=form?.querySelector('.form-inline-error');if(!box){showLeadToast(message,true);return}box.textContent=message;box.hidden=false;const field=error?.field&&form.elements[error.field];field?.focus?.()}
   function addHoneypot(form){if(!form||form.querySelector('[name="website"]'))return;const input=document.createElement('input');input.type='text';input.name='website';input.className='hp-field';input.hidden=true;input.tabIndex=-1;input.autocomplete='off';input.setAttribute('aria-hidden','true');input.style.display='none';form.append(input)}
   document.querySelectorAll('form').forEach(addHoneypot);
   async function sendLead(type,data,form){
     const button=form?.querySelector('[type="submit"]'),original=button?.textContent;
+    data=normalizeLeadData(data);
     if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent=currentLanguage==='ru'?'Отправляем…':'Yuborilmoqda…'}
     try{
       const payload={type,...data,website:form?.querySelector('[name="website"]')?.value||'',language:currentLanguage,page:`${location.pathname}${location.search}`};
@@ -221,10 +231,9 @@
     }finally{if(button){button.disabled=false;button.removeAttribute('aria-busy');button.textContent=original}}
   }
   function showLeadToast(message,error=false){const toast=document.querySelector('#toast');if(!toast)return;toast.classList.toggle('error',error);const icon=toast.querySelector('b');if(icon)icon.textContent=error?'!':'✓';const text=toast.querySelector('span');if(text)text.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),5000)}
-  window.GoCleanLeads={send:sendLead,showToast:showLeadToast,errorText:leadErrorText};
+  window.GoCleanLeads={send:sendLead,showToast:showLeadToast,errorText:leadErrorText,clearFormError,showFormError,normalizeUzPhone};
   const serviceLeadDialog=document.querySelector('#serviceLeadModal'),serviceLeadForm=document.querySelector('#serviceLeadForm');
   let selectedService='';
-  const normalizeUzPhone=value=>{const digits=String(value||'').replace(/\D/g,'').replace(/^998/,'');return digits.length===9?`+998${digits}`:''};
   document.addEventListener('click',event=>{const trigger=event.target.closest('[data-service-lead]');if(!trigger||!serviceLeadDialog)return;event.preventDefault();selectedService=trigger.dataset.serviceName||trigger.closest('.catalog-card')?.querySelector('h3')?.textContent.trim()||document.querySelector('.service-detail-hero h1')?.textContent.trim()||trigger.dataset.serviceLead||'';serviceLeadDialog.querySelector('#selectedServiceName').textContent=selectedService;const error=serviceLeadDialog.querySelector('.form-inline-error');error.hidden=true;serviceLeadDialog.showModal()});
   serviceLeadDialog?.querySelector('.service-lead-close')?.addEventListener('click',()=>serviceLeadDialog.close());
   serviceLeadDialog?.addEventListener('click',event=>{if(event.target===serviceLeadDialog)serviceLeadDialog.close()});

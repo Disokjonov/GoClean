@@ -69,9 +69,11 @@ function validate(type, input) {
   const data = {};
   for (const key of allowedFields[type]) data[key] = clean(input[key], key === "message" || key === "comment" ? 500 : 240);
   const digits = data.phone.replace(/\D/g, "");
-  if (data.name.length < 2 || data.name.length > 80) return { error: "Ismni to‘g‘ri kiriting." };
-  if (digits.length < 9 || digits.length > 15) return { error: "Telefon raqamini to‘g‘ri kiriting." };
-  if (type === "business" && (!data.object || !data.area || !data.service)) return { error: "Obyekt ma’lumotlarini to‘ldiring." };
+  const nameLetters = [...data.name].filter(char => /\p{L}/u.test(char)).length;
+  if (nameLetters < 2 || data.name.length > 80) return { error: "Ismni to‘g‘ri kiriting." };
+  if (!/^998\d{9}$/.test(digits)) return { error: "Telefon raqamini +998 bilan to‘g‘ri kiriting." };
+  data.phone = `+${digits}`;
+  if (type === "business" && (!data.object || !data.area || !data.service || !(parseFloat(data.area.replace(",", ".")) > 0))) return { error: "Obyekt ma’lumotlarini to‘ldiring." };
   if (type === "meta" && !data.service) return { error: "Kerakli xizmatni tanlang." };
   if (type === "order" && !data.service) return { error: "Kerakli xizmatni tanlang." };
   return { data };
@@ -84,7 +86,7 @@ function rateLimited(request) {
   recent.push(now);
   attempts.set(key, recent);
   if (attempts.size > 1000) attempts.clear();
-  return recent.length > 5;
+  return recent.length > 12;
 }
 
 async function submitLead(request, env) {
@@ -92,7 +94,7 @@ async function submitLead(request, env) {
   if (!origin) return json({ ok: false, message: "So‘rov manbasi tasdiqlanmadi." }, 403);
   if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) return json({ ok: false, message: "Noto‘g‘ri so‘rov turi." }, 415);
   if (Number(request.headers.get("content-length") || 0) > 12_000) return json({ ok: false, message: "So‘rov juda katta." }, 413);
-  if (rateLimited(request)) return json({ ok: false, message: "Juda ko‘p urinish. Bir daqiqadan keyin qayta urinib ko‘ring." }, 429);
+  if (rateLimited(request)) return json({ ok: false, message: "Juda ko‘p urinish. Bir daqiqadan keyin qayta urinib ko‘ring." }, 429, { "retry-after": "60" });
 
   let input;
   try { input = await request.json(); } catch { return json({ ok: false, message: "Ma’lumotlar o‘qilmadi." }, 400); }

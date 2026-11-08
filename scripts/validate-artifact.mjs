@@ -35,18 +35,33 @@ try {
     telegramMessages.push(JSON.parse(options.body));
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   };
-  const submit = payload => {
-    const body = JSON.stringify({ type: "order", language: "uz", page: "/service-lead-test", ...payload });
+  const submit = (type, payload, ip = type) => {
+    const body = JSON.stringify({ type, language: "uz", page: "/service-lead-test", ...payload });
     return worker.default.fetch(new Request("https://go-clean.uz/api/lead", {
       method: "POST",
-      headers: { origin: "https://go-clean.uz", "content-type": "application/json", "content-length": String(body.length) },
+      headers: { origin: "https://go-clean.uz", "content-type": "application/json", "content-length": String(body.length), "cf-connecting-ip": `test-${ip}` },
       body
     }), { TELEGRAM_BOT_TOKEN: "mock", TELEGRAM_CHAT_ID: "mock" });
   };
-  const shortResponse = await submit({ service: "General tozalash", area: "75 m²", name: "Test User", phone: "+998900000000" });
+  const shortResponse = await submit("order", { service: "General tozalash", area: "75 m²", name: "Test User", phone: "+998900000000" });
   if (shortResponse.status !== 200) throw new Error("Short order payload must be accepted");
-  const legacyResponse = await submit({ service: "General tozalash", object: "Kvartira", name: "Test User", phone: "+998900000000", address: "Test manzil", date: "2026-11-10", time: "10:00", payment: "after-service" });
+  const legacyResponse = await submit("order", { service: "General tozalash", object: "Kvartira", name: "Test User", phone: "+998900000000", address: "Test manzil", date: "2026-11-10", time: "10:00", payment: "after-service" }, "legacy");
   if (legacyResponse.status !== 200) throw new Error("Legacy order payload must remain accepted during rollout");
+  for (const [type, payload] of [
+    ["callback", { name: "Test User", phone: "+998900000000", property: "Kvartira" }],
+    ["consultation", { name: "Test User", phone: "+998900000000" }],
+    ["business", { name: "Test User", phone: "+998900000000", object: "Ofis", area: "100 m²", service: "Muntazam" }],
+    ["contact", { name: "Test User", phone: "+998900000000", message: "Savol" }],
+    ["meta", { name: "Test User", phone: "+998900000000", service: "General" }],
+    ["discount", { name: "Test User", phone: "+998900000000", source: "Popup" }]
+  ]) {
+    const response = await submit(type, payload);
+    if (response.status !== 200) throw new Error(`${type} payload must be accepted`);
+  }
+  const invalidPhone = await submit("contact", { name: "Test User", phone: "901234567", message: "Savol" }, "invalid-phone");
+  if (invalidPhone.status !== 422) throw new Error("Phone without +998 must be rejected");
+  const invalidName = await submit("contact", { name: "12", phone: "+998900000000", message: "Savol" }, "invalid-name");
+  if (invalidName.status !== 422) throw new Error("Name without two letters must be rejected");
 } finally {
   globalThis.fetch = originalFetch;
 }
@@ -65,6 +80,19 @@ for (const queryValue of ["office", "retail", "warehouse", "regular-office", "ge
 }
 if (!businessLead.includes("select.dispatchEvent(new Event('change',{bubbles:true}))")) {
   throw new Error("Business preselection must update the visible styled select");
+}
+const businessPage = await readFile("dist/client/business.html", "utf8");
+for (const queryValue of ["office", "retail", "warehouse", "production"]) {
+  if (!businessPage.includes(`value="${queryValue}"`)) throw new Error(`Business quick form is missing ${queryValue}`);
+}
+for (const formPage of ["index.html", "business-request.html", "contact.html", "offer.html"]) {
+  const html = await readFile(`dist/client/${formPage}`, "utf8");
+  if (!html.includes('class="phone-input"')) throw new Error(`${formPage} must use the +998 phone field`);
+  if (!html.includes('class="form-inline-error"')) throw new Error(`${formPage} must contain an inline form error`);
+}
+for (const formPage of ["business-request.html", "contact.html"]) {
+  const html = await readFile(`dist/client/${formPage}`, "utf8");
+  if (html.includes("localStorage.setItem('goclean")) throw new Error(`${formPage} still contains a false-success fallback`);
 }
 const renderBlueprint = await readFile("render.yaml", "utf8");
 for (const authPath of ["/auth", "/auth.html"]) {

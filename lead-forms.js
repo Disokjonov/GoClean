@@ -1,6 +1,7 @@
 (function(){
   const lang=()=>window.getGoCleanLanguage?.()||'uz';
-  const failure=error=>error?.message||window.GoCleanLeads.errorText();
+  const message=(uz,ru)=>lang()==='ru'?ru:uz;
+  const formError=(field,text)=>{const error=new Error(text);error.field=field;return error};
   const businessForm=document.querySelector('#businessLead');
   if(businessForm){
     const params=new URLSearchParams(location.search);
@@ -23,9 +24,15 @@
     if(params.get('area'))businessForm.elements.area.value=params.get('area');
     businessForm.onsubmit=async event=>{
       event.preventDefault();const form=event.currentTarget,data=Object.fromEntries(new FormData(form));
+      window.GoCleanLeads.clearFormError(form);
       const object=form.elements.object.selectedOptions[0]?.textContent.trim()||data.object;
       const selectedService=form.elements.service.selectedOptions[0]?.textContent.trim()||data.service;
-      try{await window.GoCleanLeads.send('business',{object,area:`${data.area} m²`,service:selectedService,name:data.name,phone:data.phone},form);form.reset();window.GoCleanLeads.showToast(lang()==='ru'?'Заявка принята. Менеджер скоро свяжется с вами.':'Arizangiz qabul qilindi. Menejer tez orada bog‘lanadi.');setTimeout(()=>location.href='business.html',2200)}catch(error){window.GoCleanLeads.showToast(failure(error),true)}
+      try{
+        if(!data.object)throw formError('object',message('Obyekt turini tanlang.','Выберите тип объекта.'));
+        if(!data.area||Number(data.area)<1)throw formError('area',message('Taxminiy maydonni kiriting.','Укажите примерную площадь.'));
+        if(!data.service)throw formError('service',message('Kerakli xizmatni tanlang.','Выберите нужную услугу.'));
+        await window.GoCleanLeads.send('business',{object,area:`${data.area} m²`,service:selectedService,name:data.name,phone:data.phone},form);form.reset();window.GoCleanLeads.showToast(lang()==='ru'?'Заявка принята. Менеджер скоро свяжется с вами.':'Arizangiz qabul qilindi. Menejer tez orada bog‘lanadi.');setTimeout(()=>location.href='business.html',2200)
+      }catch(error){window.GoCleanLeads.showFormError(form,error)}
     };
   }
 
@@ -33,7 +40,8 @@
   if(callbackForm){
     callbackForm.onsubmit=async event=>{
       event.preventDefault();const form=event.currentTarget,data=Object.fromEntries(new FormData(form));
-      try{await window.GoCleanLeads.send('contact',{name:data.name,phone:data.phone,message:data.message},form);form.reset();window.GoCleanLeads.showToast(lang()==='ru'?'Обращение принято. Мы скоро свяжемся с вами.':'Murojaatingiz qabul qilindi. Tez orada bog‘lanamiz.')}catch(error){window.GoCleanLeads.showToast(failure(error),true)}
+      window.GoCleanLeads.clearFormError(form);
+      try{await window.GoCleanLeads.send('contact',{name:data.name,phone:data.phone,message:data.message},form);form.reset();window.GoCleanLeads.showToast(lang()==='ru'?'Обращение принято. Мы скоро свяжемся с вами.':'Murojaatingiz qabul qilindi. Tez orada bog‘lanamiz.')}catch(error){window.GoCleanLeads.showFormError(form,error)}
     };
   }
 })();
