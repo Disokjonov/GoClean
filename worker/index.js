@@ -133,7 +133,11 @@ async function submitLead(request, env) {
   } catch {
     return json({ ok: false, message: "Arizani yuborib bo‘lmadi. Iltimos, qayta urinib ko‘ring." }, 502);
   }
-  if (!telegramResponse.ok) return json({ ok: false, message: "Arizani yuborib bo‘lmadi. Iltimos, telefon orqali bog‘laning." }, 502);
+  if (!telegramResponse.ok) {
+    const telegramError = await telegramResponse.text().catch(() => "Telegram javobi o‘qilmadi");
+    console.error("Telegram sendMessage failed", telegramResponse.status, telegramError.slice(0, 500));
+    return json({ ok: false, message: "Arizani yuborib bo‘lmadi. Iltimos, telefon orqali bog‘laning." }, 502);
+  }
   return json({ ok: true });
 }
 
