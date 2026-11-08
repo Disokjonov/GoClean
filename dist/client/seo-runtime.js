@@ -25,8 +25,16 @@
     const slug = params.get('slug');
     const service = window.GOCLEAN_SERVICES?.find(item => item.slug === slug);
     if (service) {
-      canonical(service.slug === 'general-cleaning'
-        ? `${base}/general-cleaning.html`
+      const canonicalPages = {
+        'general-cleaning': 'general-cleaning.html',
+        'furniture-cleaning': 'furniture-cleaning.html',
+        'after-renovation': 'after-renovation-cleaning.html',
+        'window-cleaning': 'window-cleaning.html',
+        'carpet-cleaning': 'carpet-cleaning.html',
+        disinfection: 'disinfection.html'
+      };
+      canonical(canonicalPages[service.slug]
+        ? `${base}/${canonicalPages[service.slug]}`
         : `${base}/service.html?slug=${encodeURIComponent(service.slug)}`);
       meta('description', `${service.name} — ${service.description} ${service.price}, ${service.unit}.`);
     } else {
