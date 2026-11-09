@@ -14,6 +14,14 @@ const publicPages = [
   "window-cleaning.html",
   "carpet-cleaning.html",
   "disinfection.html",
+  "marble-cleaning.html",
+  "paving-cleaning.html",
+  "curtain-cleaning.html",
+  "facade-cleaning.html",
+  "blanket-cleaning.html",
+  "emergency-cleaning.html",
+  "odor-removal.html",
+  "mold-removal.html",
   "blog.html",
   "about.html",
   "business.html",
@@ -50,7 +58,26 @@ const canonicalServicePages = {
   "after-renovation": "after-renovation-cleaning.html",
   "window-cleaning": "window-cleaning.html",
   "carpet-cleaning": "carpet-cleaning.html",
-  disinfection: "disinfection.html"
+  disinfection: "disinfection.html",
+  "marble-cleaning": "marble-cleaning.html",
+  "paving-cleaning": "paving-cleaning.html",
+  "curtain-cleaning": "curtain-cleaning.html",
+  "facade-cleaning": "facade-cleaning.html",
+  "blanket-cleaning": "blanket-cleaning.html",
+  "emergency-cleaning": "emergency-cleaning.html",
+  "odor-removal": "odor-removal.html",
+  "mold-removal": "mold-removal.html"
+};
+
+const expectedTitles = {
+  "marble-cleaning": "Marmar tozalash va jilolash Toshkentda — Goclean.uz",
+  "paving-cleaning": "Bruschatka yuvish Toshkentda — Goclean.uz",
+  "curtain-cleaning": "Parda yuvish Toshkentda — Goclean.uz",
+  "facade-cleaning": "Fasad yuvish Toshkentda — Goclean.uz",
+  "blanket-cleaning": "Pled yuvish Toshkentda — Goclean.uz",
+  "emergency-cleaning": "Favqulodda holatdan keyin tozalash Toshkentda — Goclean.uz",
+  "odor-removal": "Yoqimsiz hidlarni yo‘qotish Toshkentda — Goclean.uz",
+  "mold-removal": "Mog‘orni yo‘qotish Toshkentda — Goclean.uz"
 };
 for (const service of context.window.GOCLEAN_SERVICES) {
   const expectedUrl = canonicalServicePages[service.slug]
@@ -82,6 +109,7 @@ for (const [slug, file] of Object.entries(canonicalServicePages)) {
   assert.ok(description, `${file} must have a non-empty description`);
   assert.ok(!titles.has(title), `${file} title must be unique`);
   assert.ok(!descriptions.has(description), `${file} description must be unique`);
+  if (expectedTitles[slug]) assert.equal(title, expectedTitles[slug], `${file} title is incorrect`);
   titles.add(title);
   descriptions.add(description);
   assert.equal((html.match(/<link\s+rel="canonical"/gi) || []).length, 1, `${file} must have one canonical`);
@@ -89,8 +117,12 @@ for (const [slug, file] of Object.entries(canonicalServicePages)) {
   assert.ok(html.includes(`<h1>${service.name}</h1>`), `${file} H1 is incorrect`);
   assert.ok(html.includes(service.description), `${file} must contain the service description`);
   assert.ok(html.includes(service.price), `${file} must contain the service price`);
+  for (const item of service.includes) assert.ok(html.includes(item), `${file} must contain ${item}`);
   assert.ok(html.includes(`data-service-lead="${service.name}"`), `${file} must preserve the service lead CTA`);
   assert.doesNotMatch(html, /\$\{s\.name\}/, `${file} contains an unresolved template expression`);
+  if (expectedTitles[slug]) {
+    assert.doesNotMatch(html, /Sifat kafolati|bepul qayta tozalaymiz/i, `${file} must not add an unapproved guarantee`);
+  }
 }
 
 for (const page of ["index.html", "shared.js", "services.html"]) {

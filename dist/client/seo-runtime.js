@@ -31,7 +31,15 @@
         'after-renovation': 'after-renovation-cleaning.html',
         'window-cleaning': 'window-cleaning.html',
         'carpet-cleaning': 'carpet-cleaning.html',
-        disinfection: 'disinfection.html'
+        disinfection: 'disinfection.html',
+        'marble-cleaning': 'marble-cleaning.html',
+        'paving-cleaning': 'paving-cleaning.html',
+        'curtain-cleaning': 'curtain-cleaning.html',
+        'facade-cleaning': 'facade-cleaning.html',
+        'blanket-cleaning': 'blanket-cleaning.html',
+        'emergency-cleaning': 'emergency-cleaning.html',
+        'odor-removal': 'odor-removal.html',
+        'mold-removal': 'mold-removal.html'
       };
       canonical(canonicalPages[service.slug]
         ? `${base}/${canonicalPages[service.slug]}`

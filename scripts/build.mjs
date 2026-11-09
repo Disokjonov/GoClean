@@ -31,14 +31,17 @@ const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
 const dataContext = { window: {} };
 vm.runInNewContext(await readFile(resolve(root, "data.js"), "utf8"), dataContext);
 
-function renderServicePage(service) {
+function renderServicePage(service, metadata = {}) {
   const included = service.includes
     .map((item, index) => service.includePhotos?.[index]
       ? `<article><img src="public/assets/service-details/${encodeURIComponent(service.includePhotos[index])}" alt="${escapeHtml(item)}" width="960" height="540" loading="lazy" decoding="async"><div><span>0${index + 1}</span><b>${escapeHtml(item)}</b></div></article>`
       : `<div><span>0${index + 1}</span><b>${escapeHtml(item)}</b></div>`)
     .join("");
   const visualClass = service.includePhotos?.length ? " visual-included-grid" : "";
-  return `<!doctype html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(service.name)} Toshkentda — Goclean.uz</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=19"></head><body><div data-site-header></div><main><section class="service-detail-hero"><div class="container detail-grid"><div><div class="breadcrumbs"><a href="index.html">Bosh sahifa</a><span>→</span><a href="services.html">Xizmatlar</a><span>→</span><b>${escapeHtml(service.name)}</b></div><h1>${escapeHtml(service.name)}</h1><p>${escapeHtml(service.description)}</p><div class="detail-price"><strong>${escapeHtml(service.price)}</strong><span>${escapeHtml(service.unit)}</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="${escapeHtml(service.name)}">Raqam qoldirish →</button><a class="outline-button" href="tel:+998977071515">Qo‘ng‘iroq qilish</a></div></div><div class="service-art"><img class="service-art-icon" src="public/assets/icons-3d/${encodeURIComponent(service.slug)}.webp" alt="" aria-hidden="true"><b>Sifat kafolati</b><small>Natija yoqmasa, bepul qayta tozalaymiz</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Nimalar bajariladi?</h2><div class="included-grid${visualClass}">${included}</div></div><aside class="sticky-order"><h3>Operator bilan gaplashmoqchimisiz?</h3><p>Ism va raqamingizni qoldiring. Xizmat tarkibi, manzil, vaqt va to‘lovni telefonda kelishasiz.</p><button class="primary-button full" type="button" data-service-lead="${escapeHtml(service.name)}">Raqam qoldirish</button><a class="text-link" href="contact.html">Savolim bor →</a></aside></div></section><section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Qanday ishlaydi?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true"></div><h3>Xizmatni tanlang</h3><p>Kerakli xizmatni tanlab, qisqa arizaga o‘ting.</p></article><article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true"></div><h3>Raqamingizni qoldiring</h3><p>Faqat ism va telefon raqamingiz yetarli.</p></article><article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true"></div><h3>Operator bilan kelishing</h3><p>Manzil, vaqt, xizmat tarkibi va narxni telefonda aniqlashtiring.</p></article></div></div></section></main><div data-site-footer></div><script src="shared.js?v=18"></script></body></html>`;
+  const title = metadata.title || `${service.name} Toshkentda — Goclean.uz`;
+  const artTitle = metadata.artTitle || "Sifat kafolati";
+  const artText = metadata.artText || "Natija yoqmasa, bepul qayta tozalaymiz";
+  return `<!doctype html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=19"></head><body><div data-site-header></div><main><section class="service-detail-hero"><div class="container detail-grid"><div><div class="breadcrumbs"><a href="index.html">Bosh sahifa</a><span>→</span><a href="services.html">Xizmatlar</a><span>→</span><b>${escapeHtml(service.name)}</b></div><h1>${escapeHtml(service.name)}</h1><p>${escapeHtml(service.description)}</p><div class="detail-price"><strong>${escapeHtml(service.price)}</strong><span>${escapeHtml(service.unit)}</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="${escapeHtml(service.name)}">Raqam qoldirish →</button><a class="outline-button" href="tel:+998977071515">Qo‘ng‘iroq qilish</a></div></div><div class="service-art"><img class="service-art-icon" src="public/assets/icons-3d/${encodeURIComponent(service.slug)}.webp" alt="" aria-hidden="true"><b>${escapeHtml(artTitle)}</b><small>${escapeHtml(artText)}</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Nimalar bajariladi?</h2><div class="included-grid${visualClass}">${included}</div></div><aside class="sticky-order"><h3>Operator bilan gaplashmoqchimisiz?</h3><p>Ism va raqamingizni qoldiring. Xizmat tarkibi, manzil, vaqt va to‘lovni telefonda kelishasiz.</p><button class="primary-button full" type="button" data-service-lead="${escapeHtml(service.name)}">Raqam qoldirish</button><a class="text-link" href="contact.html">Savolim bor →</a></aside></div></section><section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Qanday ishlaydi?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true"></div><h3>Xizmatni tanlang</h3><p>Kerakli xizmatni tanlab, qisqa arizaga o‘ting.</p></article><article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true"></div><h3>Raqamingizni qoldiring</h3><p>Faqat ism va telefon raqamingiz yetarli.</p></article><article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true"></div><h3>Operator bilan kelishing</h3><p>Manzil, vaqt, xizmat tarkibi va narxni telefonda aniqlashtiring.</p></article></div></div></section></main><div data-site-footer></div><script src="shared.js?v=19"></script></body></html>`;
 }
 
 const canonicalServicePages = {
@@ -65,13 +68,58 @@ const canonicalServicePages = {
   disinfection: {
     file: "disinfection.html",
     description: "Toshkentda uy va biznes obyektlari uchun dezinfeksiya. Maydon va foydalanish turiga mos vositalar bilan professional antibakterial ishlov beramiz."
+  },
+  "marble-cleaning": {
+    file: "marble-cleaning.html",
+    title: "Marmar tozalash va jilolash Toshkentda — Goclean.uz",
+    description: "Toshkentda marmar tozalash va jilolash. Tosh yuzasiga mos kimyo va uskunalar bilan kir, dog‘ hamda xiralikni yo‘qotamiz."
+  },
+  "paving-cleaning": {
+    file: "paving-cleaning.html",
+    title: "Bruschatka yuvish Toshkentda — Goclean.uz",
+    description: "Toshkentda bruschatka yuvish. Hovli va kirish yo‘laklaridagi chang, loy hamda chuqur singgan kirlarni yuqori bosimli uskuna bilan tozalaymiz."
+  },
+  "curtain-cleaning": {
+    file: "curtain-cleaning.html",
+    title: "Parda yuvish Toshkentda — Goclean.uz",
+    description: "Toshkentda parda yuvish. Mato turini aniqlab, mos rejimda yuvamiz, quritamiz va kelishuv asosida qayta osamiz."
+  },
+  "facade-cleaning": {
+    file: "facade-cleaning.html",
+    title: "Fasad yuvish Toshkentda — Goclean.uz",
+    description: "Toshkentda bino fasadi va vitrinalarni yuvish. Balandlik hamda yuza turiga qarab mos uskuna va mutaxassislarni tanlaymiz."
+  },
+  "blanket-cleaning": {
+    file: "blanket-cleaning.html",
+    title: "Pled yuvish Toshkentda — Goclean.uz",
+    description: "Toshkentda pled va qalin tekstil yuvish. Materialiga mos yuvish hamda quritish rejimini tanlab, dog‘larga alohida ishlov beramiz."
+  },
+  "emergency-cleaning": {
+    file: "emergency-cleaning.html",
+    title: "Favqulodda holatdan keyin tozalash Toshkentda — Goclean.uz",
+    description: "Toshkentda suv bosishi, yong‘in va boshqa hodisalardan keyin tozalash. Holatni baholab, obyekt uchun tozalash rejasini tuzamiz."
+  },
+  "odor-removal": {
+    file: "odor-removal.html",
+    title: "Yoqimsiz hidlarni yo‘qotish Toshkentda — Goclean.uz",
+    description: "Toshkentda yoqimsiz hidlarni yo‘qotish. Hidni maskalamasdan, manbasini aniqlab, yuzalarni tozalash va neytrallash ishlarini bajaramiz."
+  },
+  "mold-removal": {
+    file: "mold-removal.html",
+    title: "Mog‘orni yo‘qotish Toshkentda — Goclean.uz",
+    description: "Toshkentda mog‘orni yo‘qotish. Zararlangan maydonni aniqlab, himoya choralariga rioya qilgan holda tozalash va antibakterial ishlov beramiz."
   }
 };
+
+for (const slug of ["marble-cleaning", "paving-cleaning", "curtain-cleaning", "facade-cleaning", "blanket-cleaning", "emergency-cleaning", "odor-removal", "mold-removal"]) {
+  canonicalServicePages[slug].artTitle = "Xizmat haqida";
+  canonicalServicePages[slug].artText = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === slug)?.summary || "Tafsilotlarni operator bilan kelishasiz";
+}
 
 for (const [slug, metadata] of Object.entries(canonicalServicePages)) {
   const service = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === slug);
   if (!service) throw new Error(`${slug} service data is missing`);
-  await writeFile(resolve(output, "client", metadata.file), renderServicePage(service));
+  await writeFile(resolve(output, "client", metadata.file), renderServicePage(service, metadata));
 }
 
 const seoPages = {
@@ -135,7 +183,7 @@ for (const [file, metadata] of Object.entries(seoPages)) {
     tags.push(`<link rel="canonical" href="${metadata.canonical}">`);
   }
   if (metadata.runtime && !html.includes("seo-runtime.js")) {
-    tags.push('<script src="seo-runtime.js?v=2" defer></script>');
+    tags.push('<script src="seo-runtime.js?v=3" defer></script>');
   }
   if (tags.length) html = html.replace("</head>", `${tags.join("")}<\/head>`);
   await writeFile(path, html);
