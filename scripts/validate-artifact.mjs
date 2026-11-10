@@ -19,7 +19,11 @@ if (!worker.default || typeof worker.default.fetch !== "function") {
 
 for (const [source, destination] of [
   ["/index.html?utm_source=search", "/?utm_source=search"],
-  ["/our-services/?utm_source=search", "/services.html?utm_source=search"]
+  ["/our-services/?utm_source=search", "/services.html?utm_source=search"],
+  ["/blog/?utm_source=search", "/blog.html?utm_source=search"],
+  ["/about-us/?utm_source=search", "/about.html?utm_source=search"],
+  ["/general-cleaning?utm_source=search", "/general-cleaning.html?utm_source=search"],
+  ["/privacy?utm_source=search", "/privacy.html?utm_source=search"]
 ]) {
   const response = await worker.default.fetch(new Request(`https://go-clean.uz${source}`), {});
   if (response.status !== 301) throw new Error(`${source} must return a permanent redirect`);
@@ -98,6 +102,15 @@ const renderBlueprint = await readFile("render.yaml", "utf8");
 for (const authPath of ["/auth", "/auth.html"]) {
   if (!renderBlueprint.includes(`source: ${authPath}`)) throw new Error(`Render redirect is missing ${authPath}`);
 }
+for (const [source, destination] of [
+  ["/index.html", "/"], ["/blog/", "/blog.html"], ["/about-us/", "/about.html"],
+  ["/services", "/services.html"], ["/general-cleaning", "/general-cleaning.html"],
+  ["/privacy", "/privacy.html"], ["/terms", "/terms.html"]
+]) {
+  const route = `source: ${source}\n        destination: ${destination}`;
+  if (!renderBlueprint.includes(route)) throw new Error(`Render redirect is missing ${source} -> ${destination}`);
+}
+if (renderBlueprint.includes("source: /author/bbois1")) throw new Error("Non-equivalent author URL must not redirect to the home page");
 for (const hiddenPath of ["/booking", "/booking.html"]) {
   const response = await worker.default.fetch(new Request(`https://go-clean.uz${hiddenPath}`), {});
   if (response.status !== 302 || response.headers.get("location") !== "https://go-clean.uz/") {
@@ -116,5 +129,18 @@ const general = await readFile("dist/client/general-cleaning.html", "utf8");
 if ((general.match(/public\/assets\/service-details\//g) || []).length !== 4) {
   throw new Error("General cleaning detail page must contain four visual service cards");
 }
+const catalog = await readFile("dist/client/services.html", "utf8");
+const sourceCatalog = catalog.slice(0, catalog.indexOf('<script src="data.js'));
+if ((sourceCatalog.match(/<article class="catalog-card"/g) || []).length !== 14) {
+  throw new Error("Services source HTML must contain exactly 14 catalog cards");
+}
+for (const file of ["privacy.html", "terms.html"]) {
+  const html = await readFile(`dist/client/${file}`, "utf8");
+  if (!html.includes(`<link rel="canonical" href="https://go-clean.uz/${file}">`)) throw new Error(`${file} canonical is missing`);
+  if (!/<h1>[^<]+<\/h1>/.test(html)) throw new Error(`${file} source H1 is missing`);
+}
+const serviceShell = await readFile("dist/client/service.html", "utf8");
+if (serviceShell.includes("const s = findService(slug)")) throw new Error("Unknown service slug must not fall back to General cleaning");
+if (!serviceShell.includes("Xizmat topilmadi")) throw new Error("Unknown service slug must show a not-found state");
 console.log("Goclean artifact is valid.");
 

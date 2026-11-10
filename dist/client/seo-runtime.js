@@ -54,7 +54,7 @@
   if (location.pathname.endsWith('/legal.html')) {
     const privacy = params.get('doc') === 'privacy';
     const doc = privacy ? 'privacy' : 'terms';
-    canonical(`${base}/legal.html?doc=${doc}`);
+    canonical(`${base}/${doc}.html`);
     meta(
       'description',
       privacy

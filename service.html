@@ -14,10 +14,15 @@
   <main id="servicePage"></main>
   <div data-site-footer></div>
   <script src="data.js?v=6"></script>
-  <script src="shared.js?v=20"></script>
+  <script src="shared.js?v=21"></script>
   <script>
     const slug = new URLSearchParams(location.search).get('slug');
-    const s = findService(slug);
+    const s = window.GOCLEAN_SERVICES.find(item => item.slug === slug);
+    if (!s) {
+      document.title = 'Xizmat topilmadi — Goclean.uz';
+      document.querySelector('#servicePage').innerHTML = `<section class="page-hero"><div class="container"><div class="breadcrumbs"><a href="index.html">Bosh sahifa</a><span>→</span><a href="services.html">Xizmatlar</a></div><h1>Xizmat topilmadi</h1><p>Bu manzilga mos xizmat topilmadi. Barcha mavjud xizmatlarni katalogdan ko‘rishingiz mumkin.</p><a class="primary-button" href="services.html">Xizmatlarni ko‘rish</a></div></section>`;
+      window.translateGoCleanPage?.();
+    } else {
     const included = s.includes.map((item, index) => {
       const photo = s.includePhotos?.[index];
       if (!photo) return `<div><span>0${index + 1}</span><b>${item}</b></div>`;
@@ -27,6 +32,7 @@
     document.title = s.name + ' — Goclean.uz';
     document.querySelector('#servicePage').innerHTML = `<section class="service-detail-hero"><div class="container detail-grid"><div><div class="breadcrumbs"><a href="index.html">Bosh sahifa</a><span>→</span><a href="services.html">Xizmatlar</a><span>→</span><b>${s.name}</b></div><h1>${s.name}</h1><p>${s.description}</p><div class="detail-price"><strong>${s.price}</strong><span>${s.unit}</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="${s.name}">Raqam qoldirish →</button><a class="outline-button" href="tel:+998977071515">Qo‘ng‘iroq qilish</a></div></div><div class="service-art"><img class="service-art-icon" src="public/assets/icons-3d/${s.slug}.webp" alt="" aria-hidden="true"><b>Sifat kafolati</b><small>Natija yoqmasa, bepul qayta tozalaymiz</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Nimalar bajariladi?</h2><div class="included-grid${visualClass}">${included}</div></div><aside class="sticky-order"><h3>Operator bilan gaplashmoqchimisiz?</h3><p>Ism va raqamingizni qoldiring. Xizmat tarkibi, manzil, vaqt va to‘lovni telefonda kelishasiz.</p><button class="primary-button full" type="button" data-service-lead="${s.name}">Raqam qoldirish</button><a class="text-link" href="contact.html">Savolim bor →</a></aside></div></section><section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Qanday ishlaydi?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true"></div><h3>Xizmatni tanlang</h3><p>Kerakli xizmatni tanlab, qisqa arizaga o‘ting.</p></article><article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true"></div><h3>Raqamingizni qoldiring</h3><p>Faqat ism va telefon raqamingiz yetarli.</p></article><article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true"></div><h3>Operator bilan kelishing</h3><p>Manzil, vaqt, xizmat tarkibi va narxni telefonda aniqlashtiring.</p></article></div></div></section>`;
     window.translateGoCleanPage?.();
+    }
   </script>
 </body>
 </html>

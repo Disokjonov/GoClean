@@ -159,8 +159,16 @@ function permanentRedirect(url, pathname) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === "/index.html") return permanentRedirect(url, "/");
-    if (url.pathname === "/our-services/") return permanentRedirect(url, "/services.html");
+    const redirects = new Map([
+      ["/index.html", "/"], ["/our-services/", "/services.html"],
+      ["/blog", "/blog.html"], ["/blog/", "/blog.html"], ["/about-us/", "/about.html"],
+      ["/about", "/about.html"], ["/services", "/services.html"], ["/business", "/business.html"],
+      ["/office-cleaning", "/office-cleaning.html"], ["/contact", "/contact.html"],
+      ["/privacy", "/privacy.html"], ["/terms", "/terms.html"],
+      ...["general-cleaning", "furniture-cleaning", "after-renovation-cleaning", "window-cleaning", "carpet-cleaning", "disinfection", "marble-cleaning", "paving-cleaning", "curtain-cleaning", "facade-cleaning", "blanket-cleaning", "emergency-cleaning", "odor-removal", "mold-removal"]
+        .map(slug => [`/${slug}`, `/${slug}.html`])
+    ]);
+    if (redirects.has(url.pathname)) return permanentRedirect(url, redirects.get(url.pathname));
     if (url.pathname === "/offer") {
       if (!env.ASSETS) return json({ ok: false, message: "Not found" }, 404);
       const assetUrl = new URL(request.url);

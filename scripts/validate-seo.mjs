@@ -38,7 +38,9 @@ const publicPages = [
   "about.html",
   "business.html",
   "office-cleaning.html",
-  "contact.html"
+  "contact.html",
+  "privacy.html",
+  "terms.html"
 ];
 
 for (const page of publicPages) {
@@ -61,6 +63,9 @@ assert.match(robots, /Sitemap:\s+https:\/\/go-clean\.uz\/sitemap\.xml/i);
 
 const sitemap = await read("sitemap.xml");
 assert.match(sitemap, /<urlset\s+xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
+assert.match(sitemap, /https:\/\/go-clean\.uz\/privacy\.html/);
+assert.match(sitemap, /https:\/\/go-clean\.uz\/terms\.html/);
+assert.doesNotMatch(sitemap, /legal\.html\?doc=/);
 
 const context = { window: {} };
 vm.runInNewContext(await readFile(new URL("../data.js", import.meta.url), "utf8"), context);
@@ -191,6 +196,16 @@ for (const [slug, file] of Object.entries(canonicalServicePages)) {
 
 for (const page of ["index.html", "shared.js", "services.html"]) {
   assert.match(await read(page), /general-cleaning\.html/, `${page} must link to the prerendered general cleaning page`);
+}
+const servicesSource = (await read("services.html")).split('<script src="data.js')[0];
+assert.equal((servicesSource.match(/<article class="catalog-card"/g) || []).length, 14, "services source must contain 14 cards");
+for (const file of Object.values(canonicalServicePages)) {
+  assert.ok(servicesSource.includes(`href="${file}"`), `services source must link to ${file}`);
+}
+for (const page of ["services.html", "general-cleaning.html", "privacy.html", "terms.html"]) {
+  const html = await read(page);
+  assert.equal((html.match(/id="mainNav"/g) || []).length, 1, `${page} must contain one source navigation`);
+  assert.equal((html.match(/<footer>/g) || []).length, 1, `${page} must contain one source footer`);
 }
 assert.ok(!sitemap.includes("service.html?slug=general-cleaning"), "legacy general cleaning URL must not remain in the sitemap");
 const seoRuntime = await read("seo-runtime.js");

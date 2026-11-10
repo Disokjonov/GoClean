@@ -8,6 +8,75 @@ services:
     staticPublishPath: ./dist/client
     routes:
       - type: redirect
+        source: /index.html
+        destination: /
+      - type: redirect
+        source: /blog/
+        destination: /blog.html
+      - type: redirect
+        source: /blog
+        destination: /blog.html
+      - type: redirect
+        source: /about-us/
+        destination: /about.html
+      - type: redirect
+        source: /about
+        destination: /about.html
+      - type: redirect
+        source: /services
+        destination: /services.html
+      - type: redirect
+        source: /business
+        destination: /business.html
+      - type: redirect
+        source: /office-cleaning
+        destination: /office-cleaning.html
+      - type: redirect
+        source: /contact
+        destination: /contact.html
+      - type: redirect
+        source: /general-cleaning
+        destination: /general-cleaning.html
+      - type: redirect
+        source: /furniture-cleaning
+        destination: /furniture-cleaning.html
+      - type: redirect
+        source: /after-renovation-cleaning
+        destination: /after-renovation-cleaning.html
+      - type: redirect
+        source: /window-cleaning
+        destination: /window-cleaning.html
+      - type: redirect
+        source: /carpet-cleaning
+        destination: /carpet-cleaning.html
+      - type: redirect
+        source: /disinfection
+        destination: /disinfection.html
+      - type: redirect
+        source: /marble-cleaning
+        destination: /marble-cleaning.html
+      - type: redirect
+        source: /paving-cleaning
+        destination: /paving-cleaning.html
+      - type: redirect
+        source: /curtain-cleaning
+        destination: /curtain-cleaning.html
+      - type: redirect
+        source: /facade-cleaning
+        destination: /facade-cleaning.html
+      - type: redirect
+        source: /blanket-cleaning
+        destination: /blanket-cleaning.html
+      - type: redirect
+        source: /emergency-cleaning
+        destination: /emergency-cleaning.html
+      - type: redirect
+        source: /odor-removal
+        destination: /odor-removal.html
+      - type: redirect
+        source: /mold-removal
+        destination: /mold-removal.html
+      - type: redirect
         source: /auth
         destination: /
       - type: redirect
@@ -22,6 +91,12 @@ services:
       - type: redirect
         source: /our-services/
         destination: /services.html
+      - type: redirect
+        source: /privacy
+        destination: /privacy.html
+      - type: redirect
+        source: /terms
+        destination: /terms.html
     headers:
       - path: /*
         name: X-Content-Type-Options
