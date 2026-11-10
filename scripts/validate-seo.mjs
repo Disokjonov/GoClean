@@ -4,6 +4,18 @@ import vm from "node:vm";
 
 const client = new URL("../dist/client/", import.meta.url);
 const read = file => readFile(new URL(file, client), "utf8");
+const organizationId = "https://go-clean.uz/#organization";
+const jsonLdBlocks = html => [...html.matchAll(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi)]
+  .map(([, source]) => JSON.parse(source));
+const graphNodes = blocks => blocks.flatMap(block => block["@graph"] || [block]);
+const forbiddenStructuredKeys = new Set(["legalName", "openingHours", "openingHoursSpecification", "address", "sameAs", "aggregateRating", "review"]);
+function assertNoUnverifiedStructuredFacts(value, page) {
+  if (!value || typeof value !== "object") return;
+  for (const [key, nested] of Object.entries(value)) {
+    assert.ok(!forbiddenStructuredKeys.has(key), `${page} contains unverified structured field ${key}`);
+    assertNoUnverifiedStructuredFacts(nested, page);
+  }
+}
 
 const publicPages = [
   "index.html",
@@ -79,6 +91,27 @@ const expectedTitles = {
   "odor-removal": "Yoqimsiz hidlarni yo‘qotish Toshkentda — Goclean.uz",
   "mold-removal": "Mog‘orni yo‘qotish Toshkentda — Goclean.uz"
 };
+
+for (const page of ["index.html", "about.html"]) {
+  const html = await read(page);
+  const blocks = jsonLdBlocks(html);
+  const organizations = graphNodes(blocks).filter(node => node["@type"] === "Organization");
+  assert.equal(organizations.length, 1, `${page} must contain exactly one Organization entity`);
+  const organization = organizations[0];
+  assert.equal(organization["@id"], organizationId, `${page} Organization ID is incorrect`);
+  assert.equal(organization.name, "GoClean", `${page} Organization name is incorrect`);
+  assert.equal(organization.url, "https://go-clean.uz/", `${page} Organization URL is incorrect`);
+  assert.equal(organization.telephone, "+998 97 707 15 15", `${page} Organization phone is incorrect`);
+  assert.equal(organization.email, "hello@goclean.uz", `${page} Organization email is incorrect`);
+  assert.equal(organization.areaServed?.["@type"], "City", `${page} Organization area type is incorrect`);
+  assert.equal(organization.areaServed?.name, "Toshkent", `${page} Organization area is incorrect`);
+  assertNoUnverifiedStructuredFacts(organization, page);
+}
+
+const about = await read("about.html");
+for (const visibleFact of ["GoClean haqida qisqa faktlar", "GoClean", "Toshkent shahri", "+998 97 707 15 15", "hello@goclean.uz", "Oxirgi yangilanish: 10 noyabr 2026"]) {
+  assert.ok(about.includes(visibleFact), `about.html is missing visible fact: ${visibleFact}`);
+}
 for (const service of context.window.GOCLEAN_SERVICES) {
   const expectedUrl = canonicalServicePages[service.slug]
     ? `https://go-clean.uz/${canonicalServicePages[service.slug]}`
@@ -123,6 +156,37 @@ for (const [slug, file] of Object.entries(canonicalServicePages)) {
   if (expectedTitles[slug]) {
     assert.doesNotMatch(html, /Sifat kafolati|bepul qayta tozalaymiz/i, `${file} must not add an unapproved guarantee`);
   }
+
+  const blocks = jsonLdBlocks(html);
+  const nodes = graphNodes(blocks);
+  const structuredServices = nodes.filter(node => node["@type"] === "Service");
+  const breadcrumbs = nodes.filter(node => node["@type"] === "BreadcrumbList");
+  assert.equal(structuredServices.length, 1, `${file} must contain exactly one Service entity`);
+  assert.equal(breadcrumbs.length, 1, `${file} must contain exactly one BreadcrumbList entity`);
+  const structuredService = structuredServices[0];
+  const url = `https://go-clean.uz/${file}`;
+  assert.equal(structuredService["@id"], `${url}#service`, `${file} Service ID is incorrect`);
+  assert.equal(structuredService.name, service.name, `${file} Service name must match visible content`);
+  assert.equal(structuredService.serviceType, service.name, `${file} Service type must match visible content`);
+  assert.equal(structuredService.description, service.description, `${file} Service description must match visible content`);
+  assert.equal(structuredService.url, url, `${file} Service URL is incorrect`);
+  assert.equal(structuredService.areaServed?.["@type"], "City", `${file} Service area type is incorrect`);
+  assert.equal(structuredService.areaServed?.name, "Toshkent", `${file} Service area is incorrect`);
+  assert.equal(structuredService.provider?.["@id"], organizationId, `${file} Service provider ID is incorrect`);
+  assertNoUnverifiedStructuredFacts(structuredService, file);
+
+  const breadcrumb = breadcrumbs[0];
+  assert.deepEqual(
+    breadcrumb.itemListElement.map(item => [item.position, item.name, item.item]),
+    [
+      [1, "Bosh sahifa", "https://go-clean.uz/"],
+      [2, "Xizmatlar", "https://go-clean.uz/services.html"],
+      [3, service.name, url]
+    ],
+    `${file} BreadcrumbList must match the visible breadcrumb`
+  );
+  assert.ok(html.includes('<div class="breadcrumbs"><a href="index.html">Bosh sahifa</a><span>→</span><a href="services.html">Xizmatlar</a>'), `${file} visible breadcrumb is missing`);
+  assertNoUnverifiedStructuredFacts(breadcrumb, file);
 }
 
 for (const page of ["index.html", "shared.js", "services.html"]) {
