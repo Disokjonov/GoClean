@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import vm from "node:vm";
+import { serviceContent } from "./service-content.mjs";
 
 const client = new URL("../dist/client/", import.meta.url);
 const read = file => readFile(new URL(file, client), "utf8");
@@ -173,7 +174,7 @@ for (const [slug, file] of Object.entries(canonicalServicePages)) {
   assert.equal(structuredService["@id"], `${url}#service`, `${file} Service ID is incorrect`);
   assert.equal(structuredService.name, service.name, `${file} Service name must match visible content`);
   assert.equal(structuredService.serviceType, service.name, `${file} Service type must match visible content`);
-  assert.equal(structuredService.description, service.description, `${file} Service description must match visible content`);
+  assert.equal(structuredService.description, serviceContent[slug]?.uz.intro || service.description, `${file} Service description must match visible content`);
   assert.equal(structuredService.url, url, `${file} Service URL is incorrect`);
   assert.equal(structuredService.areaServed?.["@type"], "City", `${file} Service area type is incorrect`);
   assert.equal(structuredService.areaServed?.name, "Toshkent", `${file} Service area is incorrect`);
@@ -192,6 +193,23 @@ for (const [slug, file] of Object.entries(canonicalServicePages)) {
   );
   assert.ok(html.includes('<div class="breadcrumbs"><a href="index.html">Bosh sahifa</a><span>→</span><a href="services.html">Xizmatlar</a>'), `${file} visible breadcrumb is missing`);
   assertNoUnverifiedStructuredFacts(breadcrumb, file);
+
+  if (serviceContent[slug]) {
+    const faqPages = nodes.filter(node => node["@type"] === "FAQPage");
+    assert.equal(faqPages.length, 1, `${file} must contain one FAQPage`);
+    assert.deepEqual(
+      faqPages[0].mainEntity.map(item => [item.name, item.acceptedAnswer?.text]),
+      serviceContent[slug].uz.faqs,
+      `${file} FAQ schema must match visible UZ FAQ content`
+    );
+    assert.ok(html.includes(serviceContent[slug].uz.intro), `${file} must contain the UZ introduction in source HTML`);
+    assert.ok(html.includes(serviceContent[slug].ru.intro), `${file} must contain the RU introduction for the language toggle`);
+    for (const [question, answer] of serviceContent[slug].uz.faqs) {
+      assert.ok(html.includes(question) && html.includes(answer), `${file} must display FAQ: ${question}`);
+    }
+  } else {
+    assert.equal(nodes.filter(node => node["@type"] === "FAQPage").length, 0, `${file} must not add FAQ schema without visible FAQ content`);
+  }
 }
 
 for (const page of ["index.html", "shared.js", "services.html"]) {
