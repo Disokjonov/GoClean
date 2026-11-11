@@ -35,6 +35,37 @@ vm.runInNewContext(await readFile(resolve(root, "data.js"), "utf8"), dataContext
 const organizationId = "https://go-clean.uz/#organization";
 const jsonLd = value => JSON.stringify(value).replace(/</g, "\\u003c");
 
+const officeStructuredData = (lang = "uz") => {
+  const russian = lang === "ru";
+  const url = russian ? "https://go-clean.uz/ru/office-cleaning.html" : "https://go-clean.uz/office-cleaning.html";
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Service",
+        "@id": `${url}#service`,
+        name: russian ? "Уборка офисов" : "Ofis tozalash",
+        serviceType: russian ? "Уборка офисов" : "Ofis tozalash",
+        description: russian
+          ? "Регулярная, генеральная или послеремонтная уборка офисов в Ташкенте. Детали услуги и стоимость согласуются с оператором."
+          : "Toshkentda ofislarni muntazam, general yoki ta’mirdan keyin tozalash. Xizmat tafsilotlari va narx operator bilan kelishiladi.",
+        url,
+        areaServed: { "@type": "City", name: russian ? "Ташкент" : "Toshkent" },
+        provider: { "@id": organizationId }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: russian ? "Главная" : "Bosh sahifa", item: "https://go-clean.uz/" },
+          { "@type": "ListItem", position: 2, name: russian ? "Для бизнеса" : "Biznes uchun", item: "https://go-clean.uz/business.html" },
+          { "@type": "ListItem", position: 3, name: russian ? "Уборка офисов" : "Ofis tozalash", item: url }
+        ]
+      }
+    ]
+  };
+};
+
 function serviceStructuredData(service, metadata) {
   const url = `https://go-clean.uz/${metadata.file}`;
   const content = serviceContent[service.slug];
@@ -219,7 +250,10 @@ const seoPages = {
     description: "Goclean jamoasi, professional tozalash standartlari va Toshkentdagi uy hamda biznes xizmatlari haqida."
   },
   "business.html": { canonical: "https://go-clean.uz/business.html" },
-  "office-cleaning.html": { canonical: "https://go-clean.uz/office-cleaning.html" },
+  "office-cleaning.html": {
+    canonical: "https://go-clean.uz/office-cleaning.html",
+    structuredData: officeStructuredData("uz")
+  },
   "contact.html": {
     canonical: "https://go-clean.uz/contact.html",
     description: "GoClean bilan buyurtma, xizmat tarkibi yoki korporativ hamkorlik bo‘yicha bog‘laning. Toshkentdagi aloqa ma’lumotlari."
@@ -263,12 +297,68 @@ for (const [file, metadata] of Object.entries(seoPages)) {
   if (metadata.canonical && !/<link\s+rel=["']canonical["']/i.test(html)) {
     tags.push(`<link rel="canonical" href="${metadata.canonical}">`);
   }
+  if (metadata.structuredData && !html.includes('office-cleaning.html#service')) {
+    tags.push(`<script type="application/ld+json">${jsonLd(metadata.structuredData)}</script>`);
+  }
   if (metadata.runtime && !html.includes("seo-runtime.js")) {
     tags.push('<script src="seo-runtime.js?v=3" defer></script>');
   }
   if (tags.length) html = html.replace("</head>", `${tags.join("")}<\/head>`);
   await writeFile(path, html);
 }
+
+const officeRussianTranslations = {
+  "Toshkentda ofis, ombor va ishlab chiqarish joylarini professional tozalash. Goclean.uz bilan individual hisob oling.": "Уборка офисов, складов и производственных помещений в Ташкенте. Оставьте номер, чтобы согласовать детали с Goclean.uz.",
+  "Ofis tozalash Toshkentda — Goclean.uz": "Уборка офисов в Ташкенте — Goclean.uz",
+  "Toshkent bo‘ylab har kuni 08:00–21:00": "По Ташкенту ежедневно 08:00–21:00",
+  "Xizmatlar": "Услуги", "Ofis tozalash": "Уборка офисов", "Biznes uchun": "Для бизнеса", "Tavsiyalar": "Рекомендации", "Kontaktlar": "Контакты",
+  "Maxsus chegirmani olish": "Получить специальную скидку", "Bosh sahifa": "Главная", "Ofis • Ombor • Ishlab chiqarish": "Офис • Склад • Производство",
+  "Ofisingiz har kuni ishga tayyor bo‘lsin": "Пусть ваш офис каждый день будет готов к работе",
+  "Muntazam, general yoki ta’mirdan keyingi tozalash. Xodimlar, vositalar, grafik va sifat nazorati — bitta xizmatda.": "Регулярная, генеральная или послеремонтная уборка. Состав работ, график и стоимость согласуются с оператором.",
+  "✓ Ish vaqtingizga mos grafik": "✓ График согласуется с вами", "✓ Shaxsiy menejer": "✓ Связь с менеджером", "✓ Hujjatlar bilan": "✓ Условия согласуются",
+  "Raqam qoldirish →": "Оставить номер →", "☎ Qo‘ng‘iroq qilish": "☎ Позвонить", "Sifat nazorati": "Контроль качества", "Har bir smena bo‘yicha": "По согласованным условиям",
+  "Ofis uchun xizmatlar": "Услуги для офиса", "Kerakli formatni tanlang": "Выберите подходящий формат",
+  "Narx maydon, davriylik, zonalar va ish vaqtiga qarab konsultatsiyadan keyin aniq hisoblanadi.": "Стоимость рассчитывается после консультации с учётом площади, периодичности, зон и времени работ.",
+  "Muntazam": "Регулярная", "Kundalik tozalash": "Ежедневная уборка", "Ish joylari, umumiy zonalar, oshxona va sanuzellar.": "Рабочие места, общие зоны, кухня и санузлы.",
+  "Kundalik ofis tozalash": "Регулярная уборка офиса", "Ofisni general tozalash": "Генеральная уборка офиса", "Ombor va sex tozalash": "Уборка склада и цеха",
+  "Chuqur": "Глубокая", "General tozalash": "Генеральная уборка", "Barcha ochiq va qiyin yetiladigan yuzalarni to‘liq tozalash.": "Очистка открытых и труднодоступных поверхностей.",
+  "Katta maydon": "Большая площадь", "Ombor va sex": "Склад и цех", "Ishlab chiqarish zonalari, texnik pol va katta maydonlar.": "Производственные зоны, технические полы и большие площади.",
+  "Maxsus": "Специальная", "Ta’mirdan keyin": "После ремонта", "Qurilish changi, bo‘yoq va yelim izlarini bartaraf etish.": "Удаление строительной пыли, следов краски и клея.",
+  "Yorqinlik": "Блеск", "Oyna va vitrina": "Окна и витрины", "Ichki-tashqi oynalar, romlar va shisha to‘siqlar.": "Внутренние и наружные окна, рамы и стеклянные перегородки.",
+  "Sanitariya": "Санитария", "Dezinfeksiya": "Дезинфекция", "Ofis va umumiy zonalarga professional ishlov berish.": "Обработка офисов и общих зон.", "Batafsil →": "Подробнее →",
+  "Biznes afzalliklari": "Для бизнеса", "Tozalikni boshqarish uchun alohida xodim shart emas": "Согласуйте подходящий формат уборки",
+  "Goclean jamoa, inventar, kimyo, smena va sifat nazoratini o‘z zimmasiga oladi.": "Команда, инвентарь, средства, график и контроль обсуждаются до начала работ.",
+  "Menejer bilan gaplashish →": "Поговорить с менеджером →", "O‘qitilgan xodimlar": "Команда для объекта", "Tanlov, tekshiruv va obyekt bo‘yicha brifing.": "Состав команды и требования к объекту обсуждаются заранее.",
+  "Doimiy nazorat": "Контроль работ", "Chek-list va menejer orqali sifat monitoringi.": "Порядок контроля согласуется с менеджером.", "Inventar va kimyo": "Инвентарь и средства", "Professional vositalarni o‘zimiz ta’minlaymiz.": "Необходимые средства и инвентарь согласуются до работ.",
+  "Yopuvchi hujjatlar": "Документы", "Shartnoma, hisob va barcha zarur hujjatlar.": "Необходимые документы уточняются при согласовании.",
+  "Qulay usulni tanlang": "Выберите удобный способ", "Hisob olishning 3 yo‘li": "3 способа уточнить стоимость", "Saytda ariza": "Заявка на сайте",
+  "Ism va telefonni qoldiring. Maydonni xohlasangiz qo‘shing.": "Оставьте имя и телефон. Площадь можно указать по желанию.", "Ariza qoldirish →": "Оставить заявку →",
+  "Telefon orqali": "По телефону", "Tez maslahat va savollarga javob.": "Обсудите задачу и задайте вопросы.", "Telegram orqali": "Через Telegram", "Vazifani yozing yoki rasmlarni yuboring.": "Опишите задачу или отправьте фотографии.",
+  "Qanday boshlaymiz?": "Как начать?", "Oddiy va tushunarli jarayon": "Простой и понятный процесс", "Ariza": "Заявка",
+  "Faqat ism va telefon raqamingizni qoldirasiz. Maydonni xohlasangiz qo‘shishingiz mumkin.": "Оставьте только имя и номер телефона. Площадь можно добавить по желанию.",
+  "Konsultatsiya va hisob": "Консультация и расчёт", "Operator obyekt, xizmat tarkibi, manzil, vaqt va narxni siz bilan kelishadi.": "Оператор согласует с вами объект, состав услуги, адрес, время и стоимость.",
+  "Shartnoma va start": "Согласование и начало", "Kelishuvdan keyin ish tartibi tasdiqlanadi.": "После согласования подтверждается порядок работ.",
+  "Ko‘p so‘raladigan savollar": "Частые вопросы", "Javob topilmasa, menejerimiz sizga bepul maslahat beradi.": "Если ответа нет, уточните вопрос у менеджера.",
+  "Narx qanday hisoblanadi?": "Как рассчитывается стоимость?", "Maydon, zonalar, davriylik, ish vaqti va kerakli xodimlar soniga qarab konsultatsiyadan keyin aniq smeta beriladi.": "Стоимость зависит от площади, зон, периодичности, времени работ и необходимого состава команды.",
+  "Ish vaqtidan keyin tozalash mumkinmi?": "Можно ли убирать после рабочего времени?", "Ha. Ertalab, kechqurun yoki tungi grafikni obyektingiz ish tartibiga moslaymiz.": "Подходящее время уборки уточняется с оператором с учётом режима работы объекта.",
+  "Vositalarni kim olib keladi?": "Кто привозит средства?", "Kelishuvga ko‘ra barcha professional kimyo, inventar va texnikani Goclean ta’minlaydi.": "Средства, инвентарь и оборудование определяются при согласовании услуги.",
+  "Yopuvchi hujjatlar beriladimi?": "Предоставляются ли документы?", "Ha, korporativ mijozlar uchun shartnoma, hisob va zarur yopuvchi hujjatlar taqdim etiladi.": "Перечень необходимых документов уточняется с оператором.",
+  "Konsultatsiya": "Консультация", "Operator bilan xizmat tafsilotlarini kelishing": "Согласуйте детали услуги с оператором",
+  "Uy va biznes uchun professional tozalash xizmati.": "Профессиональная уборка для дома и бизнеса.", "Barcha xizmatlar": "Все услуги", "Mebel tozalash": "Чистка мебели", "Oyna yuvish": "Мойка окон",
+  "Kompaniya": "Компания", "Biz haqimizda": "О нас", "Bog‘lanish": "Связаться", "Toshkent, O‘zbekiston": "Ташкент, Узбекистан", "Maxfiylik siyosati": "Политика конфиденциальности", "Foydalanish shartlari": "Условия использования"
+};
+
+let russianOffice = await readFile(resolve(output, "client", "office-cleaning.html"), "utf8");
+for (const [uz, ru] of Object.entries(officeRussianTranslations).sort(([a], [b]) => b.length - a.length)) russianOffice = russianOffice.split(uz).join(ru);
+russianOffice = russianOffice
+  .replace('<html lang="uz">', '<html lang="ru">')
+  .replace('<meta name="viewport" content="width=device-width,initial-scale=1">', '<meta name="viewport" content="width=device-width,initial-scale=1"><base href="../">')
+  .replace('<body data-page-language="uz" data-language-switch="ru/office-cleaning.html">', '<body data-page-language="ru" data-language-switch="office-cleaning.html">')
+  .replace('<link rel="canonical" href="https://go-clean.uz/office-cleaning.html">', '<link rel="canonical" href="https://go-clean.uz/ru/office-cleaning.html">')
+  .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, `<script type="application/ld+json">${jsonLd(officeStructuredData("ru"))}</script>`)
+  .replace('<a class="page-language-link" href="ru/office-cleaning.html" hreflang="ru" lang="ru">Русский</a>', '<a class="page-language-link" href="office-cleaning.html" hreflang="uz" lang="uz">O‘zbekcha</a>');
+await mkdir(resolve(output, "client", "ru"), { recursive: true });
+await writeFile(resolve(output, "client", "ru", "office-cleaning.html"), russianOffice);
 await cp(resolve(root, "worker", "index.js"), resolve(output, "server", "index.js"));
 await cp(resolve(root, ".openai", "hosting.json"), resolve(output, ".openai", "hosting.json"));
 

@@ -39,6 +39,7 @@ const publicPages = [
   "about.html",
   "business.html",
   "office-cleaning.html",
+  "ru/office-cleaning.html",
   "contact.html",
   "privacy.html",
   "terms.html"
@@ -67,6 +68,7 @@ assert.match(sitemap, /<urlset\s+xmlns="http:\/\/www\.sitemaps\.org\/schemas\/si
 assert.match(sitemap, /https:\/\/go-clean\.uz\/privacy\.html/);
 assert.match(sitemap, /https:\/\/go-clean\.uz\/terms\.html/);
 assert.doesNotMatch(sitemap, /legal\.html\?doc=/);
+assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\/office-cleaning\.html/);
 
 const context = { window: {} };
 vm.runInNewContext(await readFile(new URL("../data.js", import.meta.url), "utf8"), context);
@@ -215,6 +217,40 @@ for (const [slug, file] of Object.entries(canonicalServicePages)) {
 for (const page of ["index.html", "shared.js", "services.html"]) {
   assert.match(await read(page), /general-cleaning\.html/, `${page} must link to the prerendered general cleaning page`);
 }
+
+const officeUz = await read("office-cleaning.html");
+const officeRu = await read("ru/office-cleaning.html");
+for (const [page, html, lang, canonical, alternate] of [
+  ["office-cleaning.html", officeUz, "uz", "https://go-clean.uz/office-cleaning.html", "ru/office-cleaning.html"],
+  ["ru/office-cleaning.html", officeRu, "ru", "https://go-clean.uz/ru/office-cleaning.html", "office-cleaning.html"]
+]) {
+  assert.match(html, new RegExp(`<html lang="${lang}">`), `${page} language is incorrect`);
+  assert.equal((html.match(/<link\s+rel="canonical"/g) || []).length, 1, `${page} must contain one canonical`);
+  assert.ok(html.includes(`<link rel="canonical" href="${canonical}">`), `${page} self-canonical is incorrect`);
+  for (const [hreflang, href] of [["uz", "https://go-clean.uz/office-cleaning.html"], ["ru", "https://go-clean.uz/ru/office-cleaning.html"], ["x-default", "https://go-clean.uz/office-cleaning.html"]]) {
+    assert.ok(html.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `${page} is missing ${hreflang} hreflang`);
+  }
+  assert.ok(html.includes(`class="page-language-link" href="${alternate}"`), `${page} is missing a crawlable reciprocal language link`);
+  const nodes = graphNodes(jsonLdBlocks(html));
+  const service = nodes.filter(node => node["@type"] === "Service");
+  const breadcrumb = nodes.filter(node => node["@type"] === "BreadcrumbList");
+  assert.equal(service.length, 1, `${page} must contain one Service entity`);
+  assert.equal(breadcrumb.length, 1, `${page} must contain one BreadcrumbList entity`);
+  assert.equal(service[0].url, canonical, `${page} Service URL is incorrect`);
+  assert.equal(service[0].provider?.["@id"], organizationId, `${page} provider is incorrect`);
+  assertNoUnverifiedStructuredFacts(service[0], page);
+  assert.deepEqual(breadcrumb[0].itemListElement.map(item => item.item), ["https://go-clean.uz/", "https://go-clean.uz/business.html", canonical], `${page} breadcrumb URLs are incorrect`);
+}
+assert.match(officeUz, /<title>Ofis tozalash Toshkentda — Goclean\.uz<\/title>/);
+assert.match(officeRu, /<title>Уборка офисов в Ташкенте — Goclean\.uz<\/title>/);
+assert.match(officeRu, /<h1>Пусть ваш офис каждый день будет готов к работе<\/h1>/);
+assert.match(officeRu, /<base href="\.\.\/">/);
+for (const serviceName of ["Регулярная уборка офиса", "Генеральная уборка офиса", "Уборка склада и цеха"]) assert.ok(officeRu.includes(`data-service-lead="${serviceName}"`), `RU office CTA is missing ${serviceName}`);
+assert.doesNotMatch(officeRu, /data-service-lead="[^"]*(?:Kundalik|Ofisni|tozalash)[^"]*"/i);
+assert.doesNotMatch(officeUz, /Obyekt turi, maydon va kontaktni qoldirasiz|Maydon va telefonni qoldiring/);
+assert.doesNotMatch(officeRu, /Obyekt turi, maydon va kontaktni qoldirasiz|Maydon va telefonni qoldiring/);
+assert.ok((officeUz.match(/data-service-area-option/g) || []).length >= 6, "Office UZ CTAs must expose optional area");
+assert.ok((officeRu.match(/data-service-area-option/g) || []).length >= 6, "Office RU CTAs must expose optional area");
 const servicesSource = (await read("services.html")).split('<script src="data.js')[0];
 assert.equal((servicesSource.match(/<article class="catalog-card"/g) || []).length, 14, "services source must contain 14 cards");
 for (const file of Object.values(canonicalServicePages)) {

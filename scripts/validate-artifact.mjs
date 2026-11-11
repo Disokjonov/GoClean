@@ -5,6 +5,7 @@ for (const path of [
   "dist/server/wrangler.json",
   "dist/client/index.html",
   "dist/client/shared.js",
+  "dist/client/ru/office-cleaning.html",
   "dist/.openai/hosting.json",
   "dist/client/public/assets/service-details/general-surfaces.webp",
   "dist/client/public/assets/service-details/general-floors.webp",
@@ -54,7 +55,7 @@ try {
   for (const [type, payload] of [
     ["callback", { name: "Test User", phone: "+998900000000", property: "Kvartira" }],
     ["consultation", { name: "Test User", phone: "+998900000000" }],
-    ["business", { name: "Test User", phone: "+998900000000", object: "Ofis", area: "100 m²", service: "Muntazam" }],
+    ["business", { name: "Test User", phone: "+998900000000" }],
     ["contact", { name: "Test User", phone: "+998900000000", message: "Savol" }],
     ["meta", { name: "Test User", phone: "+998900000000", service: "General" }],
     ["discount", { name: "Test User", phone: "+998900000000", source: "Popup" }]
@@ -62,6 +63,8 @@ try {
     const response = await submit(type, payload);
     if (response.status !== 200) throw new Error(`${type} payload must be accepted`);
   }
+  const legacyBusinessResponse = await submit("business", { name: "Test User", phone: "+998900000000", object: "Ofis", area: "100 m²", service: "Muntazam" }, "legacy-business");
+  if (legacyBusinessResponse.status !== 200) throw new Error("Legacy business payload must remain accepted when the Worker is deployed first");
   const invalidPhone = await submit("contact", { name: "Test User", phone: "901234567", message: "Savol" }, "invalid-phone");
   if (invalidPhone.status !== 422) throw new Error("Phone without +998 must be rejected");
   const invalidName = await submit("contact", { name: "12", phone: "+998900000000", message: "Savol" }, "invalid-name");
@@ -73,6 +76,12 @@ if (!telegramMessages[0]?.text.includes("75 m²")) throw new Error("Short payloa
 if (!telegramMessages[1]?.text.includes("Test manzil") || !telegramMessages[1]?.text.includes("2026-11-10")) {
   throw new Error("Legacy payload details are missing from the operator message");
 }
+if (!telegramMessages[4]?.text.includes("Test User") || telegramMessages[4]?.text.includes("Maydon:")) {
+  throw new Error("Name-and-phone-only business payload must be accepted without a fabricated area");
+}
+if (!telegramMessages[8]?.text.includes("Ofis") || !telegramMessages[8]?.text.includes("100 m²") || !telegramMessages[8]?.text.includes("Muntazam")) {
+  throw new Error("Legacy business payload details must remain intact");
+}
 
 const source = await readFile("dist/client/shared.js", "utf8");
 if (!source.includes("/api/lead")) throw new Error("Lead endpoint is not wired into the client");
@@ -80,15 +89,20 @@ if (!source.includes("icon.textContent=error?'!':'✓'")) throw new Error("Lead 
 if (!source.includes("catch{throw new Error(leadErrorText())}")) throw new Error("Network failures must use the localized lead error");
 const businessLead = await readFile("dist/client/lead-forms.js", "utf8");
 for (const queryValue of ["office", "retail", "warehouse", "regular-office", "general-office"]) {
-  if (!businessLead.includes(`'${queryValue}'`)) throw new Error(`Business preselection is missing ${queryValue}`);
+  if (!new RegExp(`(?:['"]${queryValue}['"]|\\b${queryValue}:)`).test(businessLead)) throw new Error(`Business preselection is missing ${queryValue}`);
 }
-if (!businessLead.includes("select.dispatchEvent(new Event('change',{bubbles:true}))")) {
-  throw new Error("Business preselection must update the visible styled select");
-}
+if (businessLead.includes("if(!data.area") || businessLead.includes("if(!data.object") || businessLead.includes("if(!data.service")) throw new Error("Business form must not require area, object, or service");
+if (!businessLead.includes("if(data.area&&Number(data.area)>0)payload.area")) throw new Error("Business form must send area only when entered");
+if (!businessLead.includes("setAreaOpen(false)")) throw new Error("Business optional area must reset after submission");
+const businessRequestPage = await readFile("dist/client/business-request.html", "utf8");
+for (const field of ["object", "service"]) if (!businessRequestPage.includes(`type="hidden" name="${field}"`)) throw new Error(`Business query context is missing hidden ${field}`);
+if (!businessRequestPage.includes("data-area-toggle") || !businessRequestPage.includes("data-area-field hidden")) throw new Error("Business area must be hidden behind an optional toggle");
+if (/\b(required)[^>]*name="(?:object|area|service)"|name="(?:object|area|service)"[^>]*\brequired\b/.test(businessRequestPage)) throw new Error("Business area/object/service must not be required");
+for (const requiredField of ["name", "phone"]) if (!new RegExp(`(?:required[^>]*name="${requiredField}"|name="${requiredField}"[^>]*required)`).test(businessRequestPage)) throw new Error(`Business ${requiredField} must remain required`);
 const businessPage = await readFile("dist/client/business.html", "utf8");
-for (const queryValue of ["office", "retail", "warehouse", "production"]) {
-  if (!businessPage.includes(`value="${queryValue}"`)) throw new Error(`Business quick form is missing ${queryValue}`);
-}
+if (/<(?:input|select)[^>]*name="(?:type|area|object|service)"/.test(businessPage)) throw new Error("Business hero must not ask for object, service, or area before the short request");
+if (!businessPage.includes('data-service-lead="Biznes tozalash" data-service-area-option')) throw new Error("Business hero must open the short lead flow with optional area");
+if (businessPage.includes("Maydon va grafikni qoldiring")) throw new Error("Business hero contains stale mandatory-area copy");
 for (const formPage of ["index.html", "business-request.html", "contact.html", "offer.html"]) {
   const html = await readFile(`dist/client/${formPage}`, "utf8");
   if (!html.includes('class="phone-input"')) throw new Error(`${formPage} must use the +998 phone field`);

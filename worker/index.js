@@ -73,7 +73,7 @@ function validate(type, input) {
   if (nameLetters < 2 || data.name.length > 80) return { error: "Ismni to‘g‘ri kiriting." };
   if (!/^998\d{9}$/.test(digits)) return { error: "Telefon raqamini +998 bilan to‘g‘ri kiriting." };
   data.phone = `+${digits}`;
-  if (type === "business" && (!data.object || !data.area || !data.service || !(parseFloat(data.area.replace(",", ".")) > 0))) return { error: "Obyekt ma’lumotlarini to‘ldiring." };
+  if (type === "business" && data.area && !(parseFloat(data.area.replace(",", ".")) > 0)) return { error: "Maydonni to‘g‘ri kiriting." };
   if (type === "meta" && !data.service) return { error: "Kerakli xizmatni tanlang." };
   if (type === "order" && !data.service) return { error: "Kerakli xizmatni tanlang." };
   return { data };
