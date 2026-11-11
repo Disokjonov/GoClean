@@ -26,24 +26,45 @@ export const serviceContent = {
     uz: {
       intro: "GoClean Toshkentdagi obyektlarni ta’mirdan keyingi og‘ir kirlardan tozalaydi. Xizmat qurilish changi, bo‘yoq va yelim izlari, oyna va romlar hamda polni chuqur tozalashga qaratilgan. Ish professional uskuna va maxsus kimyo bilan bajariladi.",
       price: "Narx obyekt bo‘yicha hisob-kitob asosida aniqlanadi. Operator obyekt turi, taxminiy maydon, ta’mir holati, yuzalar va bajariladigan ishlar hajmini aniqlashtiradi.",
+      sections: [
+        ["Hisob-kitob uchun nimalarni aniqlashtiramiz?", "Ta’mir hajmi va qolgan ifloslanishlar haqida operatorga ayting. Hisoblashda tozalanadigan maydon, oyna va romlar, pol qoplamasi hamda kerakli ishlar muhim. Maydonni bilmasangiz ham ariza qoldirishingiz mumkin."],
+        ["Ish tarkibini oldindan aniqlashtiring", "Qurilish chiqindilarini olib chiqish, himoya plyonkasini yechish, baland joydagi oynalar yoki nozik yuzalar bo‘yicha vazifalarni operatorga alohida ayting. Ularning xizmat tarkibiga kirishi va bajarish shartlari kelishuvda aniqlashtiriladi."]
+      ],
       faqs: [
         ["Ta’mirdan keyin tozalashga nimalar kiradi?", "Qurilish changini tozalash, bo‘yoq va yelim izlariga ishlov berish, oyna va romlar hamda polni chuqur tozalash xizmat tarkibiga kiradi."],
         ["Narx oldindan ma’lummi?", "Narx obyekt bo‘yicha hisob-kitob asosida aniqlanadi. Operator obyekt va vazifalarni aniqlashtirib hisob beradi."],
         ["Oyna va romlar ham tozalanadimi?", "Ha, oyna va romlar xizmat tarkibida ko‘rsatilgan. Aniq hajm operator bilan kelishiladi."],
-        ["Bo‘yoq va yelim izlari tozalanadimi?", "Bu izlarga ishlov berish xizmat tarkibida bor. Natija yuzaning materiali va izning holatiga bog‘liq bo‘lishi mumkin."]
+        ["Bo‘yoq va yelim izlari tozalanadimi?", "Bu izlarga ishlov berish xizmat tarkibida bor. Barcha izlar to‘liq ketishi va’da qilinmaydi; natija yuzaning materiali va izning holatiga bog‘liq bo‘lishi mumkin."],
+        ["Maydonni bilmasam ham ariza qoldira olamanmi?", "Ha. Ism va telefon raqamini qoldirish yetarli. Maydon va boshqa tafsilotlarni operator bilan aniqlashtirasiz."],
+        ["Saytda to‘lov qilish kerakmi?", "Yo‘q. To‘lov usuli va shartlari operator bilan telefon orqali kelishiladi."],
+        ["Qurilish chiqindilari olib chiqiladimi?", "Chiqindi turi va hajmi, uni yig‘ish yoki olib chiqish xizmatga kirishi operator bilan alohida aniqlashtiriladi."],
+        ["Manzil va vaqtni qachon aytaman?", "Manzil va xizmat uchun qulay vaqt operator qo‘ng‘irog‘ida kelishiladi."],
+        ["Tozalash qancha davom etadi?", "Davomiylik obyekt holati, maydoni va kelishilgan ishlar hajmiga bog‘liq. Operator tafsilotlarni bilib, jarayonni aniqlashtiradi."]
       ]
     },
     ru: {
       intro: "GoClean выполняет уборку объектов после ремонта в Ташкенте. Услуга направлена на удаление строительной пыли, обработку следов краски и клея, очистку окон и рам, а также глубокую очистку пола. Используются профессиональное оборудование и специальная химия.",
       price: "Стоимость рассчитывается индивидуально по объекту. Оператор уточняет тип и примерную площадь объекта, состояние ремонта, материалы поверхностей и объём работ.",
+      sections: [
+        ["Что нужно уточнить для расчёта?", "Расскажите оператору об объёме ремонта и оставшихся загрязнениях. Для расчёта важны площадь уборки, окна и рамы, напольные покрытия и необходимые работы. Заявку можно оставить, даже если площадь пока неизвестна."],
+        ["Заранее уточните состав работ", "Отдельно сообщите оператору о строительном мусоре, защитной плёнке, высоко расположенных окнах и деликатных поверхностях. Включение этих задач в услугу и условия выполнения уточняются при согласовании."]
+      ],
       faqs: [
         ["Что входит в уборку после ремонта?", "В услугу входят удаление строительной пыли, обработка следов краски и клея, очистка окон и рам, а также глубокая очистка пола."],
         ["Можно узнать точную цену заранее?", "Стоимость рассчитывается по объекту после уточнения площади, состояния и состава работ."],
         ["Окна и рамы входят в услугу?", "Да, они входят в состав услуги. Точный объём согласуется с оператором."],
-        ["Удаляются ли следы краски и клея?", "Их обработка входит в услугу. Результат может зависеть от материала поверхности и состояния следа."]
+        ["Удаляются ли следы краски и клея?", "Их обработка входит в услугу. Полное удаление всех следов не обещается; результат может зависеть от материала поверхности и состояния следа."],
+        ["Можно оставить заявку, если площадь неизвестна?", "Да. Достаточно оставить имя и номер телефона. Площадь и другие детали вы уточните с оператором."],
+        ["Нужно ли оплачивать услугу на сайте?", "Нет. Способ и условия оплаты согласуются с оператором по телефону."],
+        ["Вывозится ли строительный мусор?", "Тип и объём мусора, а также включение его сбора или вывоза в услугу отдельно уточняются с оператором."],
+        ["Когда сообщить адрес и время?", "Адрес и удобное время оказания услуги согласуются во время звонка оператора."],
+        ["Сколько длится уборка?", "Продолжительность зависит от состояния и площади объекта, а также согласованного объёма работ. Оператор уточнит процесс после получения деталей."]
       ]
     },
-    links: [["general-cleaning.html", "General tozalash"], ["window-cleaning.html", "Oyna yuvish"], ["paving-cleaning.html", "Bruschatka yuvish"], ["contact.html", "Savol va bog‘lanish"]]
+    localizedLinks: {
+      uz: [["general-cleaning.html", "Ta’mir bo‘lmagan obyekt uchun general tozalash"], ["window-cleaning.html", "Oyna va romlarni yuvish"], ["marble-cleaning.html", "Marmar yuzalarni tozalash"], ["office-cleaning.html", "Tijorat obyektlari va ofislar"]],
+      ru: [["general-cleaning.html", "Генеральная уборка объекта без ремонта"], ["window-cleaning.html", "Мойка окон и рам"], ["marble-cleaning.html", "Очистка мраморных поверхностей"], ["office-cleaning.html", "Офисы и коммерческие объекты"]]
+    }
   },
   "furniture-cleaning": {
     uz: {

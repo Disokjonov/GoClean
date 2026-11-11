@@ -77,9 +77,15 @@ function serviceStructuredData(service, metadata) {
 function renderEnrichedServiceContent(service) {
   const content = serviceContent[service.slug];
   if (!content) return "";
-  const renderLanguage = (lang, copy, hidden = false) => `<div data-content-lang="${lang}"${hidden ? " hidden" : ""}><p class="service-content-intro">${escapeHtml(copy.intro)}</p><div class="service-price-explainer"><h2>${lang === "ru" ? "Как определяется стоимость?" : "Narx qanday aniqlanadi?"}</h2><p>${escapeHtml(copy.price)}</p></div><h2>${lang === "ru" ? "Частые вопросы" : "Ko‘p so‘raladigan savollar"}</h2><div class="service-faq">${copy.faqs.map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join("")}</div></div>`;
-  const links = content.links.map(([href, label]) => `<a href="${href}">${escapeHtml(label)}</a>`).join("");
-  return `<section class="section service-seo-content"><div class="container"><div class="service-content-card">${renderLanguage("uz", content.uz)}${renderLanguage("ru", content.ru, true)}<nav class="service-related" aria-label="Tegishli xizmatlar"><b>Tegishli sahifalar:</b>${links}</nav></div></div></section>`;
+  const renderLinks = (links, lang) => links
+    ? `<nav class="service-related" aria-label="${lang === "ru" ? "Связанные услуги" : "Tegishli xizmatlar"}"><b>${lang === "ru" ? "Связанные страницы:" : "Tegishli sahifalar:"}</b>${links.map(([href, label]) => `<a href="${href}">${escapeHtml(label)}</a>`).join("")}</nav>`
+    : "";
+  const renderLanguage = (lang, copy, hidden = false) => {
+    const sections = (copy.sections || []).map(([heading, text]) => `<div class="service-scope-note"><h2>${escapeHtml(heading)}</h2><p>${escapeHtml(text)}</p></div>`).join("");
+    return `<div data-content-lang="${lang}"${hidden ? " hidden" : ""}><p class="service-content-intro">${escapeHtml(copy.intro)}</p><div class="service-price-explainer"><h2>${lang === "ru" ? "Как определяется стоимость?" : "Narx qanday aniqlanadi?"}</h2><p>${escapeHtml(copy.price)}</p></div>${sections}<h2>${lang === "ru" ? "Частые вопросы" : "Ko‘p so‘raladigan savollar"}</h2><div class="service-faq">${copy.faqs.map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join("")}</div>${renderLinks(content.localizedLinks?.[lang], lang)}</div>`;
+  };
+  const sharedLinks = renderLinks(content.links, "uz");
+  return `<section class="section service-seo-content"><div class="container"><div class="service-content-card">${renderLanguage("uz", content.uz)}${renderLanguage("ru", content.ru, true)}${sharedLinks}</div></div></section>`;
 }
 
 function renderServicePage(service, metadata = {}) {

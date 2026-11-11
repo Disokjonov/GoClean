@@ -240,4 +240,18 @@ for (const page of ["index.html", "shared.js", "services.html", "blog.html", "of
   }
 }
 
+const afterRenovation = await read("after-renovation-cleaning.html");
+for (const text of [
+  "Hisob-kitob uchun nimalarni aniqlashtiramiz?",
+  "Maydonni bilmasangiz ham ariza qoldirishingiz mumkin.",
+  "Ish tarkibini oldindan aniqlashtiring",
+  "Что нужно уточнить для расчёта?",
+  "Заявку можно оставить, даже если площадь пока неизвестна.",
+  "Заранее уточните состав работ"
+]) assert.ok(afterRenovation.includes(text), `after-renovation content is missing: ${text}`);
+for (const href of ["general-cleaning.html", "window-cleaning.html", "marble-cleaning.html", "office-cleaning.html"]) {
+  assert.ok(afterRenovation.includes(`href="${href}"`), `after-renovation must contextually link to ${href}`);
+}
+assert.equal((afterRenovation.match(/<details>/g) || []).length, serviceContent["after-renovation"].uz.faqs.length * 2, "after-renovation UZ/RU visible FAQ count is incorrect");
+
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);
