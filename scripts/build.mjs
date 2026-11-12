@@ -219,10 +219,15 @@ function renderCatalogCard(service) {
   return `<article class="catalog-card" data-service="${escapeHtml(service.slug)}"><a class="catalog-image" href="${href}"><picture><source media="(max-width:560px)" srcset="public/assets/services/${base}-mobile.avif" type="image/avif"><source srcset="public/assets/services/${base}.avif" type="image/avif"><img src="public/assets/services/${escapeHtml(service.image)}" alt="${escapeHtml(service.name)}" loading="lazy" decoding="async" width="1200" height="800"></picture></a><div class="catalog-card-body"><h3><a href="${href}">${escapeHtml(service.name)}</a></h3><p>${escapeHtml(service.summary)}</p><div class="catalog-price"><strong>${escapeHtml(service.price)}</strong><small>${escapeHtml(service.unit)}</small></div><div class="catalog-actions"><a class="detail-cta" href="${href}">Batafsil</a><button class="mini-order" type="button" data-service-lead="${escapeHtml(service.name)}">Raqam qoldirish</button></div></div></article>`;
 }
 
+const deferBelowFoldProcessImages = html => html.replace(
+  /(<img src="public\/assets\/icons-3d\/process-[^"]+" alt="" aria-hidden="true")>/g,
+  '$1 loading="lazy" decoding="async">'
+);
+
 for (const [slug, metadata] of Object.entries(canonicalServicePages)) {
   const service = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === slug);
   if (!service) throw new Error(`${slug} service data is missing`);
-  await writeFile(resolve(output, "client", metadata.file), renderServicePage(service, metadata));
+  await writeFile(resolve(output, "client", metadata.file), deferBelowFoldProcessImages(renderServicePage(service, metadata)));
 }
 
 const seoPages = {

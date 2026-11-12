@@ -143,6 +143,27 @@ const general = await readFile("dist/client/general-cleaning.html", "utf8");
 if ((general.match(/public\/assets\/service-details\//g) || []).length !== 4) {
   throw new Error("General cleaning detail page must contain four visual service cards");
 }
+for (const page of ["general-cleaning.html", "furniture-cleaning.html"]) {
+  const html = await readFile(`dist/client/${page}`, "utf8");
+  const processImages = [...html.matchAll(/<img src="public\/assets\/icons-3d\/process-[^"]+"[^>]*>/g)].map(match => match[0]);
+  if (processImages.length !== 3 || processImages.some(image => !image.includes('loading="lazy"') || !image.includes('decoding="async"'))) {
+    throw new Error(`${page} process images must defer loading and decoding`);
+  }
+}
+const optimizedShared = await readFile("dist/client/shared.js", "utf8");
+if (!optimizedShared.includes('aria-hidden="true" loading="lazy" decoding="async"')) throw new Error("Mobile drawer images must use native lazy loading");
+const optimizedOffice = await readFile("dist/client/office-cleaning.html", "utf8");
+const optimizedOfficeImages = [...optimizedOffice.matchAll(/<img (?:class="process-icon-3d" )?src="public\/assets\/icons-3d\/(?:standard-cleaning|general-cleaning|warehouse-cleaning|after-renovation|window-cleaning|disinfection|process-[^"]+)\.webp"[^>]*>/g)].map(match => match[0]);
+if (optimizedOfficeImages.length !== 9) throw new Error("Office optimization must cover six service icons and three process icons");
+for (const image of optimizedOfficeImages) {
+  if (!image.includes('loading="lazy"') || !image.includes('decoding="async"')) throw new Error("Office below-fold icons must defer loading and decoding");
+}
+const optimizedHome = await readFile("dist/client/index.html", "utf8");
+const optimizedHomeImages = [...optimizedHome.matchAll(/<img[^>]+(?:process-|general-cleaning|furniture-cleaning|after-renovation|gocoin)[^>]*>/g)].map(match => match[0]);
+if (optimizedHomeImages.length !== 7) throw new Error("Homepage optimization must cover service, process, and offer icons");
+for (const image of optimizedHomeImages) {
+  if (!image.includes('loading="lazy"') || !image.includes('decoding="async"')) throw new Error("Homepage below-fold icons must defer loading and decoding");
+}
 const catalog = await readFile("dist/client/services.html", "utf8");
 const sourceCatalog = catalog.slice(0, catalog.indexOf('<script src="data.js'));
 if ((sourceCatalog.match(/<article class="catalog-card"/g) || []).length !== 14) {
