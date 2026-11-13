@@ -39,6 +39,7 @@ const publicPages = [
   "about.html",
   "business.html",
   "office-cleaning.html",
+  "ru/index.html",
   "ru/office-cleaning.html",
   "contact.html",
   "privacy.html",
@@ -68,6 +69,7 @@ assert.match(sitemap, /<urlset\s+xmlns="http:\/\/www\.sitemaps\.org\/schemas\/si
 assert.match(sitemap, /https:\/\/go-clean\.uz\/privacy\.html/);
 assert.match(sitemap, /https:\/\/go-clean\.uz\/terms\.html/);
 assert.doesNotMatch(sitemap, /legal\.html\?doc=/);
+assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\//);
 assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\/office-cleaning\.html/);
 
 const context = { window: {} };
@@ -218,6 +220,41 @@ for (const page of ["index.html", "shared.js", "services.html"]) {
   assert.match(await read(page), /general-cleaning\.html/, `${page} must link to the prerendered general cleaning page`);
 }
 
+const homeUz = await read("index.html");
+const homeRu = await read("ru/index.html");
+for (const [page, html, lang, canonical, alternate] of [
+  ["index.html", homeUz, "uz", "https://go-clean.uz/", "ru/"],
+  ["ru/index.html", homeRu, "ru", "https://go-clean.uz/ru/", "/"]
+]) {
+  assert.match(html, new RegExp(`<html lang="${lang}">`), `${page} language is incorrect`);
+  assert.equal((html.match(/<link\s+rel="canonical"/g) || []).length, 1, `${page} must contain one canonical`);
+  assert.ok(html.includes(`<link rel="canonical" href="${canonical}"`), `${page} self-canonical is incorrect`);
+  for (const [hreflang, href] of [["uz", "https://go-clean.uz/"], ["ru", "https://go-clean.uz/ru/"], ["x-default", "https://go-clean.uz/"]]) {
+    assert.ok(html.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}"`), `${page} is missing ${hreflang} hreflang`);
+  }
+  assert.ok(html.includes(`id="langToggle" href="${alternate}"`), `${page} is missing a crawlable reciprocal language link`);
+}
+assert.match(homeRu, /<title>Клининг в Ташкенте для дома и бизнеса — GoClean<\/title>/);
+assert.match(homeRu, /<meta name="description" content="Клининг в Ташкенте/);
+assert.match(homeRu, /<h1 data-i18n="heroTitle">Клининг в Ташкенте для дома и бизнеса<\/h1>/);
+assert.match(homeRu, /<base href="\.\.\/"/);
+assert.ok(homeRu.includes('href="ru/office-cleaning.html">Уборка офисов</a>'), "Russian homepage must link to the Russian office page");
+assert.ok(homeRu.includes("GoClean оказывает услуги уборки для квартир, домов, офисов и коммерческих объектов в Ташкенте."), "Russian homepage must contain useful source content");
+for (const fact of ["GoClean", "Ташкент", "+998 97 707 15 15", "hello@goclean.uz"]) assert.ok(homeRu.includes(fact), `Russian homepage is missing verified fact: ${fact}`);
+for (const unverified of ["4.9", "12 000+", "180+", "98%", "24 часа", "Гарантия качества", "бесплатно устраним"]) assert.ok(!homeRu.includes(unverified), `Russian homepage contains unverified claim: ${unverified}`);
+for (const form of ["orderForm", "businessForm", "discountForm"]) assert.ok(homeRu.includes(`id="${form}"`), `Russian homepage must preserve ${form}`);
+const homeRuNodes = graphNodes(jsonLdBlocks(homeRu));
+const homeRuOrganization = homeRuNodes.filter(node => node["@type"] === "Organization");
+const homeRuWebPage = homeRuNodes.filter(node => node["@type"] === "WebPage");
+assert.equal(homeRuOrganization.length, 1, "Russian homepage must contain one Organization entity");
+assert.equal(homeRuOrganization[0]["@id"], organizationId, "Russian homepage Organization ID is incorrect");
+assert.equal(homeRuOrganization[0].telephone, "+998 97 707 15 15", "Russian homepage phone is incorrect");
+assert.equal(homeRuOrganization[0].email, "hello@goclean.uz", "Russian homepage email is incorrect");
+assert.equal(homeRuWebPage.length, 1, "Russian homepage must contain one WebPage entity");
+assert.equal(homeRuWebPage[0].url, "https://go-clean.uz/ru/", "Russian homepage WebPage URL is incorrect");
+assert.equal(homeRuWebPage[0].inLanguage, "ru", "Russian homepage language schema is incorrect");
+assertNoUnverifiedStructuredFacts(homeRuNodes, "ru/index.html");
+
 const officeUz = await read("office-cleaning.html");
 const officeRu = await read("ru/office-cleaning.html");
 for (const [page, html, lang, canonical, alternate] of [
@@ -239,7 +276,7 @@ for (const [page, html, lang, canonical, alternate] of [
   assert.equal(service[0].url, canonical, `${page} Service URL is incorrect`);
   assert.equal(service[0].provider?.["@id"], organizationId, `${page} provider is incorrect`);
   assertNoUnverifiedStructuredFacts(service[0], page);
-  assert.deepEqual(breadcrumb[0].itemListElement.map(item => item.item), ["https://go-clean.uz/", "https://go-clean.uz/business.html", canonical], `${page} breadcrumb URLs are incorrect`);
+  assert.deepEqual(breadcrumb[0].itemListElement.map(item => item.item), [lang === "ru" ? "https://go-clean.uz/ru/" : "https://go-clean.uz/", "https://go-clean.uz/business.html", canonical], `${page} breadcrumb URLs are incorrect`);
 }
 assert.match(officeUz, /<title>Ofis tozalash Toshkentda — Goclean\.uz<\/title>/);
 assert.match(officeRu, /<title>Уборка офисов в Ташкенте — Goclean\.uz<\/title>/);

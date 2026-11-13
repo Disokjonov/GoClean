@@ -35,6 +35,54 @@ vm.runInNewContext(await readFile(resolve(root, "data.js"), "utf8"), dataContext
 const organizationId = "https://go-clean.uz/#organization";
 const jsonLd = value => JSON.stringify(value).replace(/</g, "\\u003c");
 
+const russianHomeStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": organizationId,
+      name: "GoClean",
+      url: "https://go-clean.uz/",
+      telephone: "+998 97 707 15 15",
+      email: "hello@goclean.uz",
+      areaServed: { "@type": "City", name: "Toshkent" }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://go-clean.uz/ru/#webpage",
+      url: "https://go-clean.uz/ru/",
+      name: "Клининг в Ташкенте для дома и бизнеса — GoClean",
+      inLanguage: "ru",
+      about: { "@id": organizationId }
+    }
+  ]
+};
+
+const appSource = await readFile(resolve(root, "app.js"), "utf8");
+const homeTranslationBase = appSource.match(/const ru=(\{[\s\S]*?\});\s*Object\.assign\(ru,/);
+const homeTranslationExtra = appSource.match(/Object\.assign\(ru,(\{[\s\S]*?\})\);\s*const directTextNode/);
+if (!homeTranslationBase || !homeTranslationExtra) throw new Error("Homepage Russian translation catalog could not be parsed");
+const homeRussianTranslations = Object.assign(
+  vm.runInNewContext(`(${homeTranslationBase[1]})`),
+  vm.runInNewContext(`(${homeTranslationExtra[1]})`)
+);
+
+const replaceFirstTextSegment = (inner, translation) => {
+  const parts = inner.split(/(<[^>]+>)/g);
+  const index = parts.findIndex(part => !part.startsWith("<") && part.trim());
+  if (index === -1) return inner;
+  parts[index] = parts[index].replace(parts[index].trim(), translation);
+  return parts.join("");
+};
+
+const translateHomepageSource = html => html.replace(
+  /<([a-z][a-z0-9-]*)([^>]*\sdata-i18n="([^"]+)"[^>]*)>([\s\S]*?)<\/\1>/gi,
+  (whole, tag, attributes, key, inner) => {
+    const translation = homeRussianTranslations[key];
+    return translation ? `<${tag}${attributes}>${replaceFirstTextSegment(inner, translation)}</${tag}>` : whole;
+  }
+);
+
 const officeStructuredData = (lang = "uz") => {
   const russian = lang === "ru";
   const url = russian ? "https://go-clean.uz/ru/office-cleaning.html" : "https://go-clean.uz/office-cleaning.html";
@@ -57,7 +105,7 @@ const officeStructuredData = (lang = "uz") => {
         "@type": "BreadcrumbList",
         "@id": `${url}#breadcrumb`,
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: russian ? "Главная" : "Bosh sahifa", item: "https://go-clean.uz/" },
+          { "@type": "ListItem", position: 1, name: russian ? "Главная" : "Bosh sahifa", item: russian ? "https://go-clean.uz/ru/" : "https://go-clean.uz/" },
           { "@type": "ListItem", position: 2, name: russian ? "Для бизнеса" : "Biznes uchun", item: "https://go-clean.uz/business.html" },
           { "@type": "ListItem", position: 3, name: russian ? "Уборка офисов" : "Ofis tozalash", item: url }
         ]
@@ -361,9 +409,72 @@ russianOffice = russianOffice
   .replace('<body data-page-language="uz" data-language-switch="ru/office-cleaning.html">', '<body data-page-language="ru" data-language-switch="office-cleaning.html">')
   .replace('<link rel="canonical" href="https://go-clean.uz/office-cleaning.html">', '<link rel="canonical" href="https://go-clean.uz/ru/office-cleaning.html">')
   .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, `<script type="application/ld+json">${jsonLd(officeStructuredData("ru"))}</script>`)
-  .replace('<a class="page-language-link" href="ru/office-cleaning.html" hreflang="ru" lang="ru">Русский</a>', '<a class="page-language-link" href="office-cleaning.html" hreflang="uz" lang="uz">O‘zbekcha</a>');
+  .replace('<a class="page-language-link" href="ru/office-cleaning.html" hreflang="ru" lang="ru">Русский</a>', '<a class="page-language-link" href="office-cleaning.html" hreflang="uz" lang="uz">O‘zbekcha</a>')
+  .replaceAll('href="index.html"', 'href="ru/"')
+  .replaceAll('href="index.html?offer=first-order"', 'href="ru/?offer=first-order"')
+  .replace('<a href="office-cleaning.html">Уборка офисов</a>', '<a href="ru/office-cleaning.html">Уборка офисов</a>');
 await mkdir(resolve(output, "client", "ru"), { recursive: true });
 await writeFile(resolve(output, "client", "ru", "office-cleaning.html"), russianOffice);
+
+const homeRussianDirectTranslations = {
+  "Toshkent bo‘ylab har kuni 08:00–21:00": "По Ташкенту ежедневно",
+  "Goclean bosh sahifa": "Главная GoClean",
+  "Asosiy navigatsiya": "Основная навигация",
+  "Mato diagnostikasi": "Определение типа ткани",
+  "Dog‘larga ishlov": "Обработка пятен",
+  "Chuqur ekstraksiya": "Глубокая экстракционная чистка",
+  "Quritish bo‘yicha tavsiya": "Рекомендации по сушке",
+  "Oyna yuvish": "Мойка окон",
+  "Marmar tozalash": "Очистка мрамора",
+  "Gilam yuvish": "Чистка ковров",
+  "Barcha xizmatlar": "Все услуги",
+  "Yangi mijozlar uchun": "Для новых клиентов",
+  "Toshkent, O‘zbekiston": "Ташкент, Узбекистан",
+  "Maxfiylik siyosati": "Политика конфиденциальности",
+  "Foydalanish shartlari": "Условия использования",
+  "Telegram orqali yozish": "Написать в Telegram",
+  "Qo‘ng‘iroq qilish": "Позвонить",
+  "Tezkor aloqa": "Быстрая связь",
+  "Yopish": "Закрыть",
+  "Masalan, Aziz": "Например, Азиз",
+  "Ismingiz": "Ваше имя"
+};
+
+let russianHome = translateHomepageSource(await readFile(resolve(output, "client", "index.html"), "utf8"));
+for (const [uz, ru] of Object.entries(homeRussianDirectTranslations).sort(([a], [b]) => b.length - a.length)) russianHome = russianHome.split(uz).join(ru);
+const russianSeoIntro = `<section class="section service-seo-content"><div class="container"><div class="service-content-card"><h2>Услуги клининга в Ташкенте</h2><p class="service-content-intro">GoClean оказывает услуги уборки для квартир, домов, офисов и коммерческих объектов в Ташкенте. Оставьте имя и телефон — оператор уточнит задачу, состав работ, адрес, удобное время и стоимость.</p><nav class="service-related" aria-label="Популярные услуги"><b>Популярные услуги:</b><a href="general-cleaning.html">Генеральная уборка</a><a href="furniture-cleaning.html">Химчистка мебели</a><a href="after-renovation-cleaning.html">Уборка после ремонта</a><a href="ru/office-cleaning.html">Уборка офисов</a></nav></div></div></section>`;
+const russianFactsStrip = `<section class="trust-strip"><div class="container trust-items"><div><strong>GoClean</strong><span>бренд</span></div><div><strong>Ташкент</strong><span>зона обслуживания</span></div><div><strong>+998 97 707 15 15</strong><span>телефон</span></div><div><strong>hello@goclean.uz</strong><span>электронная почта</span></div></div></section>`;
+const russianConsultation = `<section class="section business consultation" id="business"><div class="container business-panel"><div class="business-copy"><h2>Уточните состав работ и стоимость с оператором</h2><p>Оставьте имя и телефон. Оператор свяжется с вами и согласует услугу, адрес, удобное время и стоимость.</p><div class="business-benefits"><div><span>✓</span><b>Имя и телефон</b></div><div><span>✓</span><b>Детали по телефону</b></div></div></div><form class="business-form compact-form" id="businessForm" novalidate><h3>Оставить заявку на клининг</h3><p>Для заявки достаточно имени и номера телефона.</p><label><span data-i18n="name">Ваше имя</span><input name="name" required placeholder="Например, Азиз" /></label><label><span data-i18n="phone">Номер телефона</span><span class="phone-input"><b>+998</b><input name="phone" required type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="12" placeholder="90 123 45 67" /></span></label><p class="form-inline-error" role="alert" hidden></p><button class="primary-button full coral" type="submit" data-i18n="consultationButton">Получить консультацию</button></form></div></section>`;
+const russianFactsSection = `<section class="section trust" id="trust"><div class="container trust-grid"><div class="trust-copy"><span class="kicker">Кратко о GoClean</span><h2>Клининг для дома и бизнеса в Ташкенте</h2><p>GoClean работает в Ташкенте. Уточнить подходящую услугу можно по телефону, электронной почте или через короткую заявку на сайте.</p><a href="contact.html" class="text-link">Контакты →</a></div><div class="trust-cards"><article><span>⌖</span><div><b>Зона обслуживания</b><small>Ташкент</small></div></article><article><span>☎</span><div><b>Телефон</b><small>+998 97 707 15 15</small></div></article><article><span>@</span><div><b>Электронная почта</b><small>hello@goclean.uz</small></div></article></div></div></section>`;
+const russianFaq = `<section class="section faq" id="faq"><div class="container faq-grid"><div><span class="kicker">FAQ</span><h2>Частые вопросы о клининге</h2><p>Оператор поможет уточнить детали услуги по телефону.</p></div><div class="accordion"><details open><summary>Как узнать состав работ и стоимость?<span>+</span></summary><p>Оставьте имя и телефон. Оператор уточнит объект, задачу и согласует состав услуги и стоимость.</p></details><details><summary>Когда согласовываются адрес и время?<span>+</span></summary><p>Адрес и удобное время согласуются во время звонка оператора.</p></details><details><summary>Нужно ли знать площадь объекта?<span>+</span></summary><p>Нет. Заявку можно оставить без площади и уточнить её позже с оператором.</p></details><details><summary>Нужно ли платить на сайте?<span>+</span></summary><p>Нет. Способ и условия оплаты согласуются с оператором.</p></details></div></div></section>`;
+russianHome = russianHome
+  .replace('<html lang="uz">', '<html lang="ru">')
+  .replace('<meta name="viewport" content="width=device-width, initial-scale=1.0" />', '<meta name="viewport" content="width=device-width, initial-scale=1.0" /><base href="../" />')
+  .replace(/<meta name="description" content="[^"]+" \/>/, '<meta name="description" content="Клининг в Ташкенте для квартир, домов, офисов и коммерческих объектов. Оставьте имя и телефон — оператор уточнит детали и стоимость." />')
+  .replace('<link rel="canonical" href="https://go-clean.uz/" />', '<link rel="canonical" href="https://go-clean.uz/ru/" />')
+  .replace('<title>Goclean.uz — toza uy, xotirjam kun</title>', '<title>Клининг в Ташкенте для дома и бизнеса — GoClean</title>')
+  .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, `<script type="application/ld+json">${jsonLd(russianHomeStructuredData)}</script>`)
+  .replace('<body data-page-language="uz">', '<body data-page-language="ru" data-language-switch="../">')
+  .replace('<a class="lang" id="langToggle" href="ru/" hreflang="ru" lang="ru" aria-label="Русская версия">RU</a>', '<a class="lang" id="langToggle" href="/" hreflang="uz" lang="uz" aria-label="O‘zbekcha versiya">UZ</a>')
+  .replace('<h1 data-i18n="heroTitle">Профессиональная уборка для дома и бизнеса</h1>', '<h1 data-i18n="heroTitle">Клининг в Ташкенте для дома и бизнеса</h1>')
+  .replace('<p data-i18n="heroText">Убираем квартиры, дома, офисы и коммерческие объекты силами профессиональных сотрудников. Рассчитайте стоимость или получите бесплатную консультацию.</p>', '<p data-i18n="heroText">Уборка квартир, домов, офисов и коммерческих объектов. Оставьте номер — оператор уточнит детали услуги и стоимость.</p>')
+  .replace(/<div class="hero-points">[\s\S]*?<\/div>/, '<div class="hero-points"><span><b>✓</b> Уборка для дома и бизнеса</span><span><b>✓</b> Детали согласуются с оператором</span></div>')
+  .replace(/<div class="hero-proof">\s*<div class="avatar-stack"[\s\S]*?<\/div>\s*<div>[\s\S]*?<\/div>\s*<\/div>/, '<div class="hero-proof"><div class="avatar-stack" aria-hidden="true"><i>G</i><i>C</i></div><div><strong>GoClean</strong><small>Клининг в Ташкенте</small></div></div>')
+  .replace(/<div class="floating-card verified">[\s\S]*?<\/div><\/div>/, '<div class="floating-card verified"><span>⌖</span><div><b>Ташкент</b><small>Зона обслуживания</small></div></div>')
+  .replace(/<div class="floating-card guarantee">[\s\S]*?<\/div><\/div>/, '<div class="floating-card guarantee"><span>☎</span><div><b>Имя и телефон</b><small>Достаточно для заявки</small></div></div>')
+  .replace(/<section class="trust-strip">[\s\S]*?<\/section>/, `${russianFactsStrip}${russianSeoIntro}`)
+  .replace(/<section class="section business consultation" id="business">[\s\S]*?<\/section>/, russianConsultation)
+  .replace(/<section class="section trust" id="trust">[\s\S]*?<\/section>/, russianFactsSection)
+  .replace(/<section class="section faq" id="faq">[\s\S]*?<\/section>/, russianFaq)
+  .replace('<p data-i18n="servicesText">В каждом пакете — профессиональные средства, инвентарь и контроль качества.</p>', '<p data-i18n="servicesText">Выберите подходящую услугу и уточните детали с оператором.</p>')
+  .replace('aria-label="Obyekt turi"', 'aria-label="Тип объекта"')
+  .replaceAll('so‘m', 'сум')
+  .replace('<strong id="totalPrice">219 000 so‘m</strong>', '<strong id="totalPrice">219 000 сум</strong>')
+  .replace('<span id="orderLabel">Aniq hisob-kitob uchun raqamingizni qoldiring</span>', '<span id="orderLabel">Оставьте номер для точного расчёта</span>')
+  .replace('<p data-i18n="repairDesc">Полностью устраняем строительную пыль и сложные следы.</p>', '<p data-i18n="repairDesc">Уборка строительной пыли и обработка сложных следов.</p>')
+  .replace('<a href="business.html" data-i18n="navBusiness">Для бизнеса</a>', '<a href="ru/office-cleaning.html" data-i18n="navBusiness">Уборка офисов</a>')
+  .replace('<button type="button" data-property="office">', '<button type="button" data-property="office" data-russian-office-link="ru/office-cleaning.html">');
+await writeFile(resolve(output, "client", "ru", "index.html"), russianHome);
 await cp(resolve(root, "worker", "index.js"), resolve(output, "server", "index.js"));
 await cp(resolve(root, ".openai", "hosting.json"), resolve(output, ".openai", "hosting.json"));
 

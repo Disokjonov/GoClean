@@ -4,6 +4,7 @@ for (const path of [
   "dist/server/index.js",
   "dist/server/wrangler.json",
   "dist/client/index.html",
+  "dist/client/ru/index.html",
   "dist/client/shared.js",
   "dist/client/ru/office-cleaning.html",
   "dist/.openai/hosting.json",
