@@ -50,6 +50,7 @@ for (const page of publicPages) {
   const html = await read(page);
   assert.match(html, /<meta\s+name=["']description["']/i, `${page} is missing a description`);
   assert.match(html, /<link\s+rel=["']canonical["']/i, `${page} is missing a canonical`);
+  assert.match(html, /shared\.js\?v=24/, `${page} must load the current shared navigation asset`);
 }
 
 for (const page of ["business-request.html"]) {
@@ -238,6 +239,12 @@ assert.match(homeRu, /<title>Клининг в Ташкенте для дома 
 assert.match(homeRu, /<meta name="description" content="Клининг в Ташкенте/);
 assert.match(homeRu, /<h1 data-i18n="heroTitle">Клининг в Ташкенте для дома и бизнеса<\/h1>/);
 assert.match(homeRu, /<base href="\.\.\/"/);
+assert.equal((homeRu.match(/href="\/ru\/#top"/g) || []).length, 2, "Russian homepage must keep both brand links on /ru/#top");
+assert.equal((homeRu.match(/href="\/ru\/#how"/g) || []).length, 2, "Russian homepage must keep both how-it-works links on /ru/#how");
+assert.doesNotMatch(homeRu, /href="#(?:top|how)"/, "Russian homepage must not contain base-relative fragment links");
+const sharedClient = await read("shared.js");
+assert.ok(sharedClient.includes("const homeOfferHref=russianPage?'/ru/?offer=first-order':'/?offer=first-order'"), "shared navigation must define language-aware Home offer destinations");
+assert.ok(sharedClient.includes("cta.href=mode==='home'?homeOfferHref:'/business-request.html'"), "drawer modes must restore the language-aware Home destination and root Business destination");
 assert.ok(homeRu.includes('href="ru/office-cleaning.html">Уборка офисов</a>'), "Russian homepage must link to the Russian office page");
 assert.ok(homeRu.includes("GoClean оказывает услуги уборки для квартир, домов, офисов и коммерческих объектов в Ташкенте."), "Russian homepage must contain useful source content");
 for (const fact of ["GoClean", "Ташкент", "+998 97 707 15 15", "hello@goclean.uz"]) assert.ok(homeRu.includes(fact), `Russian homepage is missing verified fact: ${fact}`);
