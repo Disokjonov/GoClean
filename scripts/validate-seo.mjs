@@ -102,6 +102,13 @@ for (const guide of preparationGuidePages) {
   assert.ok(html.includes(`<h1>${guide.h1}</h1>`), `${guide.file} H1 is incorrect`);
   assert.equal((html.match(/<details>/g) || []).length, 5, `${guide.file} must contain five FAQs`);
   assert.equal((html.match(/class="guide-check-item"/g) || []).length, 5, `${guide.file} must contain five checklist items`);
+  assert.equal((html.match(/data-article-lead(?:\s|>)/g) || []).length, 1, `${guide.file} must contain one article lead form`);
+  assert.ok(html.includes('name="name" autocomplete="name" required'), `${guide.file} name must be required`);
+  assert.ok(html.includes('name="phone" type="tel"') && html.includes('maxlength="12" required'), `${guide.file} phone must be required`);
+  assert.ok(html.includes('name="area" type="number" min="1"') && !html.includes('name="area" type="number" min="1" required'), `${guide.file} area must stay optional`);
+  assert.ok(html.includes('data-article-area-field hidden'), `${guide.file} optional area must be hidden initially`);
+  assert.ok(html.includes('article-lead.js?v=1'), `${guide.file} must load the reusable article lead behavior`);
+  assert.ok(!html.includes('data-article-lead-form'), `${guide.file} article form placeholder must be rendered at build time`);
   const nodes = graphNodes(jsonLdBlocks(html));
   assert.equal(nodes.filter(node => node["@type"] === "Article").length, 1, `${guide.file} must contain one Article entity`);
   assert.equal(nodes.filter(node => node["@type"] === "FAQPage").length, 1, `${guide.file} must contain one FAQPage entity`);
@@ -111,6 +118,15 @@ for (const guide of preparationGuidePages) {
 const blogHtml = await read("blog.html");
 assert.ok(blogHtml.includes('href="cleaning-preparation-guide.html"'), "blog must link to the Uzbek preparation guide");
 assert.ok(blogHtml.includes('href="ru/cleaning-preparation-guide.html"'), "blog must link to the Russian preparation guide");
+assert.equal((blogHtml.match(/class="blog-card"/g) || []).length, 1, "blog must list only real published articles");
+assert.match(blogHtml, /<h2><a class="blog-card-title" href="cleaning-preparation-guide\.html" aria-label="[^"]+">Tozalash mutaxassisi kelishidan oldin uyni qanday tayyorlash kerak\?<\/a><\/h2>/);
+for (const placeholderTitle of ["Divandagi dog‘ni chuqurlashtirib yubormaslik uchun 5 qoida", "Oynani iz qoldirmay yuvishning oddiy tartibi", "General tozalash qachon kerak bo‘ladi?"]) {
+  assert.ok(!blogHtml.includes(placeholderTitle), `blog must remove unpublished placeholder: ${placeholderTitle}`);
+}
+
+const articleLeadScript = await read("article-lead.js");
+assert.match(articleLeadScript, /form\.dataset\.submitting==='true'/, "article lead form must guard repeated submissions");
+assert.match(articleLeadScript, /leads\.send\('order'/, "article lead form must reuse the existing lead route");
 
 const context = { window: {} };
 vm.runInNewContext(await readFile(new URL("../data.js", import.meta.url), "utf8"), context);

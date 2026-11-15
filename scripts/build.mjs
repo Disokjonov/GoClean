@@ -270,6 +270,40 @@ for (const slug of ["marble-cleaning", "paving-cleaning", "curtain-cleaning", "f
 const sourceHeader = `<div class="announcement"><span>Toshkent bo‘ylab har kuni 08:00–21:00</span><a href="tel:+998977071515">+998 97 707 15 15</a></div><header class="site-header"><div class="nav-wrap container"><a class="brand" href="index.html" aria-label="Goclean bosh sahifa"><img class="brand-logo" src="public/assets/goclean-logo.webp" alt="GoClean" width="200" height="86"></a><nav id="mainNav" class="main-nav"><a href="services.html">Xizmatlar</a><a href="office-cleaning.html">Ofis tozalash</a><a href="business.html">Biznes uchun</a><a href="blog.html">Tavsiyalar</a><a href="contact.html">Kontaktlar</a></nav><div class="nav-actions"><button class="lang" id="globalLangToggle" type="button" aria-label="Tilni almashtirish">RU</button><a class="outline-button desktop-cta" href="index.html?offer=first-order">Maxsus chegirmani olish</a><button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="mobileDrawer" aria-label="Menyuni ochish"><span></span><span></span><span></span></button></div></div></header>`;
 const sourceFooter = `<footer><div class="container footer-grid"><div><a class="brand footer-brand" href="index.html"><img class="brand-logo" src="public/assets/goclean-logo.webp" alt="GoClean" width="200" height="86"></a><p>Uy va biznes uchun professional tozalash xizmati.</p></div><div><b>Xizmatlar</b><a href="services.html">Barcha xizmatlar</a><a href="general-cleaning.html">General tozalash</a><a href="furniture-cleaning.html">Mebel tozalash</a><a href="window-cleaning.html">Oyna yuvish</a></div><div><b>Kompaniya</b><a href="about.html">Biz haqimizda</a><a href="business.html">Biznes uchun</a><a href="blog.html">Tavsiyalar</a><a href="contact.html">Kontaktlar</a></div><div><b>Bog‘lanish</b><a href="tel:+998977071515">+998 97 707 15 15</a><a href="https://t.me/gocleanuz">Telegram</a><a href="mailto:hello@goclean.uz">hello@goclean.uz</a><span>Toshkent, O‘zbekiston</span></div></div><div class="container footer-bottom"><span>© 2026 Goclean.uz</span><div><a href="privacy.html">Maxfiylik siyosati</a><a href="terms.html">Foydalanish shartlari</a></div></div></footer>`;
 
+const renderArticleLeadForm = language => {
+  const russian = language === "ru";
+  const copy = russian ? {
+    title: "Нужна уборка? Оставьте заявку",
+    intro: "Оставьте имя и телефон. Оператор свяжется с вами, чтобы согласовать состав работ, адрес, время и стоимость.",
+    areaOpen: "Указать площадь уборки",
+    areaClose: "Не указывать площадь уборки",
+    optional: "Необязательно",
+    area: "Площадь уборки (м²)",
+    areaPlaceholder: "Например, 50",
+    name: "Ваше имя",
+    namePlaceholder: "Ваше имя",
+    phone: "Номер телефона",
+    submit: "Оставить номер",
+    note: "Отправка заявки не подтверждает заказ. Детали согласуются с оператором.",
+    success: "Заявка принята. Оператор свяжется с вами для согласования деталей."
+  } : {
+    title: "Tozalash kerakmi? Ariza qoldiring",
+    intro: "Ism va telefon raqamingizni qoldiring. Operator xizmat tarkibi, manzil, vaqt va narxni siz bilan kelishadi.",
+    areaOpen: "Tozalash maydonini kiritish",
+    areaClose: "Tozalash maydonini kiritmaslik",
+    optional: "Ixtiyoriy",
+    area: "Tozalash maydoni (m²)",
+    areaPlaceholder: "Masalan, 50",
+    name: "Ismingiz",
+    namePlaceholder: "Ismingiz",
+    phone: "Telefon raqam",
+    submit: "Raqam qoldirish",
+    note: "Ariza yuborilishi buyurtma tasdiqlanganini anglatmaydi. Tafsilotlar operator bilan kelishiladi.",
+    success: "Ariza qabul qilindi. Operator tafsilotlarni kelishish uchun siz bilan bog‘lanadi."
+  };
+  return `<section class="article-enquiry" aria-labelledby="articleEnquiryTitle"><div class="article-enquiry-copy"><span class="kicker">${russian ? "Заявка" : "Ariza"}</span><h2 id="articleEnquiryTitle">${copy.title}</h2><p>${copy.intro}</p></div><form class="article-lead-form" data-article-lead data-service-name="General tozalash" data-area-open-label="${copy.areaOpen}" data-area-close-label="${copy.areaClose}" novalidate><button class="optional-area-toggle" type="button" data-article-area-toggle aria-expanded="false"><span>＋</span><b>${copy.areaOpen}</b><small>${copy.optional}</small></button><div class="optional-area" data-article-area-field hidden><label><span>${copy.area}</span><input name="area" type="number" min="1" inputmode="numeric" placeholder="${copy.areaPlaceholder}"></label></div><div class="article-lead-fields"><label><span>${copy.name}</span><input name="name" autocomplete="name" required placeholder="${copy.namePlaceholder}"></label><label><span>${copy.phone}</span><span class="phone-input"><b>+998</b><input name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="12" required placeholder="90 123 45 67"></span></label></div><p class="form-inline-error" role="alert" hidden></p><p class="article-form-success" role="status" data-article-success hidden>${copy.success}</p><button class="primary-button" type="submit">${copy.submit}</button><small>${copy.note}</small></form></section>`;
+};
+
 function renderCatalogCard(service) {
   const metadata = canonicalServicePages[service.slug];
   const href = metadata?.file || `service.html?slug=${encodeURIComponent(service.slug)}`;
@@ -346,7 +380,8 @@ for (const [file, metadata] of Object.entries(seoPages)) {
   let html = await readFile(path, "utf8");
   html = html
     .replace('<div data-site-header></div>', `<div data-site-header>${sourceHeader}</div>`)
-    .replace('<div data-site-footer></div>', `<div data-site-footer>${sourceFooter}</div>`);
+    .replace('<div data-site-footer></div>', `<div data-site-footer>${sourceFooter}</div>`)
+    .replace('<div data-article-lead-form></div>', renderArticleLeadForm("uz"));
   if (file === "services.html") {
     const cards = dataContext.window.GOCLEAN_SERVICES.map(renderCatalogCard).join("");
     html = html.replace('<div class="catalog-grid" id="catalogGrid"></div>', `<div class="catalog-grid" id="catalogGrid">${cards}</div>`);
@@ -431,7 +466,9 @@ await mkdir(resolve(output, "client", "ru"), { recursive: true });
 await writeFile(resolve(output, "client", "ru", "office-cleaning.html"), russianOffice);
 
 let russianPreparationGuide = await readFile(resolve(root, "preparation-guide-ru.html"), "utf8");
-russianPreparationGuide = russianPreparationGuide.replace(/shared\.js\?v=\d+/g, `shared.js?v=${sharedAssetVersion}`);
+russianPreparationGuide = russianPreparationGuide
+  .replace(/shared\.js\?v=\d+/g, `shared.js?v=${sharedAssetVersion}`)
+  .replace('<div data-article-lead-form></div>', renderArticleLeadForm("ru"));
 await writeFile(resolve(output, "client", "ru", "cleaning-preparation-guide.html"), russianPreparationGuide);
 
 const homeRussianDirectTranslations = {
