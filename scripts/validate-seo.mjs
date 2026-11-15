@@ -50,7 +50,7 @@ for (const page of publicPages) {
   const html = await read(page);
   assert.match(html, /<meta\s+name=["']description["']/i, `${page} is missing a description`);
   assert.match(html, /<link\s+rel=["']canonical["']/i, `${page} is missing a canonical`);
-  assert.match(html, /shared\.js\?v=24/, `${page} must load the current shared navigation asset`);
+  assert.match(html, /shared\.js\?v=25/, `${page} must load the current shared navigation asset`);
 }
 
 for (const page of ["business-request.html"]) {
@@ -141,6 +141,10 @@ assert.match(general, /<h1>General tozalash<\/h1>/);
 assert.match(general, /Barcha ochiq yuzalar, oshxona, sanuzel, eshiklar, plintuslar/);
 assert.match(general, /data-service-lead="General tozalash"/);
 assert.doesNotMatch(general, /<main[^>]*>\s*<\/main>/);
+assert.match(general, /const titles=\{"uz":"General tozalash Toshkentda — Goclean\.uz","ru":"Генеральная уборка в Ташкенте \| GoClean"\}/);
+assert.match(general, /data-content-lang="uz"[\s\S]*aria-label="Tegishli xizmatlar"[\s\S]*>Savol va bog‘lanish<\/a>/);
+assert.match(general, /data-content-lang="ru" hidden[\s\S]*aria-label="Связанные услуги"[\s\S]*<b>Связанные услуги<\/b>[\s\S]*>Вопросы и связь<\/a>/);
+assert.equal((general.match(/<details>/g) || []).length, 8, "general-cleaning must keep exactly four FAQs per language");
 
 const titles = new Set();
 const descriptions = new Set();
