@@ -14,7 +14,7 @@ await mkdir(resolve(output, "server"), { recursive: true });
 await mkdir(resolve(output, ".openai"), { recursive: true });
 
 const entries = await readdir(root, { withFileTypes: true });
-const excludedClientFiles = new Set(["auth.html", "booking.html", "booking.js"]);
+const excludedClientFiles = new Set(["auth.html", "booking.html", "booking.js", "preparation-guide-ru.html"]);
 for (const entry of entries) {
   if (entry.isFile() && !excludedClientFiles.has(entry.name) && /\.(html|css|js|txt|xml|svg)$/.test(entry.name)) {
     const sourcePath = resolve(root, entry.name);
@@ -308,6 +308,10 @@ const seoPages = {
     canonical: "https://go-clean.uz/blog.html",
     description: "Uy va biznes obyektlarida tozalikni saqlash bo‘yicha Goclean tavsiyalari va amaliy qo‘llanmalar."
   },
+  "cleaning-preparation-guide.html": {
+    canonical: "https://go-clean.uz/cleaning-preparation-guide.html",
+    description: "Shaxsiy buyumlar, kerakli joylarga kirish va ishlar ro‘yxati: mutaxassis kelishidan oldingi amaliy tayyorgarlik qo‘llanmasi."
+  },
   "about.html": {
     canonical: "https://go-clean.uz/about.html",
     description: "Goclean jamoasi, professional tozalash standartlari va Toshkentdagi uy hamda biznes xizmatlari haqida."
@@ -425,6 +429,10 @@ russianOffice = russianOffice
   .replace('<a href="office-cleaning.html">Уборка офисов</a>', '<a href="ru/office-cleaning.html">Уборка офисов</a>');
 await mkdir(resolve(output, "client", "ru"), { recursive: true });
 await writeFile(resolve(output, "client", "ru", "office-cleaning.html"), russianOffice);
+
+let russianPreparationGuide = await readFile(resolve(root, "preparation-guide-ru.html"), "utf8");
+russianPreparationGuide = russianPreparationGuide.replace(/shared\.js\?v=\d+/g, `shared.js?v=${sharedAssetVersion}`);
+await writeFile(resolve(output, "client", "ru", "cleaning-preparation-guide.html"), russianPreparationGuide);
 
 const homeRussianDirectTranslations = {
   "Toshkent bo‘ylab har kuni 08:00–21:00": "По Ташкенту ежедневно",

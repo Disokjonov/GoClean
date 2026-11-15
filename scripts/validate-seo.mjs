@@ -36,11 +36,13 @@ const publicPages = [
   "odor-removal.html",
   "mold-removal.html",
   "blog.html",
+  "cleaning-preparation-guide.html",
   "about.html",
   "business.html",
   "office-cleaning.html",
   "ru/index.html",
   "ru/office-cleaning.html",
+  "ru/cleaning-preparation-guide.html",
   "contact.html",
   "privacy.html",
   "terms.html"
@@ -72,6 +74,43 @@ assert.match(sitemap, /https:\/\/go-clean\.uz\/terms\.html/);
 assert.doesNotMatch(sitemap, /legal\.html\?doc=/);
 assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\//);
 assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\/office-cleaning\.html/);
+assert.match(sitemap, /https:\/\/go-clean\.uz\/cleaning-preparation-guide\.html/);
+assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\/cleaning-preparation-guide\.html/);
+
+const preparationGuidePages = [
+  {
+    file: "cleaning-preparation-guide.html",
+    lang: "uz",
+    canonical: "https://go-clean.uz/cleaning-preparation-guide.html",
+    alternate: "https://go-clean.uz/ru/cleaning-preparation-guide.html",
+    h1: "Tozalash mutaxassisi kelishidan oldin uyni qanday tayyorlash kerak?"
+  },
+  {
+    file: "ru/cleaning-preparation-guide.html",
+    lang: "ru",
+    canonical: "https://go-clean.uz/ru/cleaning-preparation-guide.html",
+    alternate: "https://go-clean.uz/cleaning-preparation-guide.html",
+    h1: "Как подготовить квартиру к приезду клинеров"
+  }
+];
+for (const guide of preparationGuidePages) {
+  const html = await read(guide.file);
+  assert.match(html, new RegExp(`<html lang=["']${guide.lang}["']`), `${guide.file} language is incorrect`);
+  assert.ok(html.includes(`<link rel="canonical" href="${guide.canonical}">`), `${guide.file} canonical is incorrect`);
+  assert.ok(html.includes(`hreflang="${guide.lang}" href="${guide.canonical}"`), `${guide.file} self hreflang is missing`);
+  assert.ok(html.includes(`href="${guide.alternate}"`), `${guide.file} reciprocal language link is missing`);
+  assert.ok(html.includes(`<h1>${guide.h1}</h1>`), `${guide.file} H1 is incorrect`);
+  assert.equal((html.match(/<details>/g) || []).length, 5, `${guide.file} must contain five FAQs`);
+  assert.equal((html.match(/class="guide-check-item"/g) || []).length, 5, `${guide.file} must contain five checklist items`);
+  const nodes = graphNodes(jsonLdBlocks(html));
+  assert.equal(nodes.filter(node => node["@type"] === "Article").length, 1, `${guide.file} must contain one Article entity`);
+  assert.equal(nodes.filter(node => node["@type"] === "FAQPage").length, 1, `${guide.file} must contain one FAQPage entity`);
+  assertNoUnverifiedStructuredFacts(nodes, guide.file);
+}
+
+const blogHtml = await read("blog.html");
+assert.ok(blogHtml.includes('href="cleaning-preparation-guide.html"'), "blog must link to the Uzbek preparation guide");
+assert.ok(blogHtml.includes('href="ru/cleaning-preparation-guide.html"'), "blog must link to the Russian preparation guide");
 
 const context = { window: {} };
 vm.runInNewContext(await readFile(new URL("../data.js", import.meta.url), "utf8"), context);
