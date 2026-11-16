@@ -22,7 +22,7 @@ export const serviceContent = {
     },
     localizedLinks: {
       uz: [["after-renovation-cleaning.html", "Ta’mirdan keyin tozalash"], ["furniture-cleaning.html", "Mebel kimyoviy tozalash"], ["window-cleaning.html", "Oyna yuvish"], ["contact.html", "Savol va bog‘lanish"]],
-      ru: [["ru/after-renovation-cleaning.html", "Уборка после ремонта"], ["furniture-cleaning.html", "Химчистка мебели"], ["window-cleaning.html", "Мойка окон"], ["contact.html", "Вопросы и связь"]]
+      ru: [["ru/after-renovation-cleaning.html", "Уборка после ремонта"], ["furniture-cleaning.html", "Химчистка мебели"], ["ru/window-cleaning.html", "Мойка окон"], ["contact.html", "Вопросы и связь"]]
     }
   },
   "after-renovation": {
@@ -66,7 +66,7 @@ export const serviceContent = {
     },
     localizedLinks: {
       uz: [["general-cleaning.html", "Ta’mir bo‘lmagan obyekt uchun general tozalash"], ["window-cleaning.html", "Oyna va romlarni yuvish"], ["marble-cleaning.html", "Marmar yuzalarni tozalash"], ["office-cleaning.html", "Tijorat obyektlari va ofislar"]],
-      ru: [["general-cleaning.html", "Генеральная уборка объекта без ремонта"], ["window-cleaning.html", "Мойка окон и рам"], ["marble-cleaning.html", "Очистка мраморных поверхностей"], ["office-cleaning.html", "Офисы и коммерческие объекты"]]
+      ru: [["general-cleaning.html", "Генеральная уборка объекта без ремонта"], ["ru/window-cleaning.html", "Мойка окон и рам"], ["marble-cleaning.html", "Очистка мраморных поверхностей"], ["office-cleaning.html", "Офисы и коммерческие объекты"]]
     }
   },
   "furniture-cleaning": {

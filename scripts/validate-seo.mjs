@@ -45,6 +45,7 @@ const publicPages = [
   "ru/after-renovation-cleaning.html",
   "ru/furniture-cleaning.html",
   "ru/carpet-cleaning.html",
+  "ru/window-cleaning.html",
   "ru/cleaning-preparation-guide.html",
   "contact.html",
   "privacy.html",
@@ -478,5 +479,31 @@ assert.equal(carpetRuService?.url, "https://go-clean.uz/ru/carpet-cleaning.html"
 assert.equal(carpetRuService?.description, "GoClean выполняет чистку ковров и ковровых покрытий в Ташкенте. Услуга включает удаление пыли, обработку пятен, глубокую стирку и сушку.");
 assert.ok(sitemap.includes("https://go-clean.uz/ru/carpet-cleaning.html"), "sitemap must include RU carpet");
 assert.ok(homeRu.includes('href="ru/carpet-cleaning.html">Чистка ковров</a>'), "RU homepage must link to RU carpet");
+
+const windowUz = await read("window-cleaning.html");
+const windowRu = await read("ru/window-cleaning.html");
+assert.match(windowRu, /<html lang="ru">/);
+assert.match(windowRu, /<base href="\.\.\/">/);
+assert.match(windowRu, /<title>Мойка окон в Ташкенте — GoClean<\/title>/);
+assert.match(windowRu, /<meta name="description" content="Мойка окон в Ташкенте:/);
+assert.match(windowRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/window-cleaning\.html">/);
+for (const [hreflang, href] of [["uz", "https://go-clean.uz/window-cleaning.html"], ["ru", "https://go-clean.uz/ru/window-cleaning.html"], ["x-default", "https://go-clean.uz/window-cleaning.html"]]) {
+  assert.ok(windowUz.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `UZ window is missing ${hreflang} hreflang`);
+  assert.ok(windowRu.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `RU window is missing ${hreflang} hreflang`);
+}
+assert.match(windowUz, /class="page-language-link" href="ru\/window-cleaning\.html"/);
+assert.match(windowRu, /data-page-language="ru" data-language-switch="window-cleaning\.html"/);
+assert.match(windowRu, /<h1>Мойка окон в Ташкенте<\/h1>/);
+assert.equal((windowRu.match(/<details>/g) || []).length, 0, "RU window must not invent FAQs");
+assert.ok((windowUz.match(/data-service-area-option/g) || []).length >= 2, "UZ window CTAs must keep optional area");
+assert.ok((windowRu.match(/data-service-area-option/g) || []).length >= 2, "RU window CTAs must keep optional area");
+assert.doesNotMatch(windowRu, /гарант|альпинист|высот|фасад|безопасн/i);
+const windowRuNodes = graphNodes(jsonLdBlocks(windowRu));
+const windowRuService = windowRuNodes.find(node => node["@type"] === "Service");
+assert.equal(windowRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU window must not add FAQ schema");
+assert.equal(windowRuService?.url, "https://go-clean.uz/ru/window-cleaning.html");
+assert.equal(windowRuService?.description, "GoClean моет внутренние и наружные поверхности окон, рамы и подоконники в Ташкенте с использованием профессиональных средств.");
+assert.ok(sitemap.includes("https://go-clean.uz/ru/window-cleaning.html"), "sitemap must include RU window");
+assert.ok(homeRu.includes('href="ru/window-cleaning.html">Мойка окон</a>'), "RU homepage must link to RU window");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);
