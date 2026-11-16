@@ -41,6 +41,7 @@ const publicPages = [
   "business.html",
   "office-cleaning.html",
   "ru/index.html",
+  "ru/general-cleaning.html",
   "ru/office-cleaning.html",
   "ru/after-renovation-cleaning.html",
   "ru/furniture-cleaning.html",
@@ -60,7 +61,7 @@ for (const page of publicPages) {
   const html = await read(page);
   assert.match(html, /<meta\s+name=["']description["']/i, `${page} is missing a description`);
   assert.match(html, /<link\s+rel=["']canonical["']/i, `${page} is missing a canonical`);
-  assert.match(html, /shared\.js\?v=26/, `${page} must load the current shared navigation asset`);
+  assert.match(html, /shared\.js\?v=27/, `${page} must load the current shared navigation asset`);
 }
 
 for (const page of ["business-request.html"]) {
@@ -228,6 +229,33 @@ assert.match(general, /data-content-lang="uz"[\s\S]*aria-label="Tegishli xizmatl
 assert.match(general, /data-content-lang="ru" hidden[\s\S]*aria-label="Связанные услуги"[\s\S]*<b>Связанные услуги<\/b>[\s\S]*>Вопросы и связь<\/a>/);
 assert.equal((general.match(/<details>/g) || []).length, 8, "general-cleaning must keep exactly four FAQs per language");
 
+const generalRu = await read("ru/general-cleaning.html");
+assert.match(generalRu, /<html lang="ru">/);
+assert.match(generalRu, /<base href="\.\.\/">/);
+assert.match(generalRu, /<title>Генеральная уборка в Ташкенте — GoClean<\/title>/);
+assert.match(generalRu, /<meta name="description" content="Генеральная уборка квартир, домов с двором и офисов в Ташкенте\./);
+assert.match(generalRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/general-cleaning\.html">/);
+for (const [hreflang, href] of [["uz", "https://go-clean.uz/general-cleaning.html"], ["ru", "https://go-clean.uz/ru/general-cleaning.html"], ["x-default", "https://go-clean.uz/general-cleaning.html"]]) {
+  assert.ok(general.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `UZ general is missing ${hreflang} hreflang`);
+  assert.ok(generalRu.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `RU general is missing ${hreflang} hreflang`);
+}
+assert.match(general, /class="page-language-link" href="ru\/general-cleaning\.html"/);
+assert.match(generalRu, /data-page-language="ru" data-language-switch="general-cleaning\.html"/);
+assert.match(generalRu, /class="page-language-link" href="general-cleaning\.html" hreflang="uz"/);
+assert.match(generalRu, /<h1>Генеральная уборка в Ташкенте<\/h1>/);
+assert.equal((generalRu.match(/<details>/g) || []).length, 3, "RU general must contain three verified non-price FAQs");
+assert.ok((generalRu.match(/data-service-area-option/g) || []).length >= 2, "RU general CTAs must keep optional area");
+assert.doesNotMatch(generalRu, /500\s*000|за вызов одного сотрудника|почасов/i, "RU general must not publish the pending price basis");
+assert.doesNotMatch(generalRu, /бесплатн[^<]{0,40}(?:повторн|переубор)|гарант/i, "RU general must not add the queued guarantee copy");
+const generalRuNodes = graphNodes(jsonLdBlocks(generalRu));
+const generalRuService = generalRuNodes.find(node => node["@type"] === "Service");
+const generalRuFaq = generalRuNodes.find(node => node["@type"] === "FAQPage");
+assert.equal(generalRuService?.url, "https://go-clean.uz/ru/general-cleaning.html");
+assert.equal(generalRuService?.description, serviceContent["general-cleaning"].ru.intro);
+const expectedGeneralRuFaqs = [serviceContent["general-cleaning"].ru.faqs[0], serviceContent["general-cleaning"].ru.faqs[2], serviceContent["general-cleaning"].ru.faqs[3]];
+assert.deepEqual(generalRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), expectedGeneralRuFaqs);
+assert.ok(sitemap.includes("https://go-clean.uz/ru/general-cleaning.html"), "sitemap must include RU general");
+
 const titles = new Set();
 const descriptions = new Set();
 for (const [slug, file] of Object.entries(canonicalServicePages)) {
@@ -332,6 +360,7 @@ const sharedClient = await read("shared.js");
 assert.ok(sharedClient.includes("const homeOfferHref=russianPage?'/ru/?offer=first-order':'/?offer=first-order'"), "shared navigation must define language-aware Home offer destinations");
 assert.ok(sharedClient.includes("cta.href=mode==='home'?homeOfferHref:'/business-request.html'"), "drawer modes must restore the language-aware Home destination and root Business destination");
 assert.ok(homeRu.includes('href="ru/office-cleaning.html">Уборка офисов</a>'), "Russian homepage must link to the Russian office page");
+assert.ok(homeRu.includes('href="ru/general-cleaning.html">Генеральная уборка</a>'), "Russian homepage must link to the Russian general page");
 assert.ok(homeRu.includes("GoClean оказывает услуги уборки для квартир, домов, офисов и коммерческих объектов в Ташкенте."), "Russian homepage must contain useful source content");
 for (const fact of ["GoClean", "Ташкент", "+998 97 707 15 15", "hello@goclean.uz"]) assert.ok(homeRu.includes(fact), `Russian homepage is missing verified fact: ${fact}`);
 for (const unverified of ["4.9", "12 000+", "180+", "98%", "24 часа", "Гарантия качества", "бесплатно устраним"]) assert.ok(!homeRu.includes(unverified), `Russian homepage contains unverified claim: ${unverified}`);
