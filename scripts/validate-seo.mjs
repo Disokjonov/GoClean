@@ -43,6 +43,7 @@ const publicPages = [
   "ru/index.html",
   "ru/office-cleaning.html",
   "ru/after-renovation-cleaning.html",
+  "ru/furniture-cleaning.html",
   "ru/cleaning-preparation-guide.html",
   "contact.html",
   "privacy.html",
@@ -420,5 +421,33 @@ assert.equal(afterRenovationRuService?.description, serviceContent["after-renova
 assert.deepEqual(afterRenovationRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), serviceContent["after-renovation"].ru.faqs);
 assert.ok(sitemap.includes("https://go-clean.uz/ru/after-renovation-cleaning.html"), "sitemap must include RU after-renovation");
 assert.ok(homeRu.includes('href="ru/after-renovation-cleaning.html">Уборка после ремонта</a>'), "RU homepage must link to RU after-renovation");
+
+const furnitureUz = await read("furniture-cleaning.html");
+const furnitureRu = await read("ru/furniture-cleaning.html");
+assert.match(furnitureRu, /<html lang="ru">/);
+assert.match(furnitureRu, /<base href="\.\.\/">/);
+assert.match(furnitureRu, /<title>Химчистка мебели в Ташкенте — GoClean<\/title>/);
+assert.match(furnitureRu, /<meta name="description" content="Химчистка диванов, кресел и мягкой мебели в Ташкенте:/);
+assert.match(furnitureRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/furniture-cleaning\.html">/);
+for (const [hreflang, href] of [["uz", "https://go-clean.uz/furniture-cleaning.html"], ["ru", "https://go-clean.uz/ru/furniture-cleaning.html"], ["x-default", "https://go-clean.uz/furniture-cleaning.html"]]) {
+  assert.ok(furnitureUz.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `UZ furniture is missing ${hreflang} hreflang`);
+  assert.ok(furnitureRu.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `RU furniture is missing ${hreflang} hreflang`);
+}
+assert.match(furnitureUz, /class="page-language-link" href="ru\/furniture-cleaning\.html"/);
+assert.match(furnitureRu, /data-page-language="ru" data-language-switch="furniture-cleaning\.html"/);
+assert.match(furnitureRu, /<h1>Химчистка мебели в Ташкенте<\/h1>/);
+for (const [question, answer] of serviceContent["furniture-cleaning"].ru.faqs) {
+  assert.ok(furnitureRu.includes(question) && furnitureRu.includes(answer), `RU furniture must display FAQ: ${question}`);
+}
+assert.equal((furnitureRu.match(/<details>/g) || []).length, 4, "RU furniture must contain four existing visible FAQs");
+assert.doesNotMatch(furnitureRu, /гарант|дезинф|безопасн|все пятна исчезнут полностью[^?]/i);
+const furnitureRuNodes = graphNodes(jsonLdBlocks(furnitureRu));
+const furnitureRuService = furnitureRuNodes.find(node => node["@type"] === "Service");
+const furnitureRuFaq = furnitureRuNodes.find(node => node["@type"] === "FAQPage");
+assert.equal(furnitureRuService?.url, "https://go-clean.uz/ru/furniture-cleaning.html");
+assert.equal(furnitureRuService?.description, serviceContent["furniture-cleaning"].ru.intro);
+assert.deepEqual(furnitureRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), serviceContent["furniture-cleaning"].ru.faqs);
+assert.ok(sitemap.includes("https://go-clean.uz/ru/furniture-cleaning.html"), "sitemap must include RU furniture");
+assert.ok(homeRu.includes('href="ru/furniture-cleaning.html">Химчистка мебели</a>'), "RU homepage must link to RU furniture");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);
