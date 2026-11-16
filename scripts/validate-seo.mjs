@@ -91,14 +91,16 @@ const preparationGuidePages = [
     lang: "uz",
     canonical: "https://go-clean.uz/cleaning-preparation-guide.html",
     alternate: "https://go-clean.uz/ru/cleaning-preparation-guide.html",
-    h1: "Tozalash mutaxassisi kelishidan oldin uyni qanday tayyorlash kerak?"
+    h1: "Tozalash mutaxassisi kelishidan oldin uyni qanday tayyorlash kerak?",
+    publishedLabel: "Nashr qilingan: 15 noyabr 2026"
   },
   {
     file: "ru/cleaning-preparation-guide.html",
     lang: "ru",
     canonical: "https://go-clean.uz/ru/cleaning-preparation-guide.html",
     alternate: "https://go-clean.uz/cleaning-preparation-guide.html",
-    h1: "Как подготовить квартиру к приезду клинеров"
+    h1: "Как подготовить квартиру к приезду клинеров",
+    publishedLabel: "Опубликовано: 15 ноября 2026"
   }
 ];
 for (const guide of preparationGuidePages) {
@@ -108,6 +110,7 @@ for (const guide of preparationGuidePages) {
   assert.ok(html.includes(`hreflang="${guide.lang}" href="${guide.canonical}"`), `${guide.file} self hreflang is missing`);
   assert.ok(html.includes(`href="${guide.alternate}"`), `${guide.file} reciprocal language link is missing`);
   assert.ok(html.includes(`<h1>${guide.h1}</h1>`), `${guide.file} H1 is incorrect`);
+  assert.ok(html.includes(`<time datetime="2026-11-15">${guide.publishedLabel}</time>`), `${guide.file} visible publication date is missing`);
   assert.equal((html.match(/<details>/g) || []).length, 5, `${guide.file} must contain five FAQs`);
   assert.equal((html.match(/class="guide-check-item"/g) || []).length, 5, `${guide.file} must contain five checklist items`);
   assert.equal((html.match(/data-article-lead(?:\s|>)/g) || []).length, 1, `${guide.file} must contain one article lead form`);
@@ -119,6 +122,10 @@ for (const guide of preparationGuidePages) {
   assert.ok(!html.includes('data-article-lead-form'), `${guide.file} article form placeholder must be rendered at build time`);
   const nodes = graphNodes(jsonLdBlocks(html));
   assert.equal(nodes.filter(node => node["@type"] === "Article").length, 1, `${guide.file} must contain one Article entity`);
+  const article = nodes.find(node => node["@type"] === "Article");
+  assert.equal(article.datePublished, "2026-11-15T16:34:03Z", `${guide.file} publication time must match the first successful Render release`);
+  assert.ok(!article.dateModified, `${guide.file} must not claim an editorial modification date for the enquiry-form-only release`);
+  assert.ok(!article.author, `${guide.file} must not invent an unverified author`);
   assert.equal(nodes.filter(node => node["@type"] === "FAQPage").length, 1, `${guide.file} must contain one FAQPage entity`);
   assertNoUnverifiedStructuredFacts(nodes, guide.file);
 }
