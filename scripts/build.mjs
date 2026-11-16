@@ -167,6 +167,13 @@ const russianGeneralFaqs = [
   serviceContent["general-cleaning"].ru.faqs[3]
 ];
 
+const russianGuaranteeArt = `<b>Гарантия качества</b><small>Если результат не устроит, уберём повторно бесплатно</small>`;
+function withRussianGuarantee(html) {
+  const updated = html.replace(/<b>Об услуге<\/b><small>[^<]+<\/small>/, russianGuaranteeArt);
+  if (updated === html) throw new Error("Russian service guarantee placeholder is missing");
+  return updated;
+}
+
 function russianGeneralStructuredData() {
   const url = "https://go-clean.uz/ru/general-cleaning.html";
   const content = serviceContent["general-cleaning"].ru;
@@ -726,16 +733,16 @@ for (const [slug, metadata] of Object.entries(canonicalServicePages)) {
 
 const afterRenovationService = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === "after-renovation");
 await mkdir(resolve(output, "client", "ru"), { recursive: true });
-await writeFile(resolve(output, "client", "ru", "general-cleaning.html"), renderRussianGeneralPage());
-await writeFile(resolve(output, "client", "ru", "after-renovation-cleaning.html"), renderRussianAfterRenovationPage(afterRenovationService, canonicalServicePages["after-renovation"]));
+await writeFile(resolve(output, "client", "ru", "general-cleaning.html"), withRussianGuarantee(renderRussianGeneralPage()));
+await writeFile(resolve(output, "client", "ru", "after-renovation-cleaning.html"), withRussianGuarantee(renderRussianAfterRenovationPage(afterRenovationService, canonicalServicePages["after-renovation"])));
 const furnitureService = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === "furniture-cleaning");
 await writeFile(
   resolve(output, "client", "ru", "furniture-cleaning.html"),
-  renderRussianFurniturePage(furnitureService, canonicalServicePages["furniture-cleaning"])
-    .replaceAll('data-service-lead="Химчистка мебели"', 'data-service-lead="Химчистка мебели" data-service-area-option')
+  withRussianGuarantee(renderRussianFurniturePage(furnitureService, canonicalServicePages["furniture-cleaning"])
+    .replaceAll('data-service-lead="Химчистка мебели"', 'data-service-lead="Химчистка мебели" data-service-area-option'))
 );
-await writeFile(resolve(output, "client", "ru", "carpet-cleaning.html"), renderRussianCarpetPage());
-await writeFile(resolve(output, "client", "ru", "window-cleaning.html"), renderRussianWindowPage());
+await writeFile(resolve(output, "client", "ru", "carpet-cleaning.html"), withRussianGuarantee(renderRussianCarpetPage()));
+await writeFile(resolve(output, "client", "ru", "window-cleaning.html"), withRussianGuarantee(renderRussianWindowPage()));
 await writeFile(resolve(output, "client", "ru", "curtain-cleaning.html"), renderRussianCurtainPage());
 await writeFile(resolve(output, "client", "ru", "blanket-cleaning.html"), renderRussianBlanketPage());
 await writeFile(resolve(output, "client", "ru", "paving-cleaning.html"), renderRussianPavingPage());

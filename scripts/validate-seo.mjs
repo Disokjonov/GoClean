@@ -246,7 +246,7 @@ assert.match(generalRu, /<h1>Генеральная уборка в Ташкен
 assert.equal((generalRu.match(/<details>/g) || []).length, 3, "RU general must contain three verified non-price FAQs");
 assert.ok((generalRu.match(/data-service-area-option/g) || []).length >= 2, "RU general CTAs must keep optional area");
 assert.doesNotMatch(generalRu, /500\s*000|за вызов одного сотрудника|почасов/i, "RU general must not publish the pending price basis");
-assert.doesNotMatch(generalRu, /бесплатн[^<]{0,40}(?:повторн|переубор)|гарант/i, "RU general must not add the queued guarantee copy");
+assert.match(generalRu, /<b>Гарантия качества<\/b><small>Если результат не устроит, уберём повторно бесплатно<\/small>/, "RU general must match the confirmed UZ guarantee");
 const generalRuNodes = graphNodes(jsonLdBlocks(generalRu));
 const generalRuService = generalRuNodes.find(node => node["@type"] === "Service");
 const generalRuFaq = generalRuNodes.find(node => node["@type"] === "FAQPage");
@@ -255,6 +255,23 @@ assert.equal(generalRuService?.description, serviceContent["general-cleaning"].r
 const expectedGeneralRuFaqs = [serviceContent["general-cleaning"].ru.faqs[0], serviceContent["general-cleaning"].ru.faqs[2], serviceContent["general-cleaning"].ru.faqs[3]];
 assert.deepEqual(generalRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), expectedGeneralRuFaqs);
 assert.ok(sitemap.includes("https://go-clean.uz/ru/general-cleaning.html"), "sitemap must include RU general");
+
+const guaranteedServicePairs = [
+  ["general-cleaning.html", "ru/general-cleaning.html"],
+  ["after-renovation-cleaning.html", "ru/after-renovation-cleaning.html"],
+  ["furniture-cleaning.html", "ru/furniture-cleaning.html"],
+  ["carpet-cleaning.html", "ru/carpet-cleaning.html"],
+  ["window-cleaning.html", "ru/window-cleaning.html"]
+];
+for (const [uzFile, ruFile] of guaranteedServicePairs) {
+  const uzHtml = await read(uzFile);
+  const ruHtml = await read(ruFile);
+  assert.equal((uzHtml.match(/Natija yoqmasa, bepul qayta tozalaymiz/g) || []).length, 1, `${uzFile} must keep one confirmed UZ guarantee`);
+  assert.equal((ruHtml.match(/Если результат не устроит, уберём повторно бесплатно/g) || []).length, 1, `${ruFile} must contain one matching RU guarantee`);
+}
+for (const ruFile of ["ru/blanket-cleaning.html", "ru/curtain-cleaning.html", "ru/marble-cleaning.html", "ru/paving-cleaning.html"]) {
+  assert.doesNotMatch(await read(ruFile), /Если результат не устроит, уберём повторно бесплатно/, `${ruFile} must not gain a guarantee absent from its UZ pair`);
+}
 
 const titles = new Set();
 const descriptions = new Set();
@@ -496,7 +513,7 @@ for (const [question, answer] of serviceContent["furniture-cleaning"].ru.faqs) {
   assert.ok(furnitureRu.includes(question) && furnitureRu.includes(answer), `RU furniture must display FAQ: ${question}`);
 }
 assert.equal((furnitureRu.match(/<details>/g) || []).length, 4, "RU furniture must contain four existing visible FAQs");
-assert.doesNotMatch(furnitureRu, /гарант|дезинф|безопасн|все пятна исчезнут полностью[^?]/i);
+assert.doesNotMatch(furnitureRu, /дезинф|безопасн|все пятна исчезнут полностью[^?]/i);
 const furnitureRuNodes = graphNodes(jsonLdBlocks(furnitureRu));
 const furnitureRuService = furnitureRuNodes.find(node => node["@type"] === "Service");
 const furnitureRuFaq = furnitureRuNodes.find(node => node["@type"] === "FAQPage");
@@ -523,7 +540,7 @@ assert.match(carpetRu, /<h1>Чистка ковров в Ташкенте<\/h1>/
 assert.equal((carpetRu.match(/<details>/g) || []).length, 0, "RU carpet must not invent FAQs");
 assert.ok((carpetUz.match(/data-service-area-option/g) || []).length >= 2, "UZ carpet CTAs must keep optional area");
 assert.ok((carpetRu.match(/data-service-area-option/g) || []).length >= 2, "RU carpet CTAs must keep optional area");
-assert.doesNotMatch(carpetRu, /гарант|дезинф|безопасн|доставка|забер|на дому/i);
+assert.doesNotMatch(carpetRu, /дезинф|безопасн|доставка|забер|на дому/i);
 const carpetRuNodes = graphNodes(jsonLdBlocks(carpetRu));
 const carpetRuService = carpetRuNodes.find(node => node["@type"] === "Service");
 assert.equal(carpetRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU carpet must not add FAQ schema");
@@ -549,7 +566,7 @@ assert.match(windowRu, /<h1>Мойка окон в Ташкенте<\/h1>/);
 assert.equal((windowRu.match(/<details>/g) || []).length, 0, "RU window must not invent FAQs");
 assert.ok((windowUz.match(/data-service-area-option/g) || []).length >= 2, "UZ window CTAs must keep optional area");
 assert.ok((windowRu.match(/data-service-area-option/g) || []).length >= 2, "RU window CTAs must keep optional area");
-assert.doesNotMatch(windowRu, /гарант|альпинист|высот|фасад|безопасн/i);
+assert.doesNotMatch(windowRu, /альпинист|высот|фасад|безопасн/i);
 const windowRuNodes = graphNodes(jsonLdBlocks(windowRu));
 const windowRuService = windowRuNodes.find(node => node["@type"] === "Service");
 assert.equal(windowRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU window must not add FAQ schema");
