@@ -22,7 +22,7 @@ export const serviceContent = {
     },
     localizedLinks: {
       uz: [["after-renovation-cleaning.html", "Ta’mirdan keyin tozalash"], ["furniture-cleaning.html", "Mebel kimyoviy tozalash"], ["window-cleaning.html", "Oyna yuvish"], ["contact.html", "Savol va bog‘lanish"]],
-      ru: [["after-renovation-cleaning.html", "Уборка после ремонта"], ["furniture-cleaning.html", "Химчистка мебели"], ["window-cleaning.html", "Мойка окон"], ["contact.html", "Вопросы и связь"]]
+      ru: [["ru/after-renovation-cleaning.html", "Уборка после ремонта"], ["furniture-cleaning.html", "Химчистка мебели"], ["window-cleaning.html", "Мойка окон"], ["contact.html", "Вопросы и связь"]]
     }
   },
   "after-renovation": {

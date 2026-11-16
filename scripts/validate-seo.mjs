@@ -42,6 +42,7 @@ const publicPages = [
   "office-cleaning.html",
   "ru/index.html",
   "ru/office-cleaning.html",
+  "ru/after-renovation-cleaning.html",
   "ru/cleaning-preparation-guide.html",
   "contact.html",
   "privacy.html",
@@ -392,5 +393,32 @@ for (const href of ["general-cleaning.html", "window-cleaning.html", "marble-cle
   assert.ok(afterRenovation.includes(`href="${href}"`), `after-renovation must contextually link to ${href}`);
 }
 assert.equal((afterRenovation.match(/<details>/g) || []).length, serviceContent["after-renovation"].uz.faqs.length * 2, "after-renovation UZ/RU visible FAQ count is incorrect");
+
+const afterRenovationRu = await read("ru/after-renovation-cleaning.html");
+assert.match(afterRenovationRu, /<html lang="ru">/);
+assert.match(afterRenovationRu, /<base href="\.\.\/">/);
+assert.match(afterRenovationRu, /<title>Уборка после ремонта в Ташкенте — GoClean<\/title>/);
+assert.match(afterRenovationRu, /<meta name="description" content="Уборка после ремонта в Ташкенте:/);
+assert.match(afterRenovationRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/after-renovation-cleaning\.html">/);
+for (const [hreflang, href] of [["uz", "https://go-clean.uz/after-renovation-cleaning.html"], ["ru", "https://go-clean.uz/ru/after-renovation-cleaning.html"], ["x-default", "https://go-clean.uz/after-renovation-cleaning.html"]]) {
+  assert.ok(afterRenovation.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `UZ after-renovation is missing ${hreflang} hreflang`);
+  assert.ok(afterRenovationRu.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `RU after-renovation is missing ${hreflang} hreflang`);
+}
+assert.match(afterRenovation, /class="page-language-link" href="ru\/after-renovation-cleaning\.html"/);
+assert.match(afterRenovationRu, /data-page-language="ru" data-language-switch="after-renovation-cleaning\.html"/);
+assert.match(afterRenovationRu, /class="page-language-link" href="after-renovation-cleaning\.html" hreflang="uz"/);
+assert.match(afterRenovationRu, /<h1>Уборка после ремонта в Ташкенте<\/h1>/);
+for (const [question, answer] of serviceContent["after-renovation"].ru.faqs) {
+  assert.ok(afterRenovationRu.includes(question) && afterRenovationRu.includes(answer), `RU after-renovation must display FAQ: ${question}`);
+}
+assert.equal((afterRenovationRu.match(/<details>/g) || []).length, 9, "RU after-renovation must contain nine visible FAQs");
+const afterRenovationRuNodes = graphNodes(jsonLdBlocks(afterRenovationRu));
+const afterRenovationRuService = afterRenovationRuNodes.find(node => node["@type"] === "Service");
+const afterRenovationRuFaq = afterRenovationRuNodes.find(node => node["@type"] === "FAQPage");
+assert.equal(afterRenovationRuService?.url, "https://go-clean.uz/ru/after-renovation-cleaning.html");
+assert.equal(afterRenovationRuService?.description, serviceContent["after-renovation"].ru.intro);
+assert.deepEqual(afterRenovationRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), serviceContent["after-renovation"].ru.faqs);
+assert.ok(sitemap.includes("https://go-clean.uz/ru/after-renovation-cleaning.html"), "sitemap must include RU after-renovation");
+assert.ok(homeRu.includes('href="ru/after-renovation-cleaning.html">Уборка после ремонта</a>'), "RU homepage must link to RU after-renovation");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);
