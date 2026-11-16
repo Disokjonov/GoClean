@@ -77,6 +77,18 @@ assert.match(robots, /Sitemap:\s+https:\/\/go-clean\.uz\/sitemap\.xml/i);
 
 const sitemap = await read("sitemap.xml");
 assert.match(sitemap, /<urlset\s+xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
+assert.doesNotMatch(sitemap, /<lastmod>/, "sitemap must omit unverified lastmod values");
+const sitemapUrls = [...sitemap.matchAll(/<loc>(https:\/\/go-clean\.uz\/[^<]*)<\/loc>/g)].map(match => match[1]);
+assert.equal(sitemapUrls.length, publicPages.length, "sitemap URL count must match public pages");
+assert.equal(new Set(sitemapUrls).size, sitemapUrls.length, "sitemap must not contain duplicate URLs");
+const publicCanonicalUrls = [];
+for (const page of publicPages) {
+  const html = await read(page);
+  const canonical = html.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i)?.[1];
+  assert.ok(canonical, `${page} canonical URL could not be parsed`);
+  publicCanonicalUrls.push(canonical);
+}
+assert.deepEqual([...sitemapUrls].sort(), [...publicCanonicalUrls].sort(), "sitemap URLs must exactly match public canonicals");
 assert.match(sitemap, /https:\/\/go-clean\.uz\/privacy\.html/);
 assert.match(sitemap, /https:\/\/go-clean\.uz\/terms\.html/);
 assert.doesNotMatch(sitemap, /legal\.html\?doc=/);
