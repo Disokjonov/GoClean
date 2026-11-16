@@ -44,6 +44,7 @@ const publicPages = [
   "ru/office-cleaning.html",
   "ru/after-renovation-cleaning.html",
   "ru/furniture-cleaning.html",
+  "ru/carpet-cleaning.html",
   "ru/cleaning-preparation-guide.html",
   "contact.html",
   "privacy.html",
@@ -451,5 +452,31 @@ assert.equal(furnitureRuService?.description, serviceContent["furniture-cleaning
 assert.deepEqual(furnitureRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), serviceContent["furniture-cleaning"].ru.faqs);
 assert.ok(sitemap.includes("https://go-clean.uz/ru/furniture-cleaning.html"), "sitemap must include RU furniture");
 assert.ok(homeRu.includes('href="ru/furniture-cleaning.html">Химчистка мебели</a>'), "RU homepage must link to RU furniture");
+
+const carpetUz = await read("carpet-cleaning.html");
+const carpetRu = await read("ru/carpet-cleaning.html");
+assert.match(carpetRu, /<html lang="ru">/);
+assert.match(carpetRu, /<base href="\.\.\/">/);
+assert.match(carpetRu, /<title>Чистка ковров в Ташкенте — GoClean<\/title>/);
+assert.match(carpetRu, /<meta name="description" content="Чистка ковров и ковровых покрытий в Ташкенте:/);
+assert.match(carpetRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/carpet-cleaning\.html">/);
+for (const [hreflang, href] of [["uz", "https://go-clean.uz/carpet-cleaning.html"], ["ru", "https://go-clean.uz/ru/carpet-cleaning.html"], ["x-default", "https://go-clean.uz/carpet-cleaning.html"]]) {
+  assert.ok(carpetUz.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `UZ carpet is missing ${hreflang} hreflang`);
+  assert.ok(carpetRu.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `RU carpet is missing ${hreflang} hreflang`);
+}
+assert.match(carpetUz, /class="page-language-link" href="ru\/carpet-cleaning\.html"/);
+assert.match(carpetRu, /data-page-language="ru" data-language-switch="carpet-cleaning\.html"/);
+assert.match(carpetRu, /<h1>Чистка ковров в Ташкенте<\/h1>/);
+assert.equal((carpetRu.match(/<details>/g) || []).length, 0, "RU carpet must not invent FAQs");
+assert.ok((carpetUz.match(/data-service-area-option/g) || []).length >= 2, "UZ carpet CTAs must keep optional area");
+assert.ok((carpetRu.match(/data-service-area-option/g) || []).length >= 2, "RU carpet CTAs must keep optional area");
+assert.doesNotMatch(carpetRu, /гарант|дезинф|безопасн|доставка|забер|на дому/i);
+const carpetRuNodes = graphNodes(jsonLdBlocks(carpetRu));
+const carpetRuService = carpetRuNodes.find(node => node["@type"] === "Service");
+assert.equal(carpetRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU carpet must not add FAQ schema");
+assert.equal(carpetRuService?.url, "https://go-clean.uz/ru/carpet-cleaning.html");
+assert.equal(carpetRuService?.description, "GoClean выполняет чистку ковров и ковровых покрытий в Ташкенте. Услуга включает удаление пыли, обработку пятен, глубокую стирку и сушку.");
+assert.ok(sitemap.includes("https://go-clean.uz/ru/carpet-cleaning.html"), "sitemap must include RU carpet");
+assert.ok(homeRu.includes('href="ru/carpet-cleaning.html">Чистка ковров</a>'), "RU homepage must link to RU carpet");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);
