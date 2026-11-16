@@ -47,6 +47,7 @@ const publicPages = [
   "ru/carpet-cleaning.html",
   "ru/window-cleaning.html",
   "ru/curtain-cleaning.html",
+  "ru/blanket-cleaning.html",
   "ru/cleaning-preparation-guide.html",
   "contact.html",
   "privacy.html",
@@ -532,5 +533,31 @@ assert.equal(curtainRuService?.url, "https://go-clean.uz/ru/curtain-cleaning.htm
 assert.equal(curtainRuService?.description, "GoClean определяет тип ткани, стирает шторы в подходящем режиме и по согласованию выполняет повторную установку.");
 assert.ok(sitemap.includes("https://go-clean.uz/ru/curtain-cleaning.html"), "sitemap must include RU curtain");
 assert.ok(homeRu.includes('href="ru/curtain-cleaning.html">Стирка штор</a>'), "RU homepage must link to RU curtain");
+
+const blanketUz = await read("blanket-cleaning.html");
+const blanketRu = await read("ru/blanket-cleaning.html");
+assert.match(blanketRu, /<html lang="ru">/);
+assert.match(blanketRu, /<base href="\.\.\/">/);
+assert.match(blanketRu, /<title>Стирка пледов в Ташкенте — GoClean<\/title>/);
+assert.match(blanketRu, /<meta name="description" content="Стирка пледов в Ташкенте:/);
+assert.match(blanketRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/blanket-cleaning\.html">/);
+for (const [hreflang, href] of [["uz", "https://go-clean.uz/blanket-cleaning.html"], ["ru", "https://go-clean.uz/ru/blanket-cleaning.html"], ["x-default", "https://go-clean.uz/blanket-cleaning.html"]]) {
+  assert.ok(blanketUz.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `UZ blanket is missing ${hreflang} hreflang`);
+  assert.ok(blanketRu.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `RU blanket is missing ${hreflang} hreflang`);
+}
+assert.match(blanketUz, /class="page-language-link" href="ru\/blanket-cleaning\.html"/);
+assert.match(blanketRu, /data-page-language="ru" data-language-switch="blanket-cleaning\.html"/);
+assert.match(blanketRu, /<h1>Стирка пледов в Ташкенте<\/h1>/);
+assert.equal((blanketRu.match(/<details>/g) || []).length, 0, "RU blanket must not invent FAQs");
+assert.ok((blanketUz.match(/data-service-area-option/g) || []).length >= 2, "UZ blanket CTAs must keep optional area");
+assert.ok((blanketRu.match(/data-service-area-option/g) || []).length >= 2, "RU blanket CTAs must keep optional area");
+assert.doesNotMatch(blanketRu, /гарант|матрас|одеял|постель|достав|забер|дезинф|безопасн|сохран/i);
+const blanketRuNodes = graphNodes(jsonLdBlocks(blanketRu));
+const blanketRuService = blanketRuNodes.find(node => node["@type"] === "Service");
+assert.equal(blanketRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU blanket must not add FAQ schema");
+assert.equal(blanketRuService?.url, "https://go-clean.uz/ru/blanket-cleaning.html");
+assert.equal(blanketRuService?.description, "GoClean предлагает стирку пледов в Ташкенте. Услуга включает определение материала, обработку пятен, стирку и сушку.");
+assert.ok(sitemap.includes("https://go-clean.uz/ru/blanket-cleaning.html"), "sitemap must include RU blanket");
+assert.ok(homeRu.includes('href="ru/blanket-cleaning.html">Стирка пледов</a>'), "RU homepage must link to RU blanket");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);
