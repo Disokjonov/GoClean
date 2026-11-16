@@ -16,7 +16,6 @@
       if(!data.service){const error=new Error((window.getGoCleanLanguage?.()||'uz')==='ru'?'Выберите нужную услугу.':'Kerakli xizmatni tanlang.');error.field='service';throw error}
       await window.GoCleanLeads.send('meta',{name:data.name,phone:data.phone,service:data.service},form);
       if(typeof window.fbq==='function')window.fbq('track','Lead',{content_name:'GoClean special offer',content_category:data.service});
-      window.dataLayer?.push({event:'generate_lead',lead_source:'meta_ads',service:data.service});
       localStorage.setItem('gocleanMetaLeadSubmitted','true');
       form.hidden=true;success.hidden=false;
       success.scrollIntoView({behavior:'smooth',block:'center'});

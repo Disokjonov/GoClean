@@ -4,6 +4,9 @@
   window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};
   window.gtag('js',new Date());
   window.gtag('config',analyticsMeasurementId);
+  document.addEventListener('click',event=>{
+    if(event.target?.closest?.('a[href^="tel:" i]'))window.gtag('event','phone_click');
+  },{capture:true});
   const analyticsScript=document.createElement('script');
   analyticsScript.async=true;
   analyticsScript.src=`https://www.googletagmanager.com/gtag/js?id=${analyticsMeasurementId}`;
@@ -246,6 +249,7 @@
       catch{throw new Error(leadErrorText())}
       const result=await response.json().catch(()=>({}));
       if(!response.ok||!result.ok)throw new Error(currentLanguage==='ru'?leadErrorText():(result.message||leadErrorText()));
+      if(!payload.website.trim())window.gtag('event','generate_lead',{lead_source:type});
       return result;
     }finally{if(button){button.disabled=false;button.removeAttribute('aria-busy');button.textContent=original}}
   }

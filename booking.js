@@ -73,7 +73,6 @@ form.addEventListener('submit', async event => {
   };
   try {
     await window.GoCleanLeads.send('order', lead, form);
-    window.dataLayer?.push({event: 'generate_lead', lead_source: 'short_order_form', service: serviceSelect.value, area_provided: Boolean(area)});
     form.reset();
     setAreaOpen(false);
     successDialog.showModal();

@@ -5,7 +5,7 @@ import { serviceContent } from "./service-content.mjs";
 
 const root = process.cwd();
 const output = resolve(root, "dist");
-const sharedAssetVersion = "25";
+const sharedAssetVersion = "26";
 if (output !== `${root}/dist`) throw new Error("Unexpected output path");
 
 await rm(output, { recursive: true, force: true });
