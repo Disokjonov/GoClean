@@ -305,6 +305,7 @@ const canonicalServicePages = {
   "furniture-cleaning": {
     file: "furniture-cleaning.html",
     ruFile: "ru/furniture-cleaning.html",
+    optionalArea: true,
     description: "Toshkentda divan, kreslo va yumshoq mebel kimyoviy tozalash. Dog‘, chang va yoqimsiz hidlarni professional ekstraktor yordamida chiqaramiz."
   },
   "after-renovation": {
@@ -431,7 +432,11 @@ const afterRenovationService = dataContext.window.GOCLEAN_SERVICES.find(item => 
 await mkdir(resolve(output, "client", "ru"), { recursive: true });
 await writeFile(resolve(output, "client", "ru", "after-renovation-cleaning.html"), renderRussianAfterRenovationPage(afterRenovationService, canonicalServicePages["after-renovation"]));
 const furnitureService = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === "furniture-cleaning");
-await writeFile(resolve(output, "client", "ru", "furniture-cleaning.html"), renderRussianFurniturePage(furnitureService, canonicalServicePages["furniture-cleaning"]));
+await writeFile(
+  resolve(output, "client", "ru", "furniture-cleaning.html"),
+  renderRussianFurniturePage(furnitureService, canonicalServicePages["furniture-cleaning"])
+    .replaceAll('data-service-lead="Химчистка мебели"', 'data-service-lead="Химчистка мебели" data-service-area-option')
+);
 
 const seoPages = {
   "index.html": { canonical: "https://go-clean.uz/" },

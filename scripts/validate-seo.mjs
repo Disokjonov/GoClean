@@ -436,6 +436,8 @@ for (const [hreflang, href] of [["uz", "https://go-clean.uz/furniture-cleaning.h
 assert.match(furnitureUz, /class="page-language-link" href="ru\/furniture-cleaning\.html"/);
 assert.match(furnitureRu, /data-page-language="ru" data-language-switch="furniture-cleaning\.html"/);
 assert.match(furnitureRu, /<h1>Химчистка мебели в Ташкенте<\/h1>/);
+assert.ok((furnitureUz.match(/data-service-area-option/g) || []).length >= 2, "UZ furniture CTAs must keep optional area");
+assert.ok((furnitureRu.match(/data-service-area-option/g) || []).length >= 2, "RU furniture CTAs must keep optional area");
 for (const [question, answer] of serviceContent["furniture-cleaning"].ru.faqs) {
   assert.ok(furnitureRu.includes(question) && furnitureRu.includes(answer), `RU furniture must display FAQ: ${question}`);
 }
