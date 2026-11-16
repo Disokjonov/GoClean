@@ -48,6 +48,7 @@ const publicPages = [
   "ru/window-cleaning.html",
   "ru/curtain-cleaning.html",
   "ru/blanket-cleaning.html",
+  "ru/paving-cleaning.html",
   "ru/cleaning-preparation-guide.html",
   "contact.html",
   "privacy.html",
@@ -559,5 +560,31 @@ assert.equal(blanketRuService?.url, "https://go-clean.uz/ru/blanket-cleaning.htm
 assert.equal(blanketRuService?.description, "GoClean предлагает стирку пледов в Ташкенте. Услуга включает определение материала, обработку пятен, стирку и сушку.");
 assert.ok(sitemap.includes("https://go-clean.uz/ru/blanket-cleaning.html"), "sitemap must include RU blanket");
 assert.ok(homeRu.includes('href="ru/blanket-cleaning.html">Стирка пледов</a>'), "RU homepage must link to RU blanket");
+
+const pavingUz = await read("paving-cleaning.html");
+const pavingRu = await read("ru/paving-cleaning.html");
+assert.match(pavingRu, /<html lang="ru">/);
+assert.match(pavingRu, /<base href="\.\.\/">/);
+assert.match(pavingRu, /<title>Чистка брусчатки в Ташкенте — GoClean<\/title>/);
+assert.match(pavingRu, /<meta name="description" content="Чистка брусчатки в Ташкенте:/);
+assert.match(pavingRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/paving-cleaning\.html">/);
+for (const [hreflang, href] of [["uz", "https://go-clean.uz/paving-cleaning.html"], ["ru", "https://go-clean.uz/ru/paving-cleaning.html"], ["x-default", "https://go-clean.uz/paving-cleaning.html"]]) {
+  assert.ok(pavingUz.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `UZ paving is missing ${hreflang} hreflang`);
+  assert.ok(pavingRu.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `RU paving is missing ${hreflang} hreflang`);
+}
+assert.match(pavingUz, /class="page-language-link" href="ru\/paving-cleaning\.html"/);
+assert.match(pavingRu, /data-page-language="ru" data-language-switch="paving-cleaning\.html"/);
+assert.match(pavingRu, /<h1>Чистка брусчатки в Ташкенте<\/h1>/);
+assert.equal((pavingRu.match(/<details>/g) || []).length, 0, "RU paving must not invent FAQs");
+assert.ok((pavingUz.match(/data-service-area-option/g) || []).length >= 2, "UZ paving CTAs must keep optional area");
+assert.ok((pavingRu.match(/data-service-area-option/g) || []).length >= 2, "RU paving CTAs must keep optional area");
+assert.doesNotMatch(pavingRu, /гарант|фасад|альпинист|безопасн|сертифик|дезинф|срок/i);
+const pavingRuNodes = graphNodes(jsonLdBlocks(pavingRu));
+const pavingRuService = pavingRuNodes.find(node => node["@type"] === "Service");
+assert.equal(pavingRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU paving must not add FAQ schema");
+assert.equal(pavingRuService?.url, "https://go-clean.uz/ru/paving-cleaning.html");
+assert.equal(pavingRuService?.description, "GoClean очищает брусчатку во дворах и на входных дорожках в Ташкенте. Услуга включает подготовку территории, мойку под высоким давлением, обработку пятен и финальную уборку.");
+assert.ok(sitemap.includes("https://go-clean.uz/ru/paving-cleaning.html"), "sitemap must include RU paving");
+assert.ok(homeRu.includes('href="ru/paving-cleaning.html">Чистка брусчатки</a>'), "RU homepage must link to RU paving");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);
