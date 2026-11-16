@@ -49,6 +49,7 @@ const publicPages = [
   "ru/curtain-cleaning.html",
   "ru/blanket-cleaning.html",
   "ru/paving-cleaning.html",
+  "ru/marble-cleaning.html",
   "ru/cleaning-preparation-guide.html",
   "contact.html",
   "privacy.html",
@@ -586,5 +587,31 @@ assert.equal(pavingRuService?.url, "https://go-clean.uz/ru/paving-cleaning.html"
 assert.equal(pavingRuService?.description, "GoClean очищает брусчатку во дворах и на входных дорожках в Ташкенте. Услуга включает подготовку территории, мойку под высоким давлением, обработку пятен и финальную уборку.");
 assert.ok(sitemap.includes("https://go-clean.uz/ru/paving-cleaning.html"), "sitemap must include RU paving");
 assert.ok(homeRu.includes('href="ru/paving-cleaning.html">Чистка брусчатки</a>'), "RU homepage must link to RU paving");
+
+const marbleUz = await read("marble-cleaning.html");
+const marbleRu = await read("ru/marble-cleaning.html");
+assert.match(marbleRu, /<html lang="ru">/);
+assert.match(marbleRu, /<base href="\.\.\/">/);
+assert.match(marbleRu, /<title>Чистка и полировка мрамора в Ташкенте — GoClean<\/title>/);
+assert.match(marbleRu, /<meta name="description" content="Чистка и полировка мрамора в Ташкенте:/);
+assert.match(marbleRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/marble-cleaning\.html">/);
+for (const [hreflang, href] of [["uz", "https://go-clean.uz/marble-cleaning.html"], ["ru", "https://go-clean.uz/ru/marble-cleaning.html"], ["x-default", "https://go-clean.uz/marble-cleaning.html"]]) {
+  assert.ok(marbleUz.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `UZ marble is missing ${hreflang} hreflang`);
+  assert.ok(marbleRu.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `RU marble is missing ${hreflang} hreflang`);
+}
+assert.match(marbleUz, /class="page-language-link" href="ru\/marble-cleaning\.html"/);
+assert.match(marbleRu, /data-page-language="ru" data-language-switch="marble-cleaning\.html"/);
+assert.match(marbleRu, /<h1>Чистка и полировка мрамора в Ташкенте<\/h1>/);
+assert.equal((marbleRu.match(/<details>/g) || []).length, 0, "RU marble must not invent FAQs");
+assert.ok((marbleUz.match(/data-service-area-option/g) || []).length >= 2, "UZ marble CTAs must keep optional area");
+assert.ok((marbleRu.match(/data-service-area-option/g) || []).length >= 2, "RU marble CTAs must keep optional area");
+assert.doesNotMatch(marbleRu, /гарант|дезинф|безопасн|сертифик|срок|восстанов/i);
+const marbleRuNodes = graphNodes(jsonLdBlocks(marbleRu));
+const marbleRuService = marbleRuNodes.find(node => node["@type"] === "Service");
+assert.equal(marbleRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU marble must not add FAQ schema");
+assert.equal(marbleRuService?.url, "https://go-clean.uz/ru/marble-cleaning.html");
+assert.equal(marbleRuService?.description, "GoClean очищает и полирует мраморные поверхности в Ташкенте. Услуга включает диагностику поверхности, специальные средства, механическую очистку и финальную полировку.");
+assert.ok(sitemap.includes("https://go-clean.uz/ru/marble-cleaning.html"), "sitemap must include RU marble");
+assert.ok(homeRu.includes('href="ru/marble-cleaning.html">Чистка мрамора</a>'), "RU homepage must link to RU marble");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);
