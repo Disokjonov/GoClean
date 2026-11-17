@@ -73,24 +73,41 @@ export const serviceContent = {
     uz: {
       intro: "GoClean Toshkentda divan, kreslo va boshqa yumshoq mebellarni kimyoviy tozalaydi. Xizmat mato diagnostikasi, dog‘larga ishlov, professional ekstraktor bilan chuqur tozalash va quritish bo‘yicha tavsiyani o‘z ichiga oladi.",
       price: "Boshlang‘ich narx bir o‘rindiq uchun 100 000 so‘mdan. Yakuniy narx mebel turi, o‘rindiqlar soni, qoplama materiali va vazifa aniqlashtirilgach aytiladi.",
+      sections: [
+        ["Buyurtmadan oldin mebelni qanday ta’riflash kerak?", "Operatorga divan, kreslo, burchakli yoki modulli mebel ekanini ayting. Alohida qismlar soni va ma’lum bo‘lsa taxminiy o‘lchamlarini ham bildiring. Aynan qaysi qismlarga ishlov berish kerakligini sanab, operator bilan aniqlashtiring. Bu ro‘yxat har bir qism xizmatga avtomatik kirishini yoki alohida tartibda hisoblanishini anglatmaydi."],
+        ["Mato va dog‘lar haqida nima aytish kerak?", "Yorliqda material yoki parvarish bo‘yicha ma’lumot bo‘lsa, uni operatorga ayting. Mato turi noma’lum bo‘lsa, taxminni fakt sifatida bermang — baribir ariza qoldirishingiz mumkin. Ko‘rinadigan dog‘ qayerdaligi, sababi ma’lum yoki noma’lumligi va unga avval nima ishlatilganini tushuntirish foydali."],
+        ["Ishdan oldin nimalarni aniqlashtirish kerak?", "Qaysi yuzalar va mebel qismlarini tozalash kerakligini, ish qayerda bajarilishini hamda ishlovdan keyin foydalanish va quritish bo‘yicha qanday tavsiya berilishini operator bilan kelishing. Qat’iy qurish muddati oldindan va’da qilinmaydi: u material va sharoitga bog‘liq bo‘lishi mumkin."]
+      ],
       faqs: [
         ["Mebel kimyoviy tozalashga nimalar kiradi?", "Mato diagnostikasi, dog‘larga ishlov, chuqur ekstraksiya va quritish bo‘yicha tavsiya xizmatning asosiy tarkibidir."],
         ["Narx qancha?", "Boshlang‘ich narx bir o‘rindiq uchun 100 000 so‘mdan. Yakuniy narx mebel va vazifa aniqlashtirilgach aytiladi."],
         ["Barcha dog‘lar to‘liq yo‘qoladimi?", "Mutlaq natija va’dasi berilmaydi. Ish usuli mato diagnostikasi va dog‘ holatiga qarab tanlanadi."],
-        ["Mebel qancha vaqtda quriydi?", "Aniq muddat oldindan belgilanmaydi. Tozalashdan keyin quritish bo‘yicha tavsiya beriladi; muddat material va sharoitga bog‘liq bo‘lishi mumkin."]
+        ["Mebel qancha vaqtda quriydi?", "Aniq muddat oldindan belgilanmaydi. Tozalashdan keyin quritish bo‘yicha tavsiya beriladi; muddat material va sharoitga bog‘liq bo‘lishi mumkin."],
+        ["Mato turi noma’lum bo‘lsa ham ariza qoldirish mumkinmi?", "Ha. Ism va telefon raqamini qoldiring va material noma’lumligini operatorga ayting. Matoni mustaqil aniqlashingiz shart emas."],
+        ["Mebelning qaysi qismlari tozalanishini qanday kelishish kerak?", "Sizga kerak bo‘lgan buyumlar va alohida qismlarni operatorga sanab bering. Ish tarkibi bajarishdan oldin aniqlashtiriladi; biror qismni tilga olish uning avtomatik ravishda xizmatga kirishini anglatmaydi."]
       ]
     },
     ru: {
       intro: "GoClean выполняет химчистку диванов, кресел и другой мягкой мебели в Ташкенте. Услуга включает диагностику ткани, обработку пятен, глубокую очистку профессиональным экстрактором и рекомендации по сушке.",
       price: "Стартовая стоимость — от 100 000 сум за одно посадочное место. Окончательная стоимость определяется после уточнения типа мебели, количества мест, материала обивки и задачи.",
+      sections: [
+        ["Как описать мебель перед заказом?", "Сообщите оператору, что нужно очистить: диван, кресло, угловую или модульную мебель. Укажите количество отдельных элементов и примерные размеры, если они известны. Перечислите части, которые нужно обработать, и уточните их с оператором. Этот список сам по себе не означает автоматическое включение каждой детали в услугу или отдельный порядок расчёта."],
+        ["Что рассказать о ткани и пятнах?", "Если на ярлыке указаны материал или рекомендации по уходу, сообщите эту информацию оператору. Когда тип ткани неизвестен, не нужно выдавать предположение за факт — заявку всё равно можно оставить. Для видимых пятен полезно назвать место, известную или неизвестную причину и средства, которыми поверхность уже обрабатывали."],
+        ["Что уточнить до работы?", "Согласуйте, какие поверхности и элементы мебели нужно очистить, где будет выполняться работа и какие рекомендации по дальнейшему использованию и сушке вам дадут после обработки. Фиксированное время высыхания заранее не обещается: оно может зависеть от материала и условий."]
+      ],
       faqs: [
         ["Что входит в химчистку мебели?", "Основные этапы — диагностика ткани, обработка пятен, глубокая экстракционная очистка и рекомендации по сушке."],
         ["Сколько стоит химчистка?", "Стартовая стоимость — от 100 000 сум за одно посадочное место. Окончательная стоимость определяется после уточнения мебели и задачи."],
         ["Все пятна исчезнут полностью?", "Абсолютный результат не обещается. Метод обработки выбирается после диагностики ткани и оценки состояния пятна."],
-        ["Сколько времени сохнет мебель?", "Точный срок заранее не устанавливается. После очистки клиент получает рекомендации по сушке; срок может зависеть от материала и условий."]
+        ["Сколько времени сохнет мебель?", "Точный срок заранее не устанавливается. После очистки клиент получает рекомендации по сушке; срок может зависеть от материала и условий."],
+        ["Можно оставить заявку, если тип ткани неизвестен?", "Да. Оставьте имя и номер телефона и сообщите оператору, что материал неизвестен. Не нужно определять ткань самостоятельно."],
+        ["Как согласовать, какие части мебели нужно очистить?", "Перечислите оператору предметы и отдельные элементы, которые вас интересуют. Состав работ уточняется до выполнения; само упоминание элемента не означает, что он автоматически включён."]
       ]
     },
-    links: [["carpet-cleaning.html", "Gilam yuvish"], ["curtain-cleaning.html", "Parda yuvish"], ["odor-removal.html", "Yoqimsiz hidlarni yo‘qotish"], ["general-cleaning.html", "General tozalash"], ["contact.html", "Savol va bog‘lanish"]]
+    localizedLinks: {
+      uz: [["carpet-cleaning.html", "Gilam tozalash"], ["cleaning-preparation-guide.html", "Tozalashdan oldin tayyorgarlik qo‘llanmasi"]],
+      ru: [["ru/carpet-cleaning.html", "Чистка ковров"], ["ru/cleaning-preparation-guide.html", "Как подготовиться к приезду клинеров"]]
+    }
   },
   "carpet-cleaning": {
     uz: {

@@ -512,7 +512,19 @@ assert.ok((furnitureRu.match(/data-service-area-option/g) || []).length >= 2, "R
 for (const [question, answer] of serviceContent["furniture-cleaning"].ru.faqs) {
   assert.ok(furnitureRu.includes(question) && furnitureRu.includes(answer), `RU furniture must display FAQ: ${question}`);
 }
-assert.equal((furnitureRu.match(/<details>/g) || []).length, 4, "RU furniture must contain four existing visible FAQs");
+assert.equal((furnitureRu.match(/<details>/g) || []).length, 6, "RU furniture must contain six visible FAQs");
+for (const [heading, text] of serviceContent["furniture-cleaning"].ru.sections) {
+  assert.ok(furnitureRu.includes(heading) && furnitureRu.includes(text), `RU furniture must display guidance: ${heading}`);
+}
+for (const [href, label] of serviceContent["furniture-cleaning"].localizedLinks.ru) {
+  assert.ok(furnitureRu.includes(`href="${href}">${label}`), `RU furniture must link to ${href}`);
+}
+assert.equal((furnitureUz.match(/<details>/g) || []).length, 12, "UZ furniture source must contain six FAQs in both language blocks");
+for (const [heading, text] of serviceContent["furniture-cleaning"].uz.sections) {
+  assert.ok(furnitureUz.includes(heading) && furnitureUz.includes(text), `UZ furniture must display guidance: ${heading}`);
+}
+assert.ok(furnitureRu.includes("от 100 000 сум") && furnitureRu.includes("за одно посадочное место"), "RU furniture price and unit must stay unchanged");
+assert.ok(furnitureUz.includes("100 000 so‘mdan") && furnitureUz.includes("bir o‘rindiq"), "UZ furniture price and unit must stay unchanged");
 assert.doesNotMatch(furnitureRu, /дезинф|безопасн|все пятна исчезнут полностью[^?]/i);
 const furnitureRuNodes = graphNodes(jsonLdBlocks(furnitureRu));
 const furnitureRuService = furnitureRuNodes.find(node => node["@type"] === "Service");
