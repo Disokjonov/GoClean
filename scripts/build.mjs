@@ -5,7 +5,7 @@ import { serviceContent } from "./service-content.mjs";
 
 const root = process.cwd();
 const output = resolve(root, "dist");
-const sharedAssetVersion = "28";
+const sharedAssetVersion = "29";
 if (output !== `${root}/dist`) throw new Error("Unexpected output path");
 
 await rm(output, { recursive: true, force: true });
@@ -769,6 +769,35 @@ function renderCatalogCard(service) {
   return `<article class="catalog-card" data-service="${escapeHtml(service.slug)}"><a class="catalog-image" href="${href}"><picture><source media="(max-width:560px)" srcset="public/assets/services/${base}-mobile.avif" type="image/avif"><source srcset="public/assets/services/${base}.avif" type="image/avif"><img src="public/assets/services/${escapeHtml(service.image)}" alt="${escapeHtml(service.name)}" loading="lazy" decoding="async" width="1200" height="800"></picture></a><div class="catalog-card-body"><h3><a href="${href}">${escapeHtml(service.name)}</a></h3><p>${escapeHtml(service.summary)}</p><div class="catalog-price"><strong>${escapeHtml(service.price)}</strong><small>${escapeHtml(service.unit)}</small></div><div class="catalog-actions"><a class="detail-cta" href="${href}">Batafsil</a><button class="mini-order" type="button" data-service-lead="${escapeHtml(service.name)}">Raqam qoldirish</button></div></div></article>`;
 }
 
+const russianCatalogContent = {
+  "general-cleaning": ["Генеральная уборка", "Подробная уборка согласованных зон для дома или офиса.", "ru/general-cleaning.html"],
+  "furniture-cleaning": ["Химчистка мебели", "Чистка диванов, кресел и мягкой мебели.", "ru/furniture-cleaning.html"],
+  "marble-cleaning": ["Чистка мрамора", "Очистка и полировка мраморных поверхностей.", "ru/marble-cleaning.html"],
+  "carpet-cleaning": ["Чистка ковров", "Чистка ковров и ковровых покрытий.", "ru/carpet-cleaning.html"],
+  "paving-cleaning": ["Чистка брусчатки", "Очистка брусчатки и входных дорожек.", "ru/paving-cleaning.html"],
+  "window-cleaning": ["Мойка окон", "Мойка окон, рам и подоконников.", "ru/window-cleaning.html"],
+  "curtain-cleaning": ["Стирка штор", "Стирка штор с уточнением состава услуги.", "ru/curtain-cleaning.html"],
+  "facade-cleaning": ["Мойка фасадов", "Мойка фасадов и витрин; детали уточняются с оператором.", "facade-cleaning.html"],
+  "blanket-cleaning": ["Стирка пледов", "Стирка пледов с учётом материала.", "ru/blanket-cleaning.html"],
+  "after-renovation": ["Уборка после ремонта", "Уборка строительной пыли и согласованных следов ремонта.", "ru/after-renovation-cleaning.html"],
+  "emergency-cleaning": ["Уборка после происшествий", "Состав работ уточняется с оператором по состоянию объекта.", "emergency-cleaning.html"],
+  "odor-removal": ["Удаление запахов", "Работы с источниками неприятного запаха; детали уточняются с оператором.", "odor-removal.html"],
+  "mold-removal": ["Удаление плесени", "Очистка участков с плесенью; детали уточняются с оператором.", "mold-removal.html"],
+  "disinfection": ["Дезинфекция", "Обработка дома или коммерческого объекта; детали уточняются с оператором.", "disinfection.html"]
+};
+
+function renderRussianCatalogCard(service) {
+  const [name, summary, href] = russianCatalogContent[service.slug];
+  const russianRoute = href.startsWith("ru/");
+  const base = service.image.replace(/\.[^.]+$/, "");
+  return `<article class="catalog-card" data-service="${escapeHtml(service.slug)}" data-category="${escapeHtml(service.category)}"><a class="catalog-image" href="${href}"><picture><source media="(max-width:560px)" srcset="public/assets/services/${base}-mobile.avif" type="image/avif"><source srcset="public/assets/services/${base}.avif" type="image/avif"><img src="public/assets/services/${escapeHtml(service.image)}" alt="${escapeHtml(name)}" loading="lazy" decoding="async" width="1200" height="800"></picture></a><div class="catalog-card-body"><h3><a href="${href}">${escapeHtml(name)}</a></h3><p>${escapeHtml(summary)}</p>${russianRoute ? "" : '<small>Подробная страница пока доступна на узбекском языке.</small>'}<div class="catalog-price"><strong>Уточнить стоимость</strong><small>у оператора</small></div><div class="catalog-actions"><a class="detail-cta" href="${href}">Подробнее</a><button class="mini-order" type="button" data-service-lead="${escapeHtml(name)}">Оставить номер</button></div></div></article>`;
+}
+
+function renderRussianServicesPage() {
+  const cards = dataContext.window.GOCLEAN_SERVICES.map(renderRussianCatalogCard).join("");
+  return `<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="../"><title>Услуги клининга в Ташкенте — GoClean</title><meta name="description" content="Каталог услуг GoClean для дома, текстиля и бизнеса в Ташкенте. Выберите услугу и оставьте имя и телефон для уточнения деталей."><link rel="canonical" href="https://go-clean.uz/ru/services.html"><link rel="alternate" hreflang="uz" href="https://go-clean.uz/services.html"><link rel="alternate" hreflang="ru" href="https://go-clean.uz/ru/services.html"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/services.html"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=19"></head><body data-page-language="ru" data-language-switch="services.html"><div data-site-header></div><main><section class="page-hero compact-page-hero"><div class="container"><div class="breadcrumbs"><a href="ru/">Главная</a><span>→</span><b>Услуги</b><a class="page-language-link" href="services.html" hreflang="uz" lang="uz">O‘zbekcha</a></div><span class="kicker">Каталог GoClean</span><h1>Услуги клининга в Ташкенте</h1><p>Выберите уборку объекта, чистку мебели или текстиля либо решение для бизнеса. Состав работ и стоимость уточняются с оператором.</p><a class="text-link" href="ru/office-cleaning.html">Уборка офисов и коммерческих объектов →</a><a class="text-link" href="ru/contact.html">Контакты →</a></div></section><section class="catalog-section"><div class="container"><div class="filter-bar"><button class="active" type="button" data-filter="all">Все</button><button type="button" data-filter="home">Дом и объект</button><button type="button" data-filter="dry">Мебель и текстиль</button><button type="button" data-filter="business">Для бизнеса</button><button type="button" data-filter="special">Специальные услуги</button></div><div class="catalog-grid" id="catalogGrid">${cards}</div></div></section></main><div data-site-footer></div><script src="shared.js?v=${sharedAssetVersion}"></script><script>document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(item=>item.classList.toggle('active',item===button));document.querySelectorAll('.catalog-card').forEach(card=>{card.hidden=button.dataset.filter!=='all'&&card.dataset.category!==button.dataset.filter;card.style.display=card.hidden?'none':''})}));</script></body></html>`;
+}
+
 const deferBelowFoldProcessImages = html => html.replace(
   /(<img src="public\/assets\/icons-3d\/process-[^"]+" alt="" aria-hidden="true")>/g,
   '$1 loading="lazy" decoding="async">'
@@ -811,7 +840,8 @@ const seoPages = {
     }])),
   "services.html": {
     canonical: "https://go-clean.uz/services.html",
-    description: "Toshkentda uy, ofis va maxsus obyektlar uchun GoClean tozalash xizmatlari katalogi. Xizmat tarkibi va dastlabki narxlarni ko‘ring."
+    description: "Toshkentda uy, ofis va maxsus obyektlar uchun GoClean tozalash xizmatlari katalogi. Xizmat tarkibi va dastlabki narxlarni ko‘ring.",
+    alternates: "services"
   },
   "blog.html": {
     canonical: "https://go-clean.uz/blog.html",
@@ -833,7 +863,7 @@ const seoPages = {
   "contact.html": {
     canonical: "https://go-clean.uz/contact.html",
     description: "GoClean bilan buyurtma, xizmat tarkibi yoki korporativ hamkorlik bo‘yicha bog‘laning. Toshkentdagi aloqa ma’lumotlari.",
-    alternates: true,
+    alternates: "contact",
     structuredData: contactStructuredData("uz")
   },
   "privacy.html": { canonical: "https://go-clean.uz/privacy.html" },
@@ -876,8 +906,11 @@ for (const [file, metadata] of Object.entries(seoPages)) {
   if (metadata.canonical && !/<link\s+rel=["']canonical["']/i.test(html)) {
     tags.push(`<link rel="canonical" href="${metadata.canonical}">`);
   }
-  if (metadata.alternates) {
+  if (metadata.alternates === "contact") {
     tags.push('<link rel="alternate" hreflang="uz" href="https://go-clean.uz/contact.html"><link rel="alternate" hreflang="ru" href="https://go-clean.uz/ru/contact.html"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/contact.html">');
+  }
+  if (metadata.alternates === "services") {
+    tags.push('<link rel="alternate" hreflang="uz" href="https://go-clean.uz/services.html"><link rel="alternate" hreflang="ru" href="https://go-clean.uz/ru/services.html"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/services.html">');
   }
   if (metadata.structuredData && !html.includes('office-cleaning.html#service')) {
     tags.push(`<script type="application/ld+json">${jsonLd(metadata.structuredData)}</script>`);
@@ -969,8 +1002,11 @@ russianContact = russianContact
   .replace('<a class="page-language-link" href="ru/contact.html" hreflang="ru" lang="ru">Русский</a>', '<a class="page-language-link" href="contact.html" hreflang="uz" lang="uz">O‘zbekcha</a>')
   .replaceAll('href="index.html"', 'href="ru/"')
   .replaceAll('href="index.html?offer=first-order"', 'href="ru/?offer=first-order"')
+  .replaceAll('href="services.html">Услуги', 'href="ru/services.html">Услуги')
+  .replaceAll('href="services.html">Все услуги', 'href="ru/services.html">Все услуги')
   .replaceAll('href="contact.html">Контакты', 'href="ru/contact.html">Контакты');
 await writeFile(resolve(output, "client", "ru", "contact.html"), russianContact);
+await writeFile(resolve(output, "client", "ru", "services.html"), renderRussianServicesPage());
 
 let russianPreparationGuide = await readFile(resolve(root, "preparation-guide-ru.html"), "utf8");
 russianPreparationGuide = russianPreparationGuide
@@ -1046,7 +1082,10 @@ for (const entry of await readdir(resolve(output, "client", "ru"), { withFileTyp
   if (!entry.isFile() || !entry.name.endsWith(".html") || entry.name === "contact.html") continue;
   const path = resolve(output, "client", "ru", entry.name);
   const html = await readFile(path, "utf8");
-  await writeFile(path, html.replaceAll('href="contact.html"', 'href="ru/contact.html"'));
+  const localized = html
+    .replaceAll('href="contact.html"', 'href="ru/contact.html"')
+    .replaceAll('href="services.html"', entry.name === "services.html" ? 'href="services.html"' : 'href="ru/services.html"');
+  await writeFile(path, localized);
 }
 await cp(resolve(root, "worker", "index.js"), resolve(output, "server", "index.js"));
 await cp(resolve(root, ".openai", "hosting.json"), resolve(output, ".openai", "hosting.json"));

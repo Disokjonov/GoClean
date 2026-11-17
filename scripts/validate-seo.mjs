@@ -21,6 +21,7 @@ function assertNoUnverifiedStructuredFacts(value, page) {
 const publicPages = [
   "index.html",
   "services.html",
+  "ru/services.html",
   "general-cleaning.html",
   "furniture-cleaning.html",
   "after-renovation-cleaning.html",
@@ -62,7 +63,7 @@ for (const page of publicPages) {
   const html = await read(page);
   assert.match(html, /<meta\s+name=["']description["']/i, `${page} is missing a description`);
   assert.match(html, /<link\s+rel=["']canonical["']/i, `${page} is missing a canonical`);
-  assert.match(html, /shared\.js\?v=28/, `${page} must load the current shared navigation asset`);
+  assert.match(html, /shared\.js\?v=29/, `${page} must load the current shared navigation asset`);
 }
 
 for (const page of ["business-request.html"]) {
@@ -734,5 +735,31 @@ for (const [html, canonical, language, alternate] of [
   assert.equal(contactPage?.inLanguage, language);
 }
 assert.ok(sitemap.includes("https://go-clean.uz/ru/contact.html"), "sitemap must include RU contact");
+
+const servicesUz = await read("services.html");
+const servicesRu = await read("ru/services.html");
+assert.match(servicesUz, /data-page-language="uz" data-language-switch="ru\/services\.html"/);
+assert.match(servicesRu, /<html lang="ru">/);
+assert.match(servicesRu, /data-page-language="ru" data-language-switch="services\.html"/);
+assert.match(servicesRu, /<title>Услуги клининга в Ташкенте — GoClean<\/title>/);
+assert.match(servicesRu, /<h1>Услуги клининга в Ташкенте<\/h1>/);
+assert.match(servicesRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/services\.html">/);
+for (const [language, url] of [["uz", "https://go-clean.uz/services.html"], ["ru", "https://go-clean.uz/ru/services.html"], ["x-default", "https://go-clean.uz/services.html"]]) {
+  assert.ok(servicesRu.includes(`hreflang="${language}" href="${url}"`), `RU services missing ${language} alternate`);
+  assert.ok(servicesUz.includes(`hreflang="${language}" href="${url}"`), `UZ services missing ${language} alternate`);
+}
+assert.equal((servicesRu.match(/<article class="catalog-card"/g) || []).length, 14, "RU services must contain all 14 catalog cards in source HTML");
+assert.equal((servicesRu.match(/data-category="(?:home|dry|business|special)"/g) || []).length, 14, "RU services cards must keep filter categories");
+assert.equal((servicesRu.match(/<strong>Уточнить стоимость<\/strong>/g) || []).length, 14, "RU services cards must use neutral price copy");
+assert.doesNotMatch(servicesRu, /\d[\d ]{2,}\s*(?:сум|so‘m)|service\.html\?slug=/i, "RU services must not duplicate numeric rates or legacy aliases");
+assert.equal((servicesRu.match(/Подробная страница пока доступна на узбекском языке\./g) || []).length, 5, "RU catalog must label five Uzbek-only destinations");
+for (const route of [
+  "ru/general-cleaning.html", "ru/furniture-cleaning.html", "ru/marble-cleaning.html", "ru/carpet-cleaning.html", "ru/paving-cleaning.html",
+  "ru/window-cleaning.html", "ru/curtain-cleaning.html", "ru/blanket-cleaning.html", "ru/after-renovation-cleaning.html", "ru/office-cleaning.html", "ru/contact.html"
+]) assert.ok(servicesRu.includes(`href="${route}"`), `RU services missing ${route}`);
+for (const page of publicPages.filter(page => page.startsWith("ru/") && !["ru/services.html", "ru/cleaning-preparation-guide.html"].includes(page))) {
+  assert.ok((await read(page)).includes('href="ru/services.html"'), `${page} must link to the Russian catalog`);
+}
+assert.ok(sitemap.includes("https://go-clean.uz/ru/services.html"), "sitemap must include RU services");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);
