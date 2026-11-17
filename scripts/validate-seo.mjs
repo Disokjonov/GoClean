@@ -334,12 +334,16 @@ for (const [slug, file] of Object.entries(canonicalServicePages)) {
 
   if (serviceContent[slug]) {
     const faqPages = nodes.filter(node => node["@type"] === "FAQPage");
-    assert.equal(faqPages.length, 1, `${file} must contain one FAQPage`);
-    assert.deepEqual(
-      faqPages[0].mainEntity.map(item => [item.name, item.acceptedAnswer?.text]),
-      serviceContent[slug].uz.faqs,
-      `${file} FAQ schema must match visible UZ FAQ content`
-    );
+    if (serviceContent[slug].uz.faqs.length) {
+      assert.equal(faqPages.length, 1, `${file} must contain one FAQPage`);
+      assert.deepEqual(
+        faqPages[0].mainEntity.map(item => [item.name, item.acceptedAnswer?.text]),
+        serviceContent[slug].uz.faqs,
+        `${file} FAQ schema must match visible UZ FAQ content`
+      );
+    } else {
+      assert.equal(faqPages.length, 0, `${file} must not contain an empty FAQPage`);
+    }
     assert.ok(html.includes(serviceContent[slug].uz.intro), `${file} must contain the UZ introduction in source HTML`);
     assert.ok(html.includes(serviceContent[slug].ru.intro), `${file} must contain the RU introduction for the language toggle`);
     for (const [question, answer] of serviceContent[slug].uz.faqs) {
@@ -598,6 +602,12 @@ assert.match(windowUz, /class="page-language-link" href="ru\/window-cleaning\.ht
 assert.match(windowRu, /data-page-language="ru" data-language-switch="window-cleaning\.html"/);
 assert.match(windowRu, /<h1>Мойка окон в Ташкенте<\/h1>/);
 assert.equal((windowRu.match(/<details>/g) || []).length, 0, "RU window must not invent FAQs");
+assert.match(windowUz, /Hisoblashdan oldin nimalarni aniqlashtirish kerak\?/);
+assert.match(windowUz, /Tavaqa uchun summa bilan m² uchun summa bir xil hisob birligi emas/);
+assert.match(windowRu, /Что уточнить перед расчётом мойки окон\?/);
+assert.match(windowRu, /Цена за створку и цена за м² — разные единицы расчёта/);
+assert.match(windowRu, /Заявку можно оставить по имени и телефону, даже если точная площадь неизвестна/);
+assert.doesNotMatch(windowRu, /автоматически входят|полностью удалим|минимальн(?:ая|ой) сумм|две стороны.*дважды/i);
 assert.ok((windowUz.match(/data-service-area-option/g) || []).length >= 2, "UZ window CTAs must keep optional area");
 assert.ok((windowRu.match(/data-service-area-option/g) || []).length >= 2, "RU window CTAs must keep optional area");
 assert.doesNotMatch(windowRu, /альпинист|высот|фасад|безопасн/i);
@@ -605,7 +615,7 @@ const windowRuNodes = graphNodes(jsonLdBlocks(windowRu));
 const windowRuService = windowRuNodes.find(node => node["@type"] === "Service");
 assert.equal(windowRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU window must not add FAQ schema");
 assert.equal(windowRuService?.url, "https://go-clean.uz/ru/window-cleaning.html");
-assert.equal(windowRuService?.description, "GoClean моет внутренние и наружные поверхности окон, рамы и подоконники в Ташкенте с использованием профессиональных средств.");
+assert.equal(windowRuService?.description, serviceContent["window-cleaning"].ru.intro);
 assert.ok(sitemap.includes("https://go-clean.uz/ru/window-cleaning.html"), "sitemap must include RU window");
 assert.ok(homeRu.includes('href="ru/window-cleaning.html">Мойка окон</a>'), "RU homepage must link to RU window");
 
