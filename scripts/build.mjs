@@ -5,7 +5,7 @@ import { serviceContent } from "./service-content.mjs";
 
 const root = process.cwd();
 const output = resolve(root, "dist");
-const sharedAssetVersion = "29";
+const sharedAssetVersion = "30";
 if (output !== `${root}/dist`) throw new Error("Unexpected output path");
 
 await rm(output, { recursive: true, force: true });
@@ -931,7 +931,7 @@ const officeRussianTranslations = {
   "Ofisingiz har kuni ishga tayyor bo‘lsin": "Пусть ваш офис каждый день будет готов к работе",
   "Muntazam, general yoki ta’mirdan keyingi tozalash. Xodimlar, vositalar, grafik va sifat nazorati — bitta xizmatda.": "Регулярная, генеральная или послеремонтная уборка. Состав работ, график и стоимость согласуются с оператором.",
   "✓ Ish vaqtingizga mos grafik": "✓ График согласуется с вами", "✓ Shaxsiy menejer": "✓ Связь с менеджером", "✓ Hujjatlar bilan": "✓ Условия согласуются",
-  "Raqam qoldirish →": "Оставить номер →", "☎ Qo‘ng‘iroq qilish": "☎ Позвонить", "Sifat nazorati": "Контроль качества", "Har bir smena bo‘yicha": "По согласованным условиям",
+  "Raqam qoldirish →": "Оставить номер →", "Raqam qoldirish": "Оставить номер", "☎ Qo‘ng‘iroq qilish": "☎ Позвонить", "Sifat nazorati": "Контроль качества", "Har bir smena bo‘yicha": "По согласованным условиям",
   "Ofis uchun xizmatlar": "Услуги для офиса", "Kerakli formatni tanlang": "Выберите подходящий формат",
   "Narx maydon, davriylik, zonalar va ish vaqtiga qarab konsultatsiyadan keyin aniq hisoblanadi.": "Стоимость рассчитывается после консультации с учётом площади, периодичности, зон и времени работ.",
   "Muntazam": "Регулярная", "Kundalik tozalash": "Ежедневная уборка", "Ish joylari, umumiy zonalar, oshxona va sanuzellar.": "Рабочие места, общие зоны, кухня и санузлы.",
@@ -949,6 +949,17 @@ const officeRussianTranslations = {
   "Qulay usulni tanlang": "Выберите удобный способ", "Hisob olishning 3 yo‘li": "3 способа уточнить стоимость", "Saytda ariza": "Заявка на сайте",
   "Ism va telefonni qoldiring. Maydonni xohlasangiz qo‘shing.": "Оставьте имя и телефон. Площадь можно указать по желанию.", "Ariza qoldirish →": "Оставить заявку →",
   "Telefon orqali": "По телефону", "Tez maslahat va savollarga javob.": "Обсудите задачу и задайте вопросы.", "Telegram orqali": "Через Telegram", "Vazifani yozing yoki rasmlarni yuboring.": "Опишите задачу или отправьте фотографии.",
+  "Ofis tozalash hisob-kitobi uchun nimalarni tayyorlash kerak?": "Что подготовить для расчёта уборки офиса?",
+  "Birinchi ariza uchun ism va telefon yetarli. Qolgan tafsilotlarni operator bilan muhokama qilishingiz mumkin. Takliflarni bir xil ish hajmi bo‘yicha solishtirish uchun qisqa tavsif tayyorlang:": "Для первой заявки достаточно имени и телефона. Остальные детали можно обсудить с оператором. Чтобы сравнить предложения по одинаковому объёму работ, подготовьте короткое описание:",
+  "Obyekt:": "Помещение:", "taxminiy maydon, ish zonalari, muzokara xonalari, oshxona va sanuzellar. Maydon noma’lum bo‘lsa, buni ayting.": "примерная площадь, рабочие зоны, переговорные, кухня и санузлы. Если площадь неизвестна, сообщите об этом.",
+  "Vazifa:": "Задача:", "muntazam tozalash, bir martalik chuqur tozalash yoki ta’mirdan keyingi tozalash.": "регулярная уборка, разовая глубокая уборка или уборка после ремонта.",
+  "Grafik:": "График:", "tozalash xodimlar ishiga xalaqit bermaydigan kerakli kun va vaqt.": "желаемые дни и время, когда уборка не помешает работе сотрудников.",
+  "Alohida sharoitlar:": "Особые условия:", "kirish cheklangan xonalar, alohida kelishish kerak bo‘lgan texnika va yuzalar.": "помещения с ограниченным доступом, техника и поверхности, требующие отдельного согласования.",
+  "Boshqa vazifalar:": "Другие задачи:", "oyna, yumshoq mebel va muhokama qilmoqchi bo‘lgan boshqa ishlar. Ularning qaysilari taklifga kiritilishini aniqlashtiring.": "окна, мягкая мебель и другие работы, которые вы хотите обсудить. Уточните, какие из них будут включены в предложение.",
+  "Tashkiliy masalalar:": "Организация:", "vosita va inventarni kim ta’minlashi, kompaniyangizga qanday hujjatlar kerakligi va ish qanday qabul qilinishi.": "кто предоставляет средства и инвентарь, какие документы нужны вашей компании и как будет приниматься работа.",
+  "Takliflarni qanday solishtirish kerak?": "Как сравнить предложения?",
+  "Faqat yakuniy summani emas, u qaysi ish hajmi va davr uchun ko‘rsatilganini ham tekshiring. Tozalashlar soni, ishlar tarkibi va ehtimoliy qo‘shimcha xarajatlarni aniqlashtiring. Turli hajmdagi takliflarni faqat yakuniy narx bo‘yicha solishtirib bo‘lmaydi.": "Проверяйте не только итоговую сумму, но и то, за какой объём и период она указана. Уточните количество уборок, состав работ и возможные дополнительные расходы. Предложения на разные объёмы нельзя сравнивать только по итоговой цене.",
+  "Xizmat tarkibi, grafik, kerakli vositalar, hujjatlar va narx ish boshlanishidan oldin operator bilan muhokama qilinadi.": "Состав услуги, график, необходимые средства, документы и стоимость обсуждаются с оператором до начала работ.",
   "Qanday boshlaymiz?": "Как начать?", "Oddiy va tushunarli jarayon": "Простой и понятный процесс", "Ariza": "Заявка",
   "Faqat ism va telefon raqamingizni qoldirasiz. Maydonni xohlasangiz qo‘shishingiz mumkin.": "Оставьте только имя и номер телефона. Площадь можно добавить по желанию.",
   "Konsultatsiya va hisob": "Консультация и расчёт", "Operator obyekt, xizmat tarkibi, manzil, vaqt va narxni siz bilan kelishadi.": "Оператор согласует с вами объект, состав услуги, адрес, время и стоимость.",

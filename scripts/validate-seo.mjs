@@ -63,7 +63,7 @@ for (const page of publicPages) {
   const html = await read(page);
   assert.match(html, /<meta\s+name=["']description["']/i, `${page} is missing a description`);
   assert.match(html, /<link\s+rel=["']canonical["']/i, `${page} is missing a canonical`);
-  assert.match(html, /shared\.js\?v=29/, `${page} must load the current shared navigation asset`);
+  assert.match(html, /shared\.js\?v=30/, `${page} must load the current shared navigation asset`);
 }
 
 for (const page of ["business-request.html"]) {
@@ -423,6 +423,16 @@ assert.match(officeUz, /<title>Ofis tozalash Toshkentda — Goclean\.uz<\/title>
 assert.match(officeRu, /<title>Уборка офисов в Ташкенте — Goclean\.uz<\/title>/);
 assert.match(officeRu, /<h1>Пусть ваш офис каждый день будет готов к работе<\/h1>/);
 assert.match(officeRu, /<base href="\.\.\/">/);
+for (const [language, html, heading, compare] of [
+  ["UZ", officeUz, "Ofis tozalash hisob-kitobi uchun nimalarni tayyorlash kerak?", "Takliflarni qanday solishtirish kerak?"],
+  ["RU", officeRu, "Что подготовить для расчёта уборки офиса?", "Как сравнить предложения?"]
+]) {
+  assert.equal((html.match(/data-office-guidance/g) || []).length, 1, `${language} office guidance must appear once`);
+  assert.ok(html.includes(heading), `${language} office guidance heading is missing`);
+  assert.ok(html.includes(compare), `${language} office comparison heading is missing`);
+  assert.equal((html.match(/<section class="section service-seo-content office-briefing"[\s\S]*?<\/section>/) || [""])[0].match(/<li>/g)?.length, 6, `${language} office guidance must keep six preparation items`);
+}
+assert.doesNotMatch(officeRu, />Raqam qoldirish</, "RU office guidance CTA must be Russian");
 for (const serviceName of ["Регулярная уборка офиса", "Генеральная уборка офиса", "Уборка склада и цеха"]) assert.ok(officeRu.includes(`data-service-lead="${serviceName}"`), `RU office CTA is missing ${serviceName}`);
 assert.doesNotMatch(officeRu, /data-service-lead="[^"]*(?:Kundalik|Ofisni|tozalash)[^"]*"/i);
 assert.doesNotMatch(officeUz, /Obyekt turi, maydon va kontaktni qoldirasiz|Maydon va telefonni qoldiring/);
