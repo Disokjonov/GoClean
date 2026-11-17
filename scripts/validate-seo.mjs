@@ -53,6 +53,7 @@ const publicPages = [
   "ru/marble-cleaning.html",
   "ru/cleaning-preparation-guide.html",
   "contact.html",
+  "ru/contact.html",
   "privacy.html",
   "terms.html"
 ];
@@ -61,7 +62,7 @@ for (const page of publicPages) {
   const html = await read(page);
   assert.match(html, /<meta\s+name=["']description["']/i, `${page} is missing a description`);
   assert.match(html, /<link\s+rel=["']canonical["']/i, `${page} is missing a canonical`);
-  assert.match(html, /shared\.js\?v=27/, `${page} must load the current shared navigation asset`);
+  assert.match(html, /shared\.js\?v=28/, `${page} must load the current shared navigation asset`);
 }
 
 for (const page of ["business-request.html"]) {
@@ -700,5 +701,38 @@ assert.equal(marbleRuService?.url, "https://go-clean.uz/ru/marble-cleaning.html"
 assert.equal(marbleRuService?.description, "GoClean очищает и полирует мраморные поверхности в Ташкенте. Услуга включает диагностику поверхности, специальные средства, механическую очистку и финальную полировку.");
 assert.ok(sitemap.includes("https://go-clean.uz/ru/marble-cleaning.html"), "sitemap must include RU marble");
 assert.ok(homeRu.includes('href="ru/marble-cleaning.html">Чистка мрамора</a>'), "RU homepage must link to RU marble");
+
+const contactUz = await read("contact.html");
+const contactRu = await read("ru/contact.html");
+assert.match(contactUz, /<html lang="uz">/);
+assert.match(contactRu, /<html lang="ru">/);
+assert.match(contactUz, /<h1>Savolingiz bormi\?<\/h1>/);
+assert.match(contactRu, /<h1>Есть вопрос\?<\/h1>/);
+assert.match(contactUz, /Toshkent, Registon 8-tor ko‘chasi, 6/);
+assert.match(contactRu, /Ташкент, 8-й проезд Регистон, 6/);
+assert.doesNotMatch(`${contactUz}${contactRu}`, /Yunusobod|Юнусабад/i);
+for (const [html, canonical, language, alternate] of [
+  [contactUz, "https://go-clean.uz/contact.html", "uz", "https://go-clean.uz/ru/contact.html"],
+  [contactRu, "https://go-clean.uz/ru/contact.html", "ru", "https://go-clean.uz/contact.html"]
+]) {
+  assert.ok(html.includes(`<link rel="canonical" href="${canonical}">`));
+  assert.ok(html.includes(`hreflang="${language}" href="${canonical}"`));
+  assert.ok(html.includes(`href="${alternate}"`));
+  assert.match(html, /href="tel:\+998977071515"/);
+  assert.match(html, /href="mailto:hello@goclean\.uz"/);
+  assert.match(html, /<input required name="name"/);
+  assert.match(html, /<input required name="phone"/);
+  assert.match(html, /<textarea name="message"/);
+  assert.doesNotMatch(html, /<textarea[^>]*name="message"[^>]*required/);
+  const nodes = graphNodes(jsonLdBlocks(html));
+  const organization = nodes.find(node => node["@id"] === organizationId);
+  const contactPage = nodes.find(node => node["@type"] === "ContactPage");
+  assert.equal(organization?.telephone, "+998 97 707 15 15");
+  assert.equal(organization?.email, "hello@goclean.uz");
+  assert.equal(organization?.address?.addressCountry, "UZ");
+  assert.equal(contactPage?.url, canonical);
+  assert.equal(contactPage?.inLanguage, language);
+}
+assert.ok(sitemap.includes("https://go-clean.uz/ru/contact.html"), "sitemap must include RU contact");
 
 console.log(`SEO artifact validated for ${publicPages.length} public pages and ${context.window.GOCLEAN_SERVICES.length} services.`);

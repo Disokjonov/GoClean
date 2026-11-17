@@ -5,7 +5,7 @@ import { serviceContent } from "./service-content.mjs";
 
 const root = process.cwd();
 const output = resolve(root, "dist");
-const sharedAssetVersion = "27";
+const sharedAssetVersion = "28";
 if (output !== `${root}/dist`) throw new Error("Unexpected output path");
 
 await rm(output, { recursive: true, force: true });
@@ -42,6 +42,39 @@ vm.runInNewContext(await readFile(resolve(root, "data.js"), "utf8"), dataContext
 
 const organizationId = "https://go-clean.uz/#organization";
 const jsonLd = value => JSON.stringify(value).replace(/</g, "\\u003c");
+
+const contactStructuredData = language => {
+  const russian = language === "ru";
+  const url = russian ? "https://go-clean.uz/ru/contact.html" : "https://go-clean.uz/contact.html";
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": organizationId,
+        name: "GoClean",
+        url: "https://go-clean.uz/",
+        telephone: "+998 97 707 15 15",
+        email: "hello@goclean.uz",
+        areaServed: { "@type": "City", name: russian ? "Ташкент" : "Toshkent" },
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: russian ? "8-й проезд Регистон, 6" : "Registon 8-tor ko‘chasi, 6",
+          addressLocality: russian ? "Ташкент" : "Toshkent",
+          addressCountry: "UZ"
+        }
+      },
+      {
+        "@type": "ContactPage",
+        "@id": `${url}#webpage`,
+        url,
+        name: russian ? "Контакты GoClean" : "GoClean kontaktlari",
+        inLanguage: language,
+        mainEntity: { "@id": organizationId }
+      }
+    ]
+  };
+};
 
 const russianHomeStructuredData = {
   "@context": "https://schema.org",
@@ -799,7 +832,9 @@ const seoPages = {
   },
   "contact.html": {
     canonical: "https://go-clean.uz/contact.html",
-    description: "GoClean bilan buyurtma, xizmat tarkibi yoki korporativ hamkorlik bo‘yicha bog‘laning. Toshkentdagi aloqa ma’lumotlari."
+    description: "GoClean bilan buyurtma, xizmat tarkibi yoki korporativ hamkorlik bo‘yicha bog‘laning. Toshkentdagi aloqa ma’lumotlari.",
+    alternates: true,
+    structuredData: contactStructuredData("uz")
   },
   "privacy.html": { canonical: "https://go-clean.uz/privacy.html" },
   "terms.html": { canonical: "https://go-clean.uz/terms.html" },
@@ -840,6 +875,9 @@ for (const [file, metadata] of Object.entries(seoPages)) {
   }
   if (metadata.canonical && !/<link\s+rel=["']canonical["']/i.test(html)) {
     tags.push(`<link rel="canonical" href="${metadata.canonical}">`);
+  }
+  if (metadata.alternates) {
+    tags.push('<link rel="alternate" hreflang="uz" href="https://go-clean.uz/contact.html"><link rel="alternate" hreflang="ru" href="https://go-clean.uz/ru/contact.html"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/contact.html">');
   }
   if (metadata.structuredData && !html.includes('office-cleaning.html#service')) {
     tags.push(`<script type="application/ld+json">${jsonLd(metadata.structuredData)}</script>`);
@@ -907,6 +945,33 @@ russianOffice = russianOffice
 await mkdir(resolve(output, "client", "ru"), { recursive: true });
 await writeFile(resolve(output, "client", "ru", "office-cleaning.html"), russianOffice);
 
+const contactRussianTranslations = {
+  "Kontaktlar — Goclean.uz": "Контакты — Goclean.uz",
+  "GoClean bilan buyurtma, xizmat tarkibi yoki korporativ hamkorlik bo‘yicha bog‘laning. Toshkentdagi aloqa ma’lumotlari.": "Свяжитесь с GoClean по вопросам заказа, состава услуги или корпоративного сотрудничества. Контактные данные в Ташкенте.",
+  "Toshkent bo‘ylab har kuni 08:00–21:00": "По Ташкенту ежедневно 08:00–21:00",
+  "Goclean bosh sahifa": "Главная Goclean", "Xizmatlar": "Услуги", "Ofis tozalash": "Уборка офисов", "Biznes uchun": "Для бизнеса", "Tavsiyalar": "Рекомендации", "Kontaktlar": "Контакты",
+  "Maxsus chegirmani olish": "Получить специальную скидку", "Bosh sahifa": "Главная", "Bog‘lanish": "Связаться", "Savolingiz bormi?": "Есть вопрос?",
+  "Buyurtma, xizmat tarkibi yoki korporativ hamkorlik bo‘yicha murojaat qiling.": "Обращайтесь по вопросам заказа, состава услуг или корпоративного сотрудничества.",
+  "Telefon": "Телефон", "Manzil": "Адрес", "Toshkent, Registon 8-tor ko‘chasi, 6": "Ташкент, 8-й проезд Регистон, 6", "Xizmat hududi": "Зона обслуживания", "Toshkent shahri": "Ташкент",
+  "Qayta qo‘ng‘iroq": "Обратный звонок", "Raqamingizni qoldiring, operator bog‘lanadi.": "Оставьте номер, оператор свяжется с вами.", "Ismingiz": "Ваше имя", "Ism": "Имя", "Savol": "Вопрос", "Qisqacha yozing": "Кратко опишите", "Yuborish →": "Отправить →",
+  "Ma’lumotlaringiz faqat murojaatga javob berish uchun ishlatiladi.": "Ваши данные используются только для ответа на обращение.", "Murojaatingiz qabul qilindi.": "Ваше обращение принято.",
+  "Uy va biznes uchun professional tozalash xizmati.": "Профессиональная уборка для дома и бизнеса.", "Barcha xizmatlar": "Все услуги", "General tozalash": "Генеральная уборка", "Mebel tozalash": "Чистка мебели", "Oyna yuvish": "Мойка окон",
+  "Kompaniya": "Компания", "Biz haqimizda": "О нас", "Toshkent, O‘zbekiston": "Ташкент, Узбекистан", "Maxfiylik siyosati": "Политика конфиденциальности", "Foydalanish shartlari": "Условия использования"
+};
+let russianContact = await readFile(resolve(output, "client", "contact.html"), "utf8");
+for (const [uz, ru] of Object.entries(contactRussianTranslations).sort(([a], [b]) => b.length - a.length)) russianContact = russianContact.split(uz).join(ru);
+russianContact = russianContact
+  .replace('<html lang="uz">', '<html lang="ru">')
+  .replace('<meta name="viewport" content="width=device-width,initial-scale=1">', '<meta name="viewport" content="width=device-width,initial-scale=1"><base href="../">')
+  .replace('<body data-page-language="uz" data-language-switch="ru/contact.html">', '<body data-page-language="ru" data-language-switch="contact.html">')
+  .replace('<link rel="canonical" href="https://go-clean.uz/contact.html">', '<link rel="canonical" href="https://go-clean.uz/ru/contact.html">')
+  .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, `<script type="application/ld+json">${jsonLd(contactStructuredData("ru"))}</script>`)
+  .replace('<a class="page-language-link" href="ru/contact.html" hreflang="ru" lang="ru">Русский</a>', '<a class="page-language-link" href="contact.html" hreflang="uz" lang="uz">O‘zbekcha</a>')
+  .replaceAll('href="index.html"', 'href="ru/"')
+  .replaceAll('href="index.html?offer=first-order"', 'href="ru/?offer=first-order"')
+  .replaceAll('href="contact.html">Контакты', 'href="ru/contact.html">Контакты');
+await writeFile(resolve(output, "client", "ru", "contact.html"), russianContact);
+
 let russianPreparationGuide = await readFile(resolve(root, "preparation-guide-ru.html"), "utf8");
 russianPreparationGuide = russianPreparationGuide
   .replace(/shared\.js\?v=\d+/g, `shared.js?v=${sharedAssetVersion}`)
@@ -942,7 +1007,7 @@ for (const [uz, ru] of Object.entries(homeRussianDirectTranslations).sort(([a], 
 const russianSeoIntro = `<section class="section service-seo-content"><div class="container"><div class="service-content-card"><h2>Услуги клининга в Ташкенте</h2><p class="service-content-intro">GoClean оказывает услуги уборки для квартир, домов, офисов и коммерческих объектов в Ташкенте. Оставьте имя и телефон — оператор уточнит задачу, состав работ, адрес, удобное время и стоимость.</p><nav class="service-related" aria-label="Популярные услуги"><b>Популярные услуги:</b><a href="ru/general-cleaning.html">Генеральная уборка</a><a href="ru/furniture-cleaning.html">Химчистка мебели</a><a href="ru/carpet-cleaning.html">Чистка ковров</a><a href="ru/window-cleaning.html">Мойка окон</a><a href="ru/curtain-cleaning.html">Стирка штор</a><a href="ru/blanket-cleaning.html">Стирка пледов</a><a href="ru/paving-cleaning.html">Чистка брусчатки</a><a href="ru/marble-cleaning.html">Чистка мрамора</a><a href="ru/after-renovation-cleaning.html">Уборка после ремонта</a><a href="ru/office-cleaning.html">Уборка офисов</a></nav></div></div></section>`;
 const russianFactsStrip = `<section class="trust-strip"><div class="container trust-items"><div><strong>GoClean</strong><span>бренд</span></div><div><strong>Ташкент</strong><span>зона обслуживания</span></div><div><strong>+998 97 707 15 15</strong><span>телефон</span></div><div><strong>hello@goclean.uz</strong><span>электронная почта</span></div></div></section>`;
 const russianConsultation = `<section class="section business consultation" id="business"><div class="container business-panel"><div class="business-copy"><h2>Уточните состав работ и стоимость с оператором</h2><p>Оставьте имя и телефон. Оператор свяжется с вами и согласует услугу, адрес, удобное время и стоимость.</p><div class="business-benefits"><div><span>✓</span><b>Имя и телефон</b></div><div><span>✓</span><b>Детали по телефону</b></div></div></div><form class="business-form compact-form" id="businessForm" novalidate><h3>Оставить заявку на клининг</h3><p>Для заявки достаточно имени и номера телефона.</p><label><span data-i18n="name">Ваше имя</span><input name="name" required placeholder="Например, Азиз" /></label><label><span data-i18n="phone">Номер телефона</span><span class="phone-input"><b>+998</b><input name="phone" required type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="12" placeholder="90 123 45 67" /></span></label><p class="form-inline-error" role="alert" hidden></p><button class="primary-button full coral" type="submit" data-i18n="consultationButton">Получить консультацию</button></form></div></section>`;
-const russianFactsSection = `<section class="section trust" id="trust"><div class="container trust-grid"><div class="trust-copy"><span class="kicker">Кратко о GoClean</span><h2>Клининг для дома и бизнеса в Ташкенте</h2><p>GoClean работает в Ташкенте. Уточнить подходящую услугу можно по телефону, электронной почте или через короткую заявку на сайте.</p><a href="contact.html" class="text-link">Контакты →</a></div><div class="trust-cards"><article><span>⌖</span><div><b>Зона обслуживания</b><small>Ташкент</small></div></article><article><span>☎</span><div><b>Телефон</b><small>+998 97 707 15 15</small></div></article><article><span>@</span><div><b>Электронная почта</b><small>hello@goclean.uz</small></div></article></div></div></section>`;
+const russianFactsSection = `<section class="section trust" id="trust"><div class="container trust-grid"><div class="trust-copy"><span class="kicker">Кратко о GoClean</span><h2>Клининг для дома и бизнеса в Ташкенте</h2><p>GoClean работает в Ташкенте. Уточнить подходящую услугу можно по телефону, электронной почте или через короткую заявку на сайте.</p><a href="ru/contact.html" class="text-link">Контакты →</a></div><div class="trust-cards"><article><span>⌖</span><div><b>Зона обслуживания</b><small>Ташкент</small></div></article><article><span>☎</span><div><b>Телефон</b><small>+998 97 707 15 15</small></div></article><article><span>@</span><div><b>Электронная почта</b><small>hello@goclean.uz</small></div></article></div></div></section>`;
 const russianFaq = `<section class="section faq" id="faq"><div class="container faq-grid"><div><span class="kicker">FAQ</span><h2>Частые вопросы о клининге</h2><p>Оператор поможет уточнить детали услуги по телефону.</p></div><div class="accordion"><details open><summary>Как узнать состав работ и стоимость?<span>+</span></summary><p>Оставьте имя и телефон. Оператор уточнит объект, задачу и согласует состав услуги и стоимость.</p></details><details><summary>Когда согласовываются адрес и время?<span>+</span></summary><p>Адрес и удобное время согласуются во время звонка оператора.</p></details><details><summary>Нужно ли знать площадь объекта?<span>+</span></summary><p>Нет. Заявку можно оставить без площади и уточнить её позже с оператором.</p></details><details><summary>Нужно ли платить на сайте?<span>+</span></summary><p>Нет. Способ и условия оплаты согласуются с оператором.</p></details></div></div></section>`;
 russianHome = russianHome
   .replace('<html lang="uz">', '<html lang="ru">')
@@ -977,6 +1042,12 @@ russianHome = russianHome
   .replaceAll('href="#how"', 'href="/ru/#how"')
   .replace('<button type="button" data-property="office">', '<button type="button" data-property="office" data-russian-office-link="ru/office-cleaning.html">');
 await writeFile(resolve(output, "client", "ru", "index.html"), russianHome);
+for (const entry of await readdir(resolve(output, "client", "ru"), { withFileTypes: true })) {
+  if (!entry.isFile() || !entry.name.endsWith(".html") || entry.name === "contact.html") continue;
+  const path = resolve(output, "client", "ru", entry.name);
+  const html = await readFile(path, "utf8");
+  await writeFile(path, html.replaceAll('href="contact.html"', 'href="ru/contact.html"'));
+}
 await cp(resolve(root, "worker", "index.js"), resolve(output, "server", "index.js"));
 await cp(resolve(root, ".openai", "hosting.json"), resolve(output, ".openai", "hosting.json"));
 

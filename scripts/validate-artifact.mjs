@@ -8,6 +8,7 @@ for (const path of [
   "dist/client/ru/general-cleaning.html",
   "dist/client/shared.js",
   "dist/client/ru/office-cleaning.html",
+  "dist/client/ru/contact.html",
   "dist/.openai/hosting.json",
   "dist/client/public/assets/service-details/general-surfaces.webp",
   "dist/client/public/assets/service-details/general-floors.webp",
@@ -114,6 +115,10 @@ for (const formPage of ["business-request.html", "contact.html"]) {
   const html = await readFile(`dist/client/${formPage}`, "utf8");
   if (html.includes("localStorage.setItem('goclean")) throw new Error(`${formPage} still contains a false-success fallback`);
 }
+const russianContactPage = await readFile("dist/client/ru/contact.html", "utf8");
+if (!russianContactPage.includes('data-page-language="ru" data-language-switch="contact.html"')) throw new Error("Russian contact language switch is missing");
+if (!russianContactPage.includes('name="message"') || /<textarea[^>]*name="message"[^>]*required/.test(russianContactPage)) throw new Error("Russian contact message must remain optional");
+if (!russianContactPage.includes('href="ru/contact.html">Контакты</a>')) throw new Error("Russian contact navigation must remain on the Russian contact page");
 const renderBlueprint = await readFile("render.yaml", "utf8");
 for (const authPath of ["/auth", "/auth.html"]) {
   if (!renderBlueprint.includes(`source: ${authPath}`)) throw new Error(`Render redirect is missing ${authPath}`);
