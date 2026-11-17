@@ -245,6 +245,16 @@ assert.match(general, /class="page-language-link" href="ru\/general-cleaning\.ht
 assert.match(generalRu, /data-page-language="ru" data-language-switch="general-cleaning\.html"/);
 assert.match(generalRu, /class="page-language-link" href="general-cleaning\.html" hreflang="uz"/);
 assert.match(generalRu, /<h1>Генеральная уборка в Ташкенте<\/h1>/);
+for (const phrase of [
+  "Kvartira uchun qaysi vazifani muhokama qilish kerak?",
+  "Muhim xonalar va yuzalarni ayting",
+  "Ta’mirdan keyingi izlarni alohida belgilang"
+]) assert.ok(general.includes(phrase), `UZ general content must include: ${phrase}`);
+for (const phrase of [
+  "Уборка квартиры: какую задачу обсудить с оператором?",
+  "Назовите важные комнаты и поверхности",
+  "Отдельно сообщите о следах ремонта"
+]) assert.ok(generalRu.includes(phrase), `RU general content must include: ${phrase}`);
 assert.equal((generalRu.match(/<details>/g) || []).length, 3, "RU general must contain three verified non-price FAQs");
 assert.ok((generalRu.match(/data-service-area-option/g) || []).length >= 2, "RU general CTAs must keep optional area");
 assert.doesNotMatch(generalRu, /500\s*000|за вызов одного сотрудника|почасов/i, "RU general must not publish the pending price basis");

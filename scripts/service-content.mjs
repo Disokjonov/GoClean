@@ -3,6 +3,11 @@ export const serviceContent = {
     uz: {
       intro: "GoClean Toshkentdagi kvartira, hovli va ofislar uchun general tozalash xizmatini taklif qiladi. Ochiq yuzalar, pol va plintuslar, oshxona va sanuzel, eshiklar, yoritgichlar hamda kelishilgan qiyin yetiladigan joylar batafsil tozalanadi.",
       price: "Boshlang‘ich narx 500 000 so‘mdan, bir xodim chaqiruvi uchun. Yakuniy narx obyekt turi, taxminiy maydon, zonalar va xizmat tarkibi operator bilan aniqlashtirilgach aytiladi.",
+      sections: [
+        ["Kvartira uchun qaysi vazifani muhokama qilish kerak?", "Faqat kundalik tartibni tiklash kerakmi yoki oshxona, sanuzel, ochiq yuzalar, pol va plintuslarni batafsil tozalash kerakmi — operatorga maqsadingizni ayting. Xizmat tarkibi operator bilan alohida kelishiladi."],
+        ["Muhim xonalar va yuzalarni ayting", "Kvartira ekanini, ma’lum bo‘lsa taxminiy maydon va xonalar sonini, qaysi xonalar hamda yuzalar muhimligini tushuntiring. Kirish cheklovi, nozik yuza yoki alohida vazifa bo‘lsa ham oldindan ayting. Maydonni bilmasangiz ham ism va telefon bilan ariza qoldirishingiz mumkin."],
+        ["Ta’mirdan keyingi izlarni alohida belgilang", "Qurilish changi, bo‘yoq yoki yelim izi bo‘lsa, uni oddiy changdan alohida ayting va ta’mirdan keyin tozalash xizmati mosligini operator bilan aniqlashtiring. Oyna, gilam yoki yumshoq mebelni ham tozalatmoqchi bo‘lsangiz, ularning buyurtma tarkibiga kirishini alohida kelishing."]
+      ],
       faqs: [
         ["General tozalashga nimalar kiradi?", "Ochiq yuzalar, pol va plintuslar, oshxona va sanuzel, eshiklar va yoritgichlar asosiy xizmat tarkibiga kiradi. Qo‘shimcha vazifalar operator bilan alohida kelishiladi."],
         ["General tozalash narxi qancha?", "Boshlang‘ich narx 500 000 so‘mdan, bir xodim chaqiruvi uchun. Yakuniy narx obyekt va xizmat tarkibi aniqlashtirilgach aytiladi."],
@@ -13,6 +18,11 @@ export const serviceContent = {
     ru: {
       intro: "GoClean предлагает генеральную уборку квартир, домов с двором и офисов в Ташкенте. Услуга включает детальную очистку открытых поверхностей, полов и плинтусов, кухни и санузла, дверей, светильников и согласованных труднодоступных мест.",
       price: "Стартовая стоимость — от 500 000 сум за вызов одного сотрудника. Окончательная стоимость определяется после уточнения типа объекта, примерной площади, зон и состава услуги.",
+      sections: [
+        ["Уборка квартиры: какую задачу обсудить с оператором?", "Сообщите, нужно ли восстановить повседневный порядок или подробно очистить кухню, санузел, открытые поверхности, полы и плинтусы. Состав услуги согласуется с оператором отдельно."],
+        ["Назовите важные комнаты и поверхности", "Скажите, что речь идёт о квартире, а если знаете — укажите примерную площадь и количество комнат. Объясните, какие комнаты и поверхности особенно важны, и сообщите об ограниченном доступе, деликатных поверхностях или отдельных задачах. Даже без точной площади можно оставить имя и телефон."],
+        ["Отдельно сообщите о следах ремонта", "Если есть строительная пыль, следы краски или клея, отделите их от обычной пыли и уточните у оператора, подходит ли уборка после ремонта. Если нужны окна, ковры или мягкая мебель, отдельно согласуйте их включение в заказ."]
+      ],
       faqs: [
         ["Что входит в генеральную уборку?", "В основной состав входят открытые поверхности, полы и плинтусы, кухня и санузел, двери и светильники. Дополнительные задачи согласуются с оператором."],
         ["Сколько стоит генеральная уборка?", "Стартовая стоимость — от 500 000 сум за вызов одного сотрудника. Окончательная стоимость определяется после уточнения объекта и состава работ."],
