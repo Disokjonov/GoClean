@@ -91,5 +91,43 @@ export const serviceContent = {
       ]
     },
     links: [["carpet-cleaning.html", "Gilam yuvish"], ["curtain-cleaning.html", "Parda yuvish"], ["odor-removal.html", "Yoqimsiz hidlarni yo‘qotish"], ["general-cleaning.html", "General tozalash"], ["contact.html", "Savol va bog‘lanish"]]
+  },
+  "carpet-cleaning": {
+    uz: {
+      intro: "GoClean Toshkentda gilam va mahkamlangan gilam qoplamalarini tozalaydi. Xizmat changni olib tashlash, ko‘rinadigan dog‘larga ishlov berish, chuqur yuvish va quritish bosqichlarini o‘z ichiga oladi. Gilam turi va vazifani ariza yuborgandan keyin operator bilan aniqlashtirishingiz mumkin.",
+      price: "Hisoblash tartibini aniqlashtirish uchun gilam yoki mahkamlangan qoplama ekanini, sonini, taxminiy o‘lchamini, yorliqdagi materialni va ko‘rinadigan dog‘larni operatorga ayting. Maydonni aniq bilmasangiz ham ism va telefon bilan ariza qoldirishingiz mumkin.",
+      sections: [
+        ["Suhbat uchun qanday ma’lumot tayyorlash kerak?", "Avval tozalanadigan buyum alohida gilammi yoki polga mahkamlangan qoplamami, shuni aniqlang. Gilamlar soni, taxminiy uzunligi va eni, yorliqda ko‘rsatilgan materiali hamda ko‘rinadigan dog‘lar haqida ayting. Yorliq yoki material noma’lum bo‘lsa, buni ham operatorga bildirish yetarli."],
+        ["Taxminiy maydonni qanday topish mumkin?", "To‘g‘ri to‘rtburchak gilamning taxminiy maydonini metrda o‘lchangan uzunlikni eniga ko‘paytirib topish mumkin: masalan, 2 × 3 metr — taxminan 6 m². Noodatiy shakl, bir nechta bo‘lak yoki mahkamlangan qoplama bo‘lsa, hisoblash tartibini operator bilan aniqlashtiring."],
+        ["Ish shartlarini oldindan aniqlashtiring", "Gilam qayerda tozalanishi, uni topshirish va qaytarish tartibi hamda tayyor bo‘lish vaqti ariza formasida belgilanmaydi. Sizga muhim bo‘lgan shartlarni operator bilan oldindan kelishing. Sahifa olib ketish, yetkazib berish yoki joyida yuvish xizmatga avtomatik kirishini va’da qilmaydi."]
+      ],
+      faqs: [
+        ["Maydonni bilmasam ham ariza qoldira olamanmi?", "Ha. Ism va telefon raqamini qoldirish yetarli. Gilam o‘lchami va boshqa tafsilotlarni operator bilan keyin aniqlashtirasiz."],
+        ["Hisoblash uchun nimalarni aytish kerak?", "Gilam yoki mahkamlangan qoplama ekanini, sonini, taxminiy o‘lchamini va ma’lum bo‘lsa materialini ayting. Operator amaldagi hisoblash tartibini tushuntiradi."],
+        ["Dog‘lar haqida qanday ma’lumot kerak?", "Ko‘rinadigan dog‘ qayerdaligi, nimadan paydo bo‘lgani ma’lum yoki noma’lumligi va unga avval nima ishlatilganini ayting. Barcha dog‘ yoki hid to‘liq ketishi oldindan va’da qilinmaydi."],
+        ["Gilam qayerda tozalanadi va uni olib ketishadimi?", "Ish bajariladigan joy hamda gilamni topshirish, olib ketish yoki qaytarish imkoniyati operator bilan alohida kelishiladi. Bu xizmatlar sahifada avtomatik kiritilgan deb ko‘rsatilmagan."],
+        ["Gilam qachon tayyor bo‘ladi?", "Tayyor bo‘lish vaqti sahifada qat’iy belgilanmagan. Muddatni gilam turi, vazifa va kelishilgan ish shartlari asosida operator bilan aniqlashtiring."]
+      ]
+    },
+    ru: {
+      intro: "GoClean выполняет чистку ковров и закреплённых ковровых покрытий в Ташкенте. Услуга включает удаление пыли, обработку видимых пятен, глубокую стирку и сушку. Тип ковра и задачу можно уточнить с оператором после отправки заявки.",
+      price: "Чтобы уточнить порядок расчёта, сообщите оператору, идёт ли речь об отдельном ковре или закреплённом покрытии, их количестве, примерных размерах, материале на ярлыке и видимых пятнах. Заявку можно оставить по имени и телефону, даже если площадь пока неизвестна.",
+      sections: [
+        ["Что подготовить для разговора?", "Сначала определите, нужно очистить отдельный ковёр или покрытие, закреплённое на полу. Сообщите количество ковров, примерную длину и ширину, материал на ярлыке и видимые пятна. Если ярлыка нет или материал неизвестен, просто скажите об этом оператору."],
+        ["Как оценить примерную площадь?", "Для прямоугольного ковра умножьте длину на ширину в метрах: например, 2 × 3 метра — это примерно 6 м². Для ковра необычной формы, нескольких частей или закреплённого покрытия порядок расчёта лучше уточнить с оператором."],
+        ["Какие условия согласовать заранее?", "Место выполнения работы, порядок передачи и возврата ковра, а также время готовности не задаются в форме заявки. Обсудите важные для вас условия с оператором заранее. Страница не обещает, что вывоз, доставка или чистка на месте автоматически входят в услугу."]
+      ],
+      faqs: [
+        ["Можно оставить заявку, если площадь неизвестна?", "Да. Достаточно указать имя и номер телефона. Размер ковра и другие детали можно уточнить с оператором позже."],
+        ["Что сообщить для расчёта?", "Уточните, это отдельный ковёр или закреплённое покрытие, назовите количество, примерные размеры и материал, если он известен. Оператор объяснит действующий порядок расчёта."],
+        ["Что рассказать о пятнах?", "Сообщите, где находится видимое пятно, известно ли его происхождение и чем его уже обрабатывали. Полное удаление всех пятен или запахов заранее не обещается."],
+        ["Где чистят ковёр и забирают ли его?", "Место выполнения работы и возможность передачи, вывоза или возврата ковра согласуются с оператором отдельно. На странице эти варианты не указаны как автоматически включённые."],
+        ["Когда ковёр будет готов?", "Фиксированный срок на странице не указан. Уточните время готовности с оператором с учётом типа ковра, задачи и согласованных условий работы."]
+      ]
+    },
+    localizedLinks: {
+      uz: [["furniture-cleaning.html", "Mebel kimyoviy tozalash"]],
+      ru: [["ru/furniture-cleaning.html", "Химчистка мебели"]]
+    }
   }
 };

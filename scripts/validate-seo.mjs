@@ -537,15 +537,25 @@ for (const [hreflang, href] of [["uz", "https://go-clean.uz/carpet-cleaning.html
 assert.match(carpetUz, /class="page-language-link" href="ru\/carpet-cleaning\.html"/);
 assert.match(carpetRu, /data-page-language="ru" data-language-switch="carpet-cleaning\.html"/);
 assert.match(carpetRu, /<h1>Чистка ковров в Ташкенте<\/h1>/);
-assert.equal((carpetRu.match(/<details>/g) || []).length, 0, "RU carpet must not invent FAQs");
+assert.equal(
+  (carpetUz.match(/<details>/g) || []).length,
+  serviceContent["carpet-cleaning"].uz.faqs.length + serviceContent["carpet-cleaning"].ru.faqs.length,
+  "bilingual UZ carpet fallback FAQ count must match content"
+);
+assert.equal((carpetRu.match(/<details>/g) || []).length, serviceContent["carpet-cleaning"].ru.faqs.length, "RU carpet FAQ count must match content");
+assert.match(carpetRu, /Как оценить примерную площадь\?/);
+assert.match(carpetRu, /2 × 3 метра — это примерно 6 м²/);
+assert.match(carpetRu, /Заявку можно оставить по имени и телефону, даже если площадь пока неизвестна/);
+assert.match(carpetRu, /href="ru\/furniture-cleaning\.html">Химчистка мебели/);
 assert.ok((carpetUz.match(/data-service-area-option/g) || []).length >= 2, "UZ carpet CTAs must keep optional area");
 assert.ok((carpetRu.match(/data-service-area-option/g) || []).length >= 2, "RU carpet CTAs must keep optional area");
-assert.doesNotMatch(carpetRu, /дезинф|безопасн|доставка|забер|на дому/i);
+assert.doesNotMatch(carpetRu, /дезинф|гипоаллерген|экологич|все (пятна|запахи).*(удалим|исчезнут)|чистим на дому/i);
 const carpetRuNodes = graphNodes(jsonLdBlocks(carpetRu));
 const carpetRuService = carpetRuNodes.find(node => node["@type"] === "Service");
-assert.equal(carpetRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU carpet must not add FAQ schema");
+const carpetRuFaq = carpetRuNodes.find(node => node["@type"] === "FAQPage");
 assert.equal(carpetRuService?.url, "https://go-clean.uz/ru/carpet-cleaning.html");
-assert.equal(carpetRuService?.description, "GoClean выполняет чистку ковров и ковровых покрытий в Ташкенте. Услуга включает удаление пыли, обработку пятен, глубокую стирку и сушку.");
+assert.equal(carpetRuService?.description, serviceContent["carpet-cleaning"].ru.intro);
+assert.deepEqual(carpetRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), serviceContent["carpet-cleaning"].ru.faqs);
 assert.ok(sitemap.includes("https://go-clean.uz/ru/carpet-cleaning.html"), "sitemap must include RU carpet");
 assert.ok(homeRu.includes('href="ru/carpet-cleaning.html">Чистка ковров</a>'), "RU homepage must link to RU carpet");
 

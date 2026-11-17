@@ -290,7 +290,7 @@ function russianFurnitureStructuredData(service) {
 
 function russianCarpetStructuredData() {
   const url = "https://go-clean.uz/ru/carpet-cleaning.html";
-  const description = "GoClean выполняет чистку ковров и ковровых покрытий в Ташкенте. Услуга включает удаление пыли, обработку пятен, глубокую стирку и сушку.";
+  const content = serviceContent["carpet-cleaning"].ru;
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -299,7 +299,7 @@ function russianCarpetStructuredData() {
         "@id": `${url}#service`,
         name: "Чистка ковров",
         serviceType: "Чистка ковров",
-        description,
+        description: content.intro,
         url,
         areaServed: { "@type": "City", name: "Ташкент" },
         provider: { "@id": organizationId }
@@ -312,6 +312,15 @@ function russianCarpetStructuredData() {
           { "@type": "ListItem", position: 2, name: "Услуги", item: "https://go-clean.uz/services.html" },
           { "@type": "ListItem", position: 3, name: "Чистка ковров", item: url }
         ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${url}#faq`,
+        mainEntity: content.faqs.map(([name, text]) => ({
+          "@type": "Question",
+          name,
+          acceptedAnswer: { "@type": "Answer", text }
+        }))
       }
     ]
   };
@@ -469,7 +478,8 @@ function renderEnrichedServiceContent(service) {
     ? `<nav class="service-related" aria-label="${lang === "ru" ? "Связанные услуги" : "Tegishli xizmatlar"}"><b>${lang === "ru" ? "Связанные услуги" : "Tegishli sahifalar:"}</b>${links.map(([href, label]) => `<a href="${href}">${escapeHtml(label)}</a>`).join("")}</nav>`
     : "";
   const renderLanguage = (lang, copy, hidden = false) => {
-    const sections = (copy.sections || []).map(([heading, text]) => `<div class="service-scope-note"><h2>${escapeHtml(heading)}</h2><p>${escapeHtml(text)}</p></div>`).join("");
+    const scopeHeadingStyle = service.slug === "carpet-cleaning" ? ' style="letter-spacing:-.35px;line-height:1.3"' : "";
+    const sections = (copy.sections || []).map(([heading, text]) => `<div class="service-scope-note"><h2${scopeHeadingStyle}>${escapeHtml(heading)}</h2><p>${escapeHtml(text)}</p></div>`).join("");
     return `<div data-content-lang="${lang}"${hidden ? " hidden" : ""}><p class="service-content-intro">${escapeHtml(copy.intro)}</p><div class="service-price-explainer"><h2>${lang === "ru" ? "Как определяется стоимость?" : "Narx qanday aniqlanadi?"}</h2><p>${escapeHtml(copy.price)}</p></div>${sections}<h2>${lang === "ru" ? "Частые вопросы" : "Ko‘p so‘raladigan savollar"}</h2><div class="service-faq">${copy.faqs.map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join("")}</div>${renderLinks(content.localizedLinks?.[lang], lang)}</div>`;
   };
   const sharedLinks = renderLinks(content.links, "uz");
@@ -534,11 +544,15 @@ function renderRussianFurniturePage(service, metadata) {
 
 function renderRussianCarpetPage() {
   const url = "https://go-clean.uz/ru/carpet-cleaning.html";
-  const intro = "GoClean выполняет чистку ковров и ковровых покрытий в Ташкенте. Услуга включает удаление пыли, обработку пятен, глубокую стирку и сушку.";
+  const content = serviceContent["carpet-cleaning"].ru;
+  const intro = content.intro;
   const included = ["Удаление пыли", "Обработка пятен", "Глубокая стирка", "Сушка"]
     .map((item, index) => `<div><span>0${index + 1}</span><b>${item}</b></div>`).join("");
+  const sections = content.sections.map(([heading, text]) => `<div class="service-scope-note"><h2 style="letter-spacing:-.35px;line-height:1.3">${escapeHtml(heading)}</h2><p>${escapeHtml(text)}</p></div>`).join("");
+  const faqs = content.faqs.map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join("");
+  const links = serviceContent["carpet-cleaning"].localizedLinks.ru.map(([href, label]) => `<a href="${href}">${escapeHtml(label)}</a>`).join("");
   const structuredData = jsonLd(russianCarpetStructuredData());
-  return `<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="../"><title>Чистка ковров в Ташкенте — GoClean</title><meta name="description" content="Чистка ковров и ковровых покрытий в Ташкенте: удаление пыли, обработка пятен, глубокая стирка и сушка."><link rel="canonical" href="${url}"><link rel="alternate" hreflang="uz" href="https://go-clean.uz/carpet-cleaning.html"><link rel="alternate" hreflang="ru" href="${url}"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/carpet-cleaning.html"><script type="application/ld+json">${structuredData}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=19"></head><body data-page-language="ru" data-language-switch="carpet-cleaning.html"><div data-site-header></div><main><section class="service-detail-hero"><div class="container detail-grid"><div><div class="breadcrumbs"><a href="ru/">Главная</a><span>→</span><a href="services.html">Услуги</a><span>→</span><b>Чистка ковров</b><a class="page-language-link" href="carpet-cleaning.html" hreflang="uz" lang="uz">O‘zbekcha</a></div><h1>Чистка ковров в Ташкенте</h1><p>${intro}</p><div class="detail-price"><strong>15 000–30 000 сум</strong><span>1 м²</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="Чистка ковров" data-service-area-option>Оставить номер →</button><a class="outline-button" href="tel:+998977071515">Позвонить</a></div></div><div class="service-art"><img class="service-art-icon" src="public/assets/icons-3d/carpet-cleaning.webp" alt="" aria-hidden="true"><b>Об услуге</b><small>Удаление пыли и глубокая стирка</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Что входит в услугу?</h2><div class="included-grid">${included}</div></div><aside class="sticky-order"><h3>Хотите обсудить услугу с оператором?</h3><p>Оставьте имя и номер телефона. Площадь, адрес, время, состав услуги и стоимость вы согласуете с оператором.</p><button class="primary-button full" type="button" data-service-lead="Чистка ковров" data-service-area-option>Оставить номер</button><a class="text-link" href="contact.html">Есть вопрос →</a></aside></div></section><section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Как это работает?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Выберите услугу</h3><p>Перейдите к короткой заявке.</p></article><article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Оставьте номер</h3><p>Достаточно имени и номера телефона.</p></article><article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Согласуйте детали</h3><p>Оператор согласует площадь, адрес, время, состав услуги и стоимость.</p></article></div></div></section></main><div data-site-footer></div><script src="shared.js?v=${sharedAssetVersion}"></script></body></html>`;
+  return `<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="../"><title>Чистка ковров в Ташкенте — GoClean</title><meta name="description" content="Чистка ковров и ковровых покрытий в Ташкенте: удаление пыли, обработка пятен, глубокая стирка и сушка."><link rel="canonical" href="${url}"><link rel="alternate" hreflang="uz" href="https://go-clean.uz/carpet-cleaning.html"><link rel="alternate" hreflang="ru" href="${url}"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/carpet-cleaning.html"><script type="application/ld+json">${structuredData}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=19"></head><body data-page-language="ru" data-language-switch="carpet-cleaning.html"><div data-site-header></div><main><section class="service-detail-hero"><div class="container detail-grid"><div><div class="breadcrumbs"><a href="ru/">Главная</a><span>→</span><a href="services.html">Услуги</a><span>→</span><b>Чистка ковров</b><a class="page-language-link" href="carpet-cleaning.html" hreflang="uz" lang="uz">O‘zbekcha</a></div><h1>Чистка ковров в Ташкенте</h1><p>${escapeHtml(intro)}</p><div class="detail-price"><strong>15 000–30 000 сум</strong><span>1 м²</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="Чистка ковров" data-service-area-option>Оставить номер →</button><a class="outline-button" href="tel:+998977071515">Позвонить</a></div></div><div class="service-art"><img class="service-art-icon" src="public/assets/icons-3d/carpet-cleaning.webp" alt="" aria-hidden="true"><b>Об услуге</b><small>Удаление пыли и глубокая стирка</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Что входит в услугу?</h2><div class="included-grid">${included}</div></div><aside class="sticky-order"><h3>Хотите обсудить услугу с оператором?</h3><p>Оставьте имя и номер телефона. Площадь, адрес, время, состав услуги и стоимость вы согласуете с оператором.</p><button class="primary-button full" type="button" data-service-lead="Чистка ковров" data-service-area-option>Оставить номер</button><a class="text-link" href="contact.html">Есть вопрос →</a></aside></div></section><section class="section service-seo-content"><div class="container"><div class="service-content-card"><p class="service-content-intro">${escapeHtml(content.intro)}</p><div class="service-price-explainer"><h2>Как подготовиться к расчёту?</h2><p>${escapeHtml(content.price)}</p></div>${sections}<h2>Частые вопросы</h2><div class="service-faq">${faqs}</div><nav class="service-related" aria-label="Связанные услуги"><b>Связанные услуги</b>${links}</nav></div></div></section><section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Как это работает?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Выберите услугу</h3><p>Перейдите к короткой заявке.</p></article><article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Оставьте номер</h3><p>Достаточно имени и номера телефона.</p></article><article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Согласуйте детали</h3><p>Оператор согласует площадь, адрес, время, состав услуги и стоимость.</p></article></div></div></section></main><div data-site-footer></div><script src="shared.js?v=${sharedAssetVersion}"></script></body></html>`;
 }
 
 function renderRussianWindowPage() {
