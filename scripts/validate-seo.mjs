@@ -447,6 +447,19 @@ for (const [language, html, heading, compare] of [
   assert.equal((html.match(/<section class="section service-seo-content office-briefing"[\s\S]*?<\/section>/) || [""])[0].match(/<li>/g)?.length, 6, `${language} office guidance must keep six preparation items`);
 }
 assert.doesNotMatch(officeRu, />Raqam qoldirish</, "RU office guidance CTA must be Russian");
+for (const [language, html, heading, rows, faqQuestions, links] of [
+  ["UZ", officeUz, "Ofis uchun qaysi tozalash formati mos?", ["Ofis foydalanishda, tozalikni muntazam saqlash kerak", "Kundalik parvarishdan tashqari chuqurroq tozalash kerak", "Ta’mir tugagan, qurilish changi yoki material izlari qolgan"], ["General tozalash muntazam tozalash o‘rnini bosadimi?", "Ofisdagi yumshoq mebel va oynalar ham shu xizmatga kiradimi?"], ["after-renovation-cleaning.html", "window-cleaning.html", "furniture-cleaning.html"]],
+  ["RU", officeRu, "Какой формат уборки подходит вашему офису?", ["Офис используется, чистоту нужно поддерживать регулярно", "Нужна более глубокая очистка, чем при повседневном уходе", "Ремонт завершён, остались строительная пыль или следы материалов"], ["Заменяет ли генеральная уборка регулярную?", "Входит ли чистка мягкой мебели и мытьё окон в уборку офиса?"], ["ru/after-renovation-cleaning.html", "ru/window-cleaning.html", "ru/furniture-cleaning.html"]]
+]) {
+  const block = (html.match(/<section class="section service-seo-content office-format-guide"[\s\S]*?<\/section>/) || [""])[0];
+  assert.equal((html.match(/data-office-format-guide/g) || []).length, 1, `${language} office format guide must appear once`);
+  assert.ok(block.includes(heading), `${language} office format heading is missing`);
+  assert.equal((block.match(/<tr>/g) || []).length, 4, `${language} office format table must contain one header and three rows`);
+  assert.equal((block.match(/<details>/g) || []).length, 2, `${language} office format guide must contain two FAQs`);
+  for (const text of [...rows, ...faqQuestions]) assert.ok(block.includes(text), `${language} office format content is missing: ${text}`);
+  for (const href of links) assert.ok(block.includes(`href="${href}"`), `${language} office format link is missing: ${href}`);
+  if (language === "RU") assert.doesNotMatch(block, /\b(?:tozalash|va|uchun|xizmat)\b/i, "RU office format guide contains Uzbek text");
+}
 for (const serviceName of ["Регулярная уборка офиса", "Генеральная уборка офиса", "Уборка склада и цеха"]) assert.ok(officeRu.includes(`data-service-lead="${serviceName}"`), `RU office CTA is missing ${serviceName}`);
 assert.doesNotMatch(officeRu, /data-service-lead="[^"]*(?:Kundalik|Ofisni|tozalash)[^"]*"/i);
 assert.doesNotMatch(officeUz, /Obyekt turi, maydon va kontaktni qoldirasiz|Maydon va telefonni qoldiring/);
