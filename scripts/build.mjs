@@ -504,6 +504,35 @@ function russianMarbleStructuredData() {
   };
 }
 
+function russianFacadeStructuredData() {
+  const url = "https://go-clean.uz/ru/facade-cleaning.html";
+  const description = "GoClean моет фасады и витрины в Ташкенте. Способ работы зависит от высоты, материала поверхности и условий доступа. Оставьте имя и телефон, чтобы согласовать, какие поверхности нужно очистить и что войдёт в услугу.";
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Service",
+        "@id": `${url}#service`,
+        name: "Мойка фасадов и витрин",
+        serviceType: "Мойка фасадов и витрин",
+        description,
+        url,
+        areaServed: { "@type": "City", name: "Ташкент" },
+        provider: { "@id": organizationId }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Главная", item: "https://go-clean.uz/ru/" },
+          { "@type": "ListItem", position: 2, name: "Услуги", item: "https://go-clean.uz/ru/services.html" },
+          { "@type": "ListItem", position: 3, name: "Мойка фасадов и витрин", item: url }
+        ]
+      }
+    ]
+  };
+}
+
 function renderEnrichedServiceContent(service) {
   const content = serviceContent[service.slug];
   if (!content) return "";
@@ -641,6 +670,15 @@ function renderRussianMarblePage() {
   return `<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="../"><title>Чистка и полировка мрамора в Ташкенте — GoClean</title><meta name="description" content="Чистка и полировка мрамора в Ташкенте: диагностика поверхности, специальные средства, механическая очистка и финальная полировка."><link rel="canonical" href="${url}"><link rel="alternate" hreflang="uz" href="https://go-clean.uz/marble-cleaning.html"><link rel="alternate" hreflang="ru" href="${url}"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/marble-cleaning.html"><script type="application/ld+json">${structuredData}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=19"></head><body data-page-language="ru" data-language-switch="marble-cleaning.html"><div data-site-header></div><main><section class="service-detail-hero"><div class="container detail-grid"><div><div class="breadcrumbs"><a href="ru/">Главная</a><span>→</span><a href="services.html">Услуги</a><span>→</span><b>Чистка и полировка мрамора</b><a class="page-language-link" href="marble-cleaning.html" hreflang="uz" lang="uz">O‘zbekcha</a></div><h1>Чистка и полировка мрамора в Ташкенте</h1><p>${intro}</p><div class="detail-price"><strong>15 000–20 000 сум</strong><span>1 м²</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="Чистка и полировка мрамора" data-service-area-option>Оставить номер →</button><a class="outline-button" href="tel:+998977071515">Позвонить</a></div></div><div class="service-art"><img class="service-art-icon" src="public/assets/icons-3d/marble-cleaning.webp" alt="" aria-hidden="true"><b>Об услуге</b><small>Диагностика, очистка и полировка</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Что входит в услугу?</h2><div class="included-grid">${included}</div></div><aside class="sticky-order"><h3>Хотите обсудить услугу с оператором?</h3><p>Оставьте имя и номер телефона. Площадь, состояние поверхности, состав услуги, адрес, время и стоимость вы согласуете с оператором.</p><button class="primary-button full" type="button" data-service-lead="Чистка и полировка мрамора" data-service-area-option>Оставить номер</button><a class="text-link" href="contact.html">Есть вопрос →</a></aside></div></section><section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Как это работает?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Выберите услугу</h3><p>Перейдите к короткой заявке.</p></article><article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Оставьте номер</h3><p>Достаточно имени и номера телефона.</p></article><article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Согласуйте детали</h3><p>Оператор согласует площадь, состояние поверхности, состав услуги, адрес, время и стоимость.</p></article></div></div></section></main><div data-site-footer></div><script src="shared.js?v=${sharedAssetVersion}"></script></body></html>`;
 }
 
+function renderRussianFacadePage() {
+  const url = "https://go-clean.uz/ru/facade-cleaning.html";
+  const intro = "GoClean моет фасады и витрины в Ташкенте. Способ работы зависит от высоты, материала поверхности и условий доступа. Оставьте имя и телефон, чтобы согласовать, какие поверхности нужно очистить и что войдёт в услугу.";
+  const details = ["Поверхности для очистки", "Высота объекта", "Материал поверхности", "Условия доступа"]
+    .map((item, index) => `<div><span>0${index + 1}</span><b>${item}</b></div>`).join("");
+  const structuredData = jsonLd(russianFacadeStructuredData());
+  return `<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="../"><title>Мойка фасадов и витрин в Ташкенте — GoClean</title><meta name="description" content="Мойка фасадов и витрин в Ташкенте. Высота, материал поверхности, условия доступа и состав услуги согласуются с оператором."><link rel="canonical" href="${url}"><link rel="alternate" hreflang="uz" href="https://go-clean.uz/facade-cleaning.html"><link rel="alternate" hreflang="ru" href="${url}"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/facade-cleaning.html"><script type="application/ld+json">${structuredData}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=19"></head><body data-page-language="ru" data-language-switch="facade-cleaning.html"><div data-site-header></div><main><section class="service-detail-hero"><div class="container detail-grid"><div><div class="breadcrumbs"><a href="ru/">Главная</a><span>→</span><a href="services.html">Услуги</a><span>→</span><b>Мойка фасадов и витрин</b><a class="page-language-link" href="facade-cleaning.html" hreflang="uz" lang="uz">O‘zbekcha</a></div><h1>Мойка фасадов и витрин в Ташкенте</h1><p>${intro}</p><div class="detail-price"><strong>Стоимость уточняется</strong><span>с оператором</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="Мойка фасадов" data-service-area-option>Оставить номер →</button><a class="outline-button" href="tel:+998977071515">Позвонить</a></div></div><div class="service-art"><img class="service-art-icon" src="public/assets/icons-3d/facade-cleaning.webp" alt="" aria-hidden="true"><b>Об услуге</b><small>Фасады и витрины</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Что уточнить с оператором?</h2><div class="included-grid">${details}</div></div><aside class="sticky-order"><h3>Хотите обсудить услугу с оператором?</h3><p>Оставьте имя и номер телефона. Площадь можно указать по желанию; поверхности и состав услуги согласуются с оператором.</p><button class="primary-button full" type="button" data-service-lead="Мойка фасадов" data-service-area-option>Оставить номер</button><a class="text-link" href="contact.html">Есть вопрос →</a></aside></div></section><section class="section service-seo-content"><div class="container"><div class="service-content-card"><h2>Фасады, витрины, окна и рамы</h2><p class="service-content-intro">Мойка окон и рам указана на <a href="ru/window-cleaning.html">отдельной странице услуги</a>. Уточните с оператором, какие поверхности относятся к фасаду или витрине, а какие — к окнам и рамам.</p></div></div></section><section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Как это работает?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Выберите услугу</h3><p>Перейдите к короткой заявке.</p></article><article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Оставьте номер</h3><p>Достаточно имени и номера телефона. Площадь указывается по желанию.</p></article><article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Согласуйте детали</h3><p>Оператор уточнит поверхности, условия доступа и состав услуги.</p></article></div></div></section></main><div data-site-footer></div><script src="shared.js?v=${sharedAssetVersion}"></script></body></html>`;
+}
+
 const canonicalServicePages = {
   "general-cleaning": {
     file: "general-cleaning.html",
@@ -699,6 +737,8 @@ const canonicalServicePages = {
   },
   "facade-cleaning": {
     file: "facade-cleaning.html",
+    ruFile: "ru/facade-cleaning.html",
+    optionalArea: true,
     title: "Fasad yuvish Toshkentda — Goclean.uz",
     description: "Toshkentda bino fasadi va vitrinalarni yuvish. Balandlik hamda yuza turiga qarab mos uskuna va mutaxassislarni tanlaymiz."
   },
@@ -783,7 +823,7 @@ const russianCatalogContent = {
   "paving-cleaning": ["Чистка брусчатки", "Очистка брусчатки и входных дорожек.", "ru/paving-cleaning.html"],
   "window-cleaning": ["Мойка окон", "Мойка окон, рам и подоконников.", "ru/window-cleaning.html"],
   "curtain-cleaning": ["Стирка штор", "Стирка штор с уточнением состава услуги.", "ru/curtain-cleaning.html"],
-  "facade-cleaning": ["Мойка фасадов", "Мойка фасадов и витрин; детали уточняются с оператором.", "facade-cleaning.html"],
+  "facade-cleaning": ["Мойка фасадов", "Мойка фасадов и витрин; детали уточняются с оператором.", "ru/facade-cleaning.html"],
   "blanket-cleaning": ["Стирка пледов", "Стирка пледов с учётом материала.", "ru/blanket-cleaning.html"],
   "after-renovation": ["Уборка после ремонта", "Уборка строительной пыли и согласованных следов ремонта.", "ru/after-renovation-cleaning.html"],
   "emergency-cleaning": ["Уборка после происшествий", "Состав работ уточняется с оператором по состоянию объекта.", "emergency-cleaning.html"],
@@ -831,6 +871,7 @@ await writeFile(resolve(output, "client", "ru", "curtain-cleaning.html"), render
 await writeFile(resolve(output, "client", "ru", "blanket-cleaning.html"), renderRussianBlanketPage());
 await writeFile(resolve(output, "client", "ru", "paving-cleaning.html"), renderRussianPavingPage());
 await writeFile(resolve(output, "client", "ru", "marble-cleaning.html"), renderRussianMarblePage());
+await writeFile(resolve(output, "client", "ru", "facade-cleaning.html"), renderRussianFacadePage());
 
 const seoPages = {
   "index.html": { canonical: "https://go-clean.uz/" },

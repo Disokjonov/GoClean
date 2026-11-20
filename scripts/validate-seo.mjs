@@ -52,6 +52,7 @@ const publicPages = [
   "ru/blanket-cleaning.html",
   "ru/paving-cleaning.html",
   "ru/marble-cleaning.html",
+  "ru/facade-cleaning.html",
   "ru/cleaning-preparation-guide.html",
   "contact.html",
   "ru/contact.html",
@@ -281,7 +282,7 @@ for (const [uzFile, ruFile] of guaranteedServicePairs) {
   assert.equal((uzHtml.match(/Natija yoqmasa, bepul qayta tozalaymiz/g) || []).length, 1, `${uzFile} must keep one confirmed UZ guarantee`);
   assert.equal((ruHtml.match(/Если результат не устроит, уберём повторно бесплатно/g) || []).length, 1, `${ruFile} must contain one matching RU guarantee`);
 }
-for (const ruFile of ["ru/blanket-cleaning.html", "ru/curtain-cleaning.html", "ru/marble-cleaning.html", "ru/paving-cleaning.html"]) {
+for (const ruFile of ["ru/blanket-cleaning.html", "ru/curtain-cleaning.html", "ru/marble-cleaning.html", "ru/paving-cleaning.html", "ru/facade-cleaning.html"]) {
   assert.doesNotMatch(await read(ruFile), /Если результат не устроит, уберём повторно бесплатно/, `${ruFile} must not gain a guarantee absent from its UZ pair`);
 }
 
@@ -746,6 +747,33 @@ assert.equal(marbleRuService?.description, "GoClean очищает и полир
 assert.ok(sitemap.includes("https://go-clean.uz/ru/marble-cleaning.html"), "sitemap must include RU marble");
 assert.ok(homeRu.includes('href="ru/marble-cleaning.html">Чистка мрамора</a>'), "RU homepage must link to RU marble");
 
+const facadeUz = await read("facade-cleaning.html");
+const facadeRu = await read("ru/facade-cleaning.html");
+const facadeIntro = "GoClean моет фасады и витрины в Ташкенте. Способ работы зависит от высоты, материала поверхности и условий доступа. Оставьте имя и телефон, чтобы согласовать, какие поверхности нужно очистить и что войдёт в услугу.";
+assert.match(facadeRu, /<html lang="ru">/);
+assert.match(facadeRu, /<base href="\.\.\/">/);
+assert.match(facadeRu, /<title>Мойка фасадов и витрин в Ташкенте — GoClean<\/title>/);
+assert.match(facadeRu, /<h1>Мойка фасадов и витрин в Ташкенте<\/h1>/);
+assert.ok(facadeRu.includes(facadeIntro), "RU facade must contain the approved initial-HTML introduction");
+assert.match(facadeRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/facade-cleaning\.html">/);
+for (const [hreflang, href] of [["uz", "https://go-clean.uz/facade-cleaning.html"], ["ru", "https://go-clean.uz/ru/facade-cleaning.html"], ["x-default", "https://go-clean.uz/facade-cleaning.html"]]) {
+  assert.ok(facadeUz.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `UZ facade is missing ${hreflang} hreflang`);
+  assert.ok(facadeRu.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}">`), `RU facade is missing ${hreflang} hreflang`);
+}
+assert.match(facadeUz, /class="page-language-link" href="ru\/facade-cleaning\.html"/);
+assert.match(facadeRu, /data-page-language="ru" data-language-switch="facade-cleaning\.html"/);
+assert.match(facadeRu, /href="ru\/window-cleaning\.html">отдельной странице услуги<\/a>/);
+assert.equal((facadeRu.match(/<details>/g) || []).length, 0, "RU facade must not invent FAQs");
+assert.ok((facadeUz.match(/data-service-area-option/g) || []).length >= 2, "UZ facade CTAs must keep optional area");
+assert.ok((facadeRu.match(/data-service-area-option/g) || []).length >= 2, "RU facade CTAs must keep optional area");
+assert.doesNotMatch(facadeRu, /\d[\d ]{2,}\s*(?:сум|so‘m)|гарант|сертифик|результат|максимальн|срок/i, "RU facade must not add price, certification, result, height-limit, guarantee or timing claims");
+const facadeRuNodes = graphNodes(jsonLdBlocks(facadeRu));
+const facadeRuService = facadeRuNodes.find(node => node["@type"] === "Service");
+assert.equal(facadeRuNodes.filter(node => node["@type"] === "FAQPage").length, 0, "RU facade must not add FAQ schema");
+assert.equal(facadeRuService?.url, "https://go-clean.uz/ru/facade-cleaning.html");
+assert.equal(facadeRuService?.description, facadeIntro);
+assert.ok(sitemap.includes("https://go-clean.uz/ru/facade-cleaning.html"), "sitemap must include RU facade");
+
 const contactUz = await read("contact.html");
 const contactRu = await read("ru/contact.html");
 assert.match(contactUz, /<html lang="uz">/);
@@ -795,10 +823,10 @@ assert.equal((servicesRu.match(/<article class="catalog-card"/g) || []).length, 
 assert.equal((servicesRu.match(/data-category="(?:home|dry|business|special)"/g) || []).length, 14, "RU services cards must keep filter categories");
 assert.equal((servicesRu.match(/<strong>Уточнить стоимость<\/strong>/g) || []).length, 14, "RU services cards must use neutral price copy");
 assert.doesNotMatch(servicesRu, /\d[\d ]{2,}\s*(?:сум|so‘m)|service\.html\?slug=/i, "RU services must not duplicate numeric rates or legacy aliases");
-assert.equal((servicesRu.match(/Подробная страница пока доступна на узбекском языке\./g) || []).length, 5, "RU catalog must label five Uzbek-only destinations");
+assert.equal((servicesRu.match(/Подробная страница пока доступна на узбекском языке\./g) || []).length, 4, "RU catalog must label four Uzbek-only destinations");
 for (const route of [
   "ru/general-cleaning.html", "ru/furniture-cleaning.html", "ru/marble-cleaning.html", "ru/carpet-cleaning.html", "ru/paving-cleaning.html",
-  "ru/window-cleaning.html", "ru/curtain-cleaning.html", "ru/blanket-cleaning.html", "ru/after-renovation-cleaning.html", "ru/office-cleaning.html", "ru/contact.html"
+  "ru/window-cleaning.html", "ru/curtain-cleaning.html", "ru/blanket-cleaning.html", "ru/facade-cleaning.html", "ru/after-renovation-cleaning.html", "ru/office-cleaning.html", "ru/contact.html"
 ]) assert.ok(servicesRu.includes(`href="${route}"`), `RU services missing ${route}`);
 for (const page of publicPages.filter(page => page.startsWith("ru/") && !["ru/services.html", "ru/cleaning-preparation-guide.html"].includes(page))) {
   assert.ok((await read(page)).includes('href="ru/services.html"'), `${page} must link to the Russian catalog`);
