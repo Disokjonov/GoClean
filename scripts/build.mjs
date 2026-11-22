@@ -576,16 +576,81 @@ function renderServicePage(service, metadata = {}) {
   return `<!doctype html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)}</title>${alternates}<script type="application/ld+json">${structuredData}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=19"></head><body${bodyAttributes}><div data-site-header></div><main><section class="service-detail-hero"><div class="container detail-grid"><div><div class="breadcrumbs"><a href="index.html">Bosh sahifa</a><span>→</span><a href="services.html">Xizmatlar</a><span>→</span><b>${escapeHtml(service.name)}</b>${languageLink}</div><h1>${escapeHtml(service.name)}</h1><p>${escapeHtml(service.description)}</p><div class="detail-price"><strong>${escapeHtml(service.price)}</strong><span>${escapeHtml(service.unit)}</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="${escapeHtml(service.name)}"${areaOption}>Raqam qoldirish →</button><a class="outline-button" href="tel:+998977071515">Qo‘ng‘iroq qilish</a></div></div><div class="service-art"><img class="service-art-icon" src="public/assets/icons-3d/${encodeURIComponent(service.slug)}.webp" alt="" aria-hidden="true"><b>${escapeHtml(artTitle)}</b><small>${escapeHtml(artText)}</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Nimalar bajariladi?</h2><div class="included-grid${visualClass}">${included}</div></div><aside class="sticky-order"><h3>Operator bilan gaplashmoqchimisiz?</h3><p>Ism va raqamingizni qoldiring. Xizmat tarkibi, manzil, vaqt va to‘lovni telefonda kelishasiz.</p><button class="primary-button full" type="button" data-service-lead="${escapeHtml(service.name)}"${areaOption}>Raqam qoldirish</button><a class="text-link" href="contact.html">Savolim bor →</a></aside></div></section>${enrichedContent}<section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Qanday ishlaydi?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true"></div><h3>Xizmatni tanlang</h3><p>Kerakli xizmatni tanlab, qisqa arizaga o‘ting.</p></article><article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true"></div><h3>Raqamingizni qoldiring</h3><p>Faqat ism va telefon raqamingiz yetarli.</p></article><article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true"></div><h3>Operator bilan kelishing</h3><p>Manzil, vaqt, xizmat tarkibi va narxni telefonda aniqlashtiring.</p></article></div></div></section></main><div data-site-footer></div><script src="shared.js?v=${sharedAssetVersion}"></script>${contentLanguageScript}</body></html>`;
 }
 
-function renderRussianGeneralPage() {
+const russianSearchHeader = `
+  <header id="top">
+    <div class="nav-wrap container">
+      <div class="brand"><img class="brand-logo" src="/public/assets/goclean-logo.webp" alt="GoClean" width="200" height="86"></div>
+      <a href="tel:+998977071515">+998 97 707 15 15</a>
+    </div>
+  </header>`;
+
+const russianSearchFooter = `
+  <footer id="contacts">
+    <div class="container footer-grid">
+      <div><b>GoClean</b><p>Генеральная уборка в Ташкенте</p></div>
+      <div><b>Контакты</b><a href="tel:+998977071515">+998 97 707 15 15</a><a href="mailto:hello@goclean.uz">hello@goclean.uz</a><span>Ежедневно с 08:00 до 21:00</span></div>
+    </div>
+    <div class="container footer-bottom">
+      <a href="#privacy">Политика конфиденциальности</a>
+      <a href="#terms">Условия использования</a>
+    </div>
+  </footer>
+  <section class="detail-content" aria-label="Информация для клиентов">
+    <div class="container legal-copy">
+      <h2 id="privacy">Политика конфиденциальности</h2>
+      <p>GoClean использует имя, телефон и указанную по желанию площадь, чтобы обработать заявку, согласовать детали услуги и контролировать качество. Данные передаются менеджерам через защищённый сервер.</p>
+      <p>Для статистики посещений и анализа взаимодействий с сайтом используется Google Analytics. Google обрабатывает данные по своей политике. Файлы cookie можно ограничить в настройках браузера.</p>
+      <h2 id="terms">Условия использования</h2>
+      <p>Заявка на сайте не подтверждает заказ. Состав услуги, адрес, время, оплата и итоговая стоимость согласуются с оператором.</p>
+      <p>Заказ вступает в силу после согласования и подтверждения. Условия отмены и переноса времени согласуются при подтверждении.</p>
+    </div>
+  </section>`;
+
+const russianSearchLeadDialog = `
+  <dialog class="service-lead-modal" id="serviceLeadModal" aria-labelledby="searchLeadTitle">
+    <button class="modal-close service-lead-close" type="button" aria-label="Закрыть">×</button>
+    <div class="modal-icon" aria-hidden="true">☎</div>
+    <h2 id="searchLeadTitle">Свяжемся с вами по заявке</h2>
+    <p>Выбранная услуга</p>
+    <strong class="selected-service-name" id="selectedServiceName"></strong>
+    <form id="serviceLeadForm" novalidate>
+      <div class="service-lead-area" data-service-area hidden>
+        <button class="optional-area-toggle" type="button" data-service-area-toggle aria-expanded="false">
+          <span aria-hidden="true">＋</span><b>Указать площадь уборки</b><small>Необязательно</small>
+        </button>
+        <div class="optional-area" data-service-area-field hidden>
+          <label><span>Площадь уборки (м²)</span><input name="area" type="number" min="1" inputmode="numeric" placeholder="Например, 50"></label>
+        </div>
+      </div>
+      <label><span>Ваше имя</span><input name="name" autocomplete="name" required placeholder="Ваше имя"></label>
+      <label><span>Номер телефона</span><span class="phone-input"><b>+998</b><input name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="12" required placeholder="90 123 45 67"></span></label>
+      <p class="form-inline-error" role="alert" hidden></p>
+      <button class="primary-button full" type="submit">Отправить заявку</button>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status"><b aria-hidden="true">✓</b><span></span></div>`;
+
+function renderRussianGeneralPage({ forSearchAds = false } = {}) {
   const content = serviceContent["general-cleaning"].ru;
-  const url = "https://go-clean.uz/ru/general-cleaning.html";
+  const url = forSearchAds ? "https://go-clean.uz/ru/search-general-cleaning.html" : "https://go-clean.uz/ru/general-cleaning.html";
+  const base = forSearchAds ? "" : '<base href="../">';
+  const assetPrefix = forSearchAds ? "/" : "";
+  const languageLinks = forSearchAds
+    ? '<meta name="robots" content="noindex">'
+    : `<link rel="alternate" hreflang="uz" href="https://go-clean.uz/general-cleaning.html"><link rel="alternate" hreflang="ru" href="${url}"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/general-cleaning.html">`;
+  const switchLanguage = forSearchAds ? "" : ' data-language-switch="general-cleaning.html"';
+  const header = forSearchAds ? russianSearchHeader : '<div data-site-header></div>';
+  const breadcrumbs = forSearchAds ? "" : '<div class="breadcrumbs"><a href="ru/">Главная</a><span>→</span><a href="services.html">Услуги</a><span>→</span><b>Генеральная уборка</b><a class="page-language-link" href="general-cleaning.html" hreflang="uz" lang="uz">O‘zbekcha</a></div>';
+  const contact = forSearchAds ? "#contacts" : "contact.html";
+  const footer = forSearchAds ? russianSearchFooter : '<div data-site-footer></div>';
+  const dialog = forSearchAds ? russianSearchLeadDialog : "";
   const included = ["Открытые поверхности", "Полы и плинтусы", "Кухня и санузел", "Двери и светильники"]
     .map((item, index) => `<div><span>0${index + 1}</span><b>${item}</b></div>`).join("");
   const faqs = russianGeneralFaqs.map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join("");
   const sections = content.sections.map(([heading, text]) => `<div class="service-scope-note"><h2>${escapeHtml(heading)}</h2><p>${escapeHtml(text)}</p></div>`).join("");
   const links = serviceContent["general-cleaning"].localizedLinks.ru.map(([href, label]) => `<a href="${href}">${escapeHtml(label)}</a>`).join("");
   const structuredData = jsonLd(russianGeneralStructuredData());
-  return `<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="../"><title>Генеральная уборка в Ташкенте — GoClean</title><meta name="description" content="Генеральная уборка квартир, домов с двором и офисов в Ташкенте. Оставьте имя и телефон — состав работ и стоимость уточняются с оператором."><link rel="canonical" href="${url}"><link rel="alternate" hreflang="uz" href="https://go-clean.uz/general-cleaning.html"><link rel="alternate" hreflang="ru" href="${url}"><link rel="alternate" hreflang="x-default" href="https://go-clean.uz/general-cleaning.html"><script type="application/ld+json">${structuredData}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=19"></head><body data-page-language="ru" data-language-switch="general-cleaning.html"><div data-site-header></div><main><section class="service-detail-hero"><div class="container detail-grid"><div><div class="breadcrumbs"><a href="ru/">Главная</a><span>→</span><a href="services.html">Услуги</a><span>→</span><b>Генеральная уборка</b><a class="page-language-link" href="general-cleaning.html" hreflang="uz" lang="uz">O‘zbekcha</a></div><h1>Генеральная уборка в Ташкенте</h1><p>${escapeHtml(content.intro)}</p><div class="detail-price"><strong>Стоимость уточняется</strong><span>с оператором</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="Генеральная уборка" data-service-area-option>Оставить номер →</button><a class="outline-button" href="tel:+998977071515">Позвонить</a></div></div><div class="service-art"><img class="service-art-icon" src="public/assets/icons-3d/general-cleaning.webp" alt="" aria-hidden="true"><b>Об услуге</b><small>Подробная уборка согласованных зон</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Что входит в услугу?</h2><div class="included-grid">${included}</div></div><aside class="sticky-order"><h3>Хотите обсудить услугу с оператором?</h3><p>Оставьте имя и номер телефона. Объект, площадь, состав услуги, адрес, время и стоимость вы согласуете с оператором.</p><button class="primary-button full" type="button" data-service-lead="Генеральная уборка" data-service-area-option>Оставить номер</button><a class="text-link" href="contact.html">Есть вопрос →</a></aside></div></section><section class="section service-seo-content"><div class="container"><div class="service-content-card"><p class="service-content-intro">${escapeHtml(content.intro)}</p><div class="service-price-explainer"><h2>Как определяется стоимость?</h2><p>Порядок расчёта и стоимость уточняются с оператором после согласования объекта и состава работ.</p></div>${sections}<h2>Частые вопросы</h2><div class="service-faq">${faqs}</div><nav class="service-related" aria-label="Связанные услуги"><b>Связанные услуги</b>${links}</nav></div></div></section><section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Как это работает?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Выберите услугу</h3><p>Перейдите к короткой заявке.</p></article><article><span>2</span><div class="step-icon"><img src="public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Оставьте номер</h3><p>Достаточно имени и номера телефона.</p></article><article><span>3</span><div class="step-icon"><img src="public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Согласуйте детали</h3><p>Оператор согласует объект, состав услуги, адрес, время и стоимость.</p></article></div></div></section></main><div data-site-footer></div><script src="shared.js?v=${sharedAssetVersion}"></script></body></html>`;
+  return `<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">${base}<title>Генеральная уборка в Ташкенте — GoClean</title><meta name="description" content="Генеральная уборка квартир, домов с двором и офисов в Ташкенте. Оставьте имя и телефон — состав работ и стоимость уточняются с оператором."><link rel="canonical" href="${url}">${languageLinks}${forSearchAds ? '' : `<script type="application/ld+json">${structuredData}</script>`}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="${assetPrefix}styles.css?v=19"></head><body data-page-language="ru"${switchLanguage}>${header}<main><section class="service-detail-hero"><div class="container detail-grid"><div>${breadcrumbs}<h1>Генеральная уборка в Ташкенте</h1><p>${escapeHtml(content.intro)}</p><div class="detail-price"><strong>Стоимость уточняется</strong><span>с оператором</span></div><div class="detail-actions"><button class="primary-button" type="button" data-service-lead="Генеральная уборка" data-service-area-option>Оставить номер →</button><a class="outline-button" href="tel:+998977071515">Позвонить</a></div></div><div class="service-art"><img class="service-art-icon" src="${assetPrefix}public/assets/icons-3d/general-cleaning.webp" alt="" aria-hidden="true"><b>Об услуге</b><small>Подробная уборка согласованных зон</small></div></div></section><section class="detail-content"><div class="container detail-columns"><div><h2>Что входит в услугу?</h2><div class="included-grid">${included}</div></div><aside class="sticky-order"><h3>Хотите обсудить услугу с оператором?</h3><p>Оставьте имя и номер телефона. Объект, площадь, состав услуги, адрес, время и стоимость вы согласуете с оператором.</p><button class="primary-button full" type="button" data-service-lead="Генеральная уборка" data-service-area-option>Оставить номер</button><a class="text-link" href="${contact}">Есть вопрос →</a></aside></div></section><section class="section service-seo-content"><div class="container"><div class="service-content-card"><p class="service-content-intro">${escapeHtml(content.intro)}</p><div class="service-price-explainer"><h2>Как определяется стоимость?</h2><p>Порядок расчёта и стоимость уточняются с оператором после согласования объекта и состава работ.</p></div>${sections}<h2>Частые вопросы</h2><div class="service-faq">${faqs}</div>${forSearchAds ? '' : `<nav class="service-related" aria-label="Связанные услуги"><b>Связанные услуги</b>${links}</nav>`}</div></div></section><section class="section process compact"><div class="container"><div class="section-heading centered"><h2>Как это работает?</h2></div><div class="steps"><article><span>1</span><div class="step-icon"><img src="${assetPrefix}public/assets/icons-3d/process-configure.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Выберите услугу</h3><p>Перейдите к короткой заявке.</p></article><article><span>2</span><div class="step-icon"><img src="${assetPrefix}public/assets/icons-3d/process-consultation.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Оставьте номер</h3><p>Достаточно имени и номера телефона.</p></article><article><span>3</span><div class="step-icon"><img src="${assetPrefix}public/assets/icons-3d/process-quote-plan.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><h3>Согласуйте детали</h3><p>Оператор согласует объект, состав услуги, адрес, время и стоимость.</p></article></div></div></section></main>${footer}${dialog}<script src="${assetPrefix}shared.js?v=${sharedAssetVersion}"></script></body></html>`;
 }
 
 function renderRussianAfterRenovationPage(service, metadata) {
@@ -860,6 +925,7 @@ for (const [slug, metadata] of Object.entries(canonicalServicePages)) {
 const afterRenovationService = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === "after-renovation");
 await mkdir(resolve(output, "client", "ru"), { recursive: true });
 await writeFile(resolve(output, "client", "ru", "general-cleaning.html"), withRussianGuarantee(renderRussianGeneralPage()));
+await writeFile(resolve(output, "client", "ru", "search-general-cleaning.html"), withRussianGuarantee(renderRussianGeneralPage({ forSearchAds: true })));
 await writeFile(resolve(output, "client", "ru", "after-renovation-cleaning.html"), withRussianGuarantee(renderRussianAfterRenovationPage(afterRenovationService, canonicalServicePages["after-renovation"])));
 const furnitureService = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === "furniture-cleaning");
 await writeFile(

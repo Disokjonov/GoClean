@@ -234,6 +234,18 @@ assert.match(general, /data-content-lang="ru" hidden[\s\S]*aria-label="Связ�
 assert.equal((general.match(/<details>/g) || []).length, 8, "general-cleaning must keep exactly four FAQs per language");
 
 const generalRu = await read("ru/general-cleaning.html");
+const russianSearchLanding = await read("ru/search-general-cleaning.html");
+assert.match(russianSearchLanding, /<html lang="ru">[\s\S]*<body data-page-language="ru">/);
+assert.doesNotMatch(russianSearchLanding, /hreflang=|data-language-switch|data-site-header|data-site-footer|O‘zbekcha/);
+assert.match(russianSearchLanding, /Гарантия качества/);
+assert.match(russianSearchLanding, /<form id="serviceLeadForm"[\s\S]*Отправить заявку/);
+for (const [, href] of russianSearchLanding.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
+  if (href.startsWith("#")) {
+    assert.ok(russianSearchLanding.includes(`id="${href.slice(1)}"`), `Search landing fragment missing: ${href}`);
+  } else {
+    assert.match(href, /^(?:tel:|mailto:)/, `Search landing link leaves the Russian page: ${href}`);
+  }
+}
 assert.match(generalRu, /<html lang="ru">/);
 assert.match(generalRu, /<base href="\.\.\/">/);
 assert.match(generalRu, /<title>Генеральная уборка в Ташкенте — GoClean<\/title>/);
