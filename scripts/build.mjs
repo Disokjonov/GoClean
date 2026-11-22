@@ -5,7 +5,9 @@ import { serviceContent } from "./service-content.mjs";
 
 const root = process.cwd();
 const output = resolve(root, "dist");
-const sharedAssetVersion = "30";
+const sharedAssetVersion = "31";
+const tagManagerId = "GTM-P65HM2PC";
+const tagManagerHead = `<script>(function(w,d,id){w.dataLayer=w.dataLayer||[];w.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});const script=d.createElement('script');script.async=true;script.src='https://www.googletagmanager.com/gtm.js?id='+id;d.head.appendChild(script)})(window,document,'${tagManagerId}');</script>`;
 if (output !== `${root}/dist`) throw new Error("Unexpected output path");
 
 await rm(output, { recursive: true, force: true });
@@ -1156,6 +1158,15 @@ for (const entry of await readdir(resolve(output, "client", "ru"), { withFileTyp
     .replaceAll('href="contact.html"', 'href="ru/contact.html"')
     .replaceAll('href="services.html"', entry.name === "services.html" ? 'href="services.html"' : 'href="ru/services.html"');
   await writeFile(path, localized);
+}
+for (const folder of [resolve(output, "client"), resolve(output, "client", "ru")]) {
+  for (const entry of await readdir(folder, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith(".html")) continue;
+    const page = resolve(folder, entry.name);
+    const html = await readFile(page, "utf8");
+    if (!/<head(?:\s[^>]*)?>/i.test(html)) throw new Error(`Missing head in ${entry.name}`);
+    await writeFile(page, html.replace(/<head(?:\s[^>]*)?>/i, head => `${head}${tagManagerHead}`));
+  }
 }
 await cp(resolve(root, "worker", "index.js"), resolve(output, "server", "index.js"));
 await cp(resolve(root, ".openai", "hosting.json"), resolve(output, ".openai", "hosting.json"));
