@@ -2,6 +2,7 @@ import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import vm from "node:vm";
 import { serviceContent } from "./service-content.mjs";
+import { prepareRussianHome } from "./russian-home.mjs";
 
 const root = process.cwd();
 const output = resolve(root, "dist");
@@ -1215,7 +1216,7 @@ russianHome = russianHome
   .replaceAll('href="#top"', 'href="/ru/#top"')
   .replaceAll('href="#how"', 'href="/ru/#how"')
   .replace('<button type="button" data-property="office">', '<button type="button" data-property="office" data-russian-office-link="ru/office-cleaning.html">');
-await writeFile(resolve(output, "client", "ru", "index.html"), russianHome);
+await writeFile(resolve(output, "client", "ru", "index.html"), prepareRussianHome(russianHome));
 for (const entry of await readdir(resolve(output, "client", "ru"), { withFileTypes: true })) {
   if (!entry.isFile() || !entry.name.endsWith(".html") || entry.name === "contact.html") continue;
   const path = resolve(output, "client", "ru", entry.name);

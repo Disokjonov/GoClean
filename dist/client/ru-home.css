@@ -1,0 +1,115 @@
+[data-ru-home] {
+  --home-ink: #172c27;
+  --home-muted: #4b625a;
+  --home-line: #d8e5de;
+}
+
+[data-ru-home] .ru-home-wordmark {
+  color: #244b52;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -.08em;
+}
+[data-ru-home] .ru-home-wordmark span { color: #1b775d; }
+[data-ru-home] .ru-home-phone { display: none; color: var(--teal); font-size: 14px; font-weight: 750; white-space: nowrap; }
+[data-ru-home] .nav-actions { gap: 12px; }
+
+.ru-home-hero { padding: clamp(32px, 6vw, 75px) 0; background: #eaf4ed; color: var(--home-ink); }
+.ru-home-grid, .ru-home-calculator {
+  display: grid;
+  grid-template-columns: minmax(0, 1.13fr) minmax(0, .87fr);
+  align-items: center;
+  gap: clamp(24px, 6vw, 84px);
+}
+.ru-home-hero h1 {
+  margin: 0;
+  font-size: clamp(40px, 5.25vw, 66px);
+  font-weight: 800;
+  letter-spacing: -.058em;
+  line-height: 1.04;
+}
+.ru-home-intro, .ru-home-calculator p {
+  max-width: 520px;
+  color: var(--home-muted);
+  font-size: 18px;
+  line-height: 1.55;
+  margin: 16px 0 0;
+}
+.ru-home-guarantee {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  width: fit-content;
+  margin: 18px 0 0;
+  padding: 10px 13px;
+  border: 1px solid var(--home-line);
+  border-radius: 12px;
+  background: #f8fcf9;
+  color: #23473b;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.ru-home-guarantee span {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  border-radius: 50%;
+  background: #daefe2;
+}
+.ru-home-quote {
+  padding: 25px;
+  border: 1px solid var(--home-line);
+  border-radius: 21px;
+  background: white;
+  box-shadow: 0 16px 40px #20483414;
+}
+.ru-home-quote h2 { margin: 0 0 6px; font-size: clamp(24px, 3vw, 32px); line-height: 1.13; letter-spacing: -.045em; }
+.ru-home-quote p { margin: 0; color: var(--home-muted); font-size: 16px; line-height: 1.42; }
+.ru-home-quote form { display: grid; gap: 10px; margin-top: 15px; }
+.ru-home-quote label { display: grid; gap: 5px; color: var(--home-ink); font-size: 14px; font-weight: 750; }
+.ru-home-quote input:not(.hp-field) {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 8px 12px;
+  border: 1px solid #cbdad1;
+  border-radius: 10px;
+  background: #f9fcfa;
+  color: var(--home-ink);
+  font-size: 16px;
+}
+.ru-home-quote .phone-input { display: flex; align-items: center; gap: 9px; padding-left: 12px; }
+.ru-home-quote .phone-input b { color: #31584c; font-size: 16px; }
+.ru-home-quote .primary-button { margin-top: 2px; min-height: 50px; font-size: 16px; }
+.ru-home-quote .ru-home-privacy { font-size: 13px; line-height: 1.45; }
+.ru-home-privacy a { color: var(--teal); text-decoration: underline; text-underline-offset: 2px; }
+.ru-home-quote .ru-home-success { color: #1f5d42; font-weight: 700; font-size: 14px; }
+.ru-home-quote :focus-visible { outline: 2px solid #176b58; outline-offset: 2px; }
+.ru-home-calculator { padding-block: 44px; scroll-margin-top: 80px; }
+.ru-home-calculator h2 { margin: 0; font-size: clamp(26px, 4vw, 42px); line-height: 1.12; }
+.ru-home-calculator .calculator-card { grid-column: auto; max-width: none; margin: 0; }
+.ru-home-calculator .calculator-total strong { font-size: clamp(17px, 2vw, 23px); }
+.ru-home-legal { border-top: 1px solid var(--home-line); padding-block: 24px; }
+.ru-home-legal details, #application, [data-ru-home] #contacts { scroll-margin-top: 86px; }
+.ru-home-legal summary { font-size: 16px; font-weight: 750; cursor: pointer; margin-block: 8px; }
+.ru-home-legal p { color: var(--home-muted); max-width: 740px; line-height: 1.5; }
+
+@media (max-width: 760px) {
+  [data-ru-home] .announcement { display: none; }
+  [data-ru-home] .nav-wrap { height: 56px; gap: 12px; }
+  [data-ru-home] .ru-home-wordmark { font-size: 24px; }
+  [data-ru-home] .ru-home-phone { display: inline; font-size: 13px; }
+  [data-ru-home] .ru-home-hero { padding: 24px 0 26px; }
+  .ru-home-grid, .ru-home-calculator { grid-template-columns: 1fr; gap: 16px; }
+  .ru-home-hero h1 { font-size: clamp(31px, 8vw, 41px); }
+  .ru-home-intro, .ru-home-calculator p { font-size: 16px; line-height: 1.38; margin-top: 9px; }
+  .ru-home-guarantee { margin-top: 11px; padding: 7px 9px; font-size: 14px; }
+  .ru-home-quote { padding: 16px; border-radius: 16px; }
+  .ru-home-quote h2 { font-size: 23px; }
+  .ru-home-quote p { font-size: 15px; }
+  .ru-home-quote form { gap: 8px; margin-top: 12px; }
+  .ru-home-calculator { padding-block: 30px; }
+}
