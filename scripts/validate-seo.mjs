@@ -38,6 +38,7 @@ const publicPages = [
   "mold-removal.html",
   "blog.html",
   "cleaning-preparation-guide.html",
+  "post-renovation-cleaning-checklist.html",
   "about.html",
   "business.html",
   "office-cleaning.html",
@@ -54,6 +55,7 @@ const publicPages = [
   "ru/marble-cleaning.html",
   "ru/facade-cleaning.html",
   "ru/cleaning-preparation-guide.html",
+  "ru/post-renovation-cleaning-checklist.html",
   "contact.html",
   "ru/contact.html",
   "privacy.html",
@@ -101,6 +103,8 @@ assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\//);
 assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\/office-cleaning\.html/);
 assert.match(sitemap, /https:\/\/go-clean\.uz\/cleaning-preparation-guide\.html/);
 assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\/cleaning-preparation-guide\.html/);
+assert.match(sitemap, /https:\/\/go-clean\.uz\/post-renovation-cleaning-checklist\.html/);
+assert.match(sitemap, /https:\/\/go-clean\.uz\/ru\/post-renovation-cleaning-checklist\.html/);
 
 const preparationGuidePages = [
   {
@@ -150,8 +154,10 @@ for (const guide of preparationGuidePages) {
 const blogHtml = await read("blog.html");
 assert.ok(blogHtml.includes('href="cleaning-preparation-guide.html"'), "blog must link to the Uzbek preparation guide");
 assert.ok(blogHtml.includes('href="ru/cleaning-preparation-guide.html"'), "blog must link to the Russian preparation guide");
-assert.equal((blogHtml.match(/class="blog-card"/g) || []).length, 1, "blog must list only real published articles");
+assert.equal((blogHtml.match(/class="blog-card"/g) || []).length, 2, "blog must list exactly the two published articles");
 assert.match(blogHtml, /<h2><a class="blog-card-title" href="cleaning-preparation-guide\.html" aria-label="[^"]+">Tozalash mutaxassisi kelishidan oldin uyni qanday tayyorlash kerak\?<\/a><\/h2>/);
+assert.match(blogHtml, /<h2><a class="blog-card-title" href="post-renovation-cleaning-checklist\.html" aria-label="[^"]+">Ta’mirdan keyin tozalashni qanday tekshirish kerak\?<\/a><\/h2>/);
+assert.ok(blogHtml.includes('href="ru/post-renovation-cleaning-checklist.html"'), "blog must link to the Russian post-renovation checklist");
 for (const placeholderTitle of ["Divandagi dog‘ni chuqurlashtirib yubormaslik uchun 5 qoida", "Oynani iz qoldirmay yuvishning oddiy tartibi", "General tozalash qachon kerak bo‘ladi?"]) {
   assert.ok(!blogHtml.includes(placeholderTitle), `blog must remove unpublished placeholder: ${placeholderTitle}`);
 }
@@ -159,6 +165,62 @@ for (const placeholderTitle of ["Divandagi dog‘ni chuqurlashtirib yubormaslik 
 const articleLeadScript = await read("article-lead.js");
 assert.match(articleLeadScript, /form\.dataset\.submitting==='true'/, "article lead form must guard repeated submissions");
 assert.match(articleLeadScript, /leads\.send\('order'/, "article lead form must reuse the existing lead route");
+
+const postRenovationChecklistPages = [
+  {
+    file: "post-renovation-cleaning-checklist.html",
+    lang: "uz",
+    canonical: "https://go-clean.uz/post-renovation-cleaning-checklist.html",
+    alternate: "https://go-clean.uz/ru/post-renovation-cleaning-checklist.html",
+    h1: "Ta’mirdan keyin tozalashni qanday tekshirish kerak?",
+    author: "Muallif: GoClean",
+    date: "Nashr qilingan: 24 noyabr 2026",
+    serviceLink: "after-renovation-cleaning.html",
+    serviceName: "Ta’mirdan keyin tozalash"
+  },
+  {
+    file: "ru/post-renovation-cleaning-checklist.html",
+    lang: "ru",
+    canonical: "https://go-clean.uz/ru/post-renovation-cleaning-checklist.html",
+    alternate: "https://go-clean.uz/post-renovation-cleaning-checklist.html",
+    h1: "Как проверить уборку после ремонта?",
+    author: "Автор: GoClean",
+    date: "Опубликовано: 24 ноября 2026",
+    serviceLink: "ru/after-renovation-cleaning.html",
+    serviceName: "Уборка после ремонта"
+  }
+];
+for (const checklist of postRenovationChecklistPages) {
+  const html = await read(checklist.file);
+  assert.match(html, new RegExp(`<html lang=["']${checklist.lang}["']`), `${checklist.file} language is incorrect`);
+  assert.ok(html.includes(`<link rel="canonical" href="${checklist.canonical}">`), `${checklist.file} canonical is incorrect`);
+  assert.ok(html.includes(`hreflang="${checklist.lang}" href="${checklist.canonical}"`), `${checklist.file} self hreflang is missing`);
+  assert.ok(html.includes(`href="${checklist.alternate}"`), `${checklist.file} reciprocal language link is missing`);
+  assert.ok(html.includes(`<h1>${checklist.h1}</h1>`), `${checklist.file} H1 is incorrect`);
+  assert.ok(html.includes(checklist.author) && html.includes(checklist.date), `${checklist.file} visible author/date is missing`);
+  assert.equal((html.match(/<tr><th scope="row">[1-8]\./g) || []).length, 8, `${checklist.file} must contain eight primary checklist rows`);
+  assert.equal((html.match(/class="repeat-row"/g) || []).length, 3, `${checklist.file} must contain three repeat rows`);
+  assert.ok(html.includes(`href="${checklist.serviceLink}"`), `${checklist.file} must link to the matching service`);
+  assert.equal((html.match(/data-print-checklist/g) || []).length, 1, `${checklist.file} must contain one print control`);
+  assert.ok(html.includes('checklist-print.js?v=1'), `${checklist.file} must load print behavior`);
+  assert.ok(html.includes('data-service-name="' + checklist.serviceName + '"'), `${checklist.file} lead form service context is incorrect`);
+  assert.equal((html.match(/data-article-lead(?:\s|>)/g) || []).length, 1, `${checklist.file} must contain one separate lead form`);
+  assert.ok(html.includes('name="name" autocomplete="name" required'), `${checklist.file} lead name must be required`);
+  assert.ok(html.includes('name="phone" type="tel"') && html.includes('maxlength="12" required'), `${checklist.file} lead phone must be required`);
+  assert.ok(html.includes('name="area" type="number" min="1"') && !html.includes('name="area" type="number" min="1" required'), `${checklist.file} lead area must stay optional`);
+  assert.ok(!html.includes('<meta name="robots" content="noindex'), `${checklist.file} must remain indexable`);
+  const nodes = graphNodes(jsonLdBlocks(html));
+  assert.equal(nodes.filter(node => node["@type"] === "Article").length, 1, `${checklist.file} must contain one Article entity`);
+  const article = nodes.find(node => node["@type"] === "Article");
+  assert.equal(article.datePublished, "2026-11-24", `${checklist.file} publication date must match the visible launch date`);
+  assert.equal(article.author?.["@id"], organizationId, `${checklist.file} author must be the approved GoClean organization`);
+  assert.equal(article.publisher?.["@id"], organizationId, `${checklist.file} publisher must reuse the GoClean organization`);
+  assert.ok(!article.dateModified, `${checklist.file} must not invent a modification date`);
+  assertNoUnverifiedStructuredFacts(nodes, checklist.file);
+}
+const checklistPrintScript = await read("checklist-print.js");
+assert.match(checklistPrintScript, /window\.print\(\)/, "checklist print control must use the browser print dialog");
+assert.doesNotMatch(checklistPrintScript, /fetch|XMLHttpRequest|localStorage|sessionStorage|sendBeacon/i, "checklist worksheet must not store or transmit values");
 
 const context = { window: {} };
 vm.runInNewContext(await readFile(new URL("../data.js", import.meta.url), "utf8"), context);
@@ -511,6 +573,7 @@ for (const page of ["index.html", "shared.js", "services.html", "blog.html", "of
 }
 
 const afterRenovation = await read("after-renovation-cleaning.html");
+assert.ok(afterRenovation.includes('href="post-renovation-cleaning-checklist.html"'), "UZ after-renovation service must link to the checklist");
 for (const text of [
   "Hisob-kitob uchun nimalarni aniqlashtiramiz?",
   "Maydonni bilmasangiz ham ariza qoldirishingiz mumkin.",
@@ -525,6 +588,7 @@ for (const href of ["general-cleaning.html", "window-cleaning.html", "marble-cle
 assert.equal((afterRenovation.match(/<details>/g) || []).length, serviceContent["after-renovation"].uz.faqs.length * 2, "after-renovation UZ/RU visible FAQ count is incorrect");
 
 const afterRenovationRu = await read("ru/after-renovation-cleaning.html");
+assert.ok(afterRenovationRu.includes('href="ru/post-renovation-cleaning-checklist.html"'), "RU after-renovation service must link to the checklist");
 assert.match(afterRenovationRu, /<html lang="ru">/);
 assert.match(afterRenovationRu, /<base href="\.\.\/">/);
 assert.match(afterRenovationRu, /<title>Уборка после ремонта в Ташкенте — GoClean<\/title>/);

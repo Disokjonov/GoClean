@@ -17,7 +17,7 @@ await mkdir(resolve(output, "server"), { recursive: true });
 await mkdir(resolve(output, ".openai"), { recursive: true });
 
 const entries = await readdir(root, { withFileTypes: true });
-const excludedClientFiles = new Set(["auth.html", "booking.html", "booking.js", "preparation-guide-ru.html"]);
+const excludedClientFiles = new Set(["auth.html", "booking.html", "booking.js", "preparation-guide-ru.html", "post-renovation-cleaning-checklist-ru.html"]);
 for (const entry of entries) {
   if (entry.isFile() && !excludedClientFiles.has(entry.name) && /\.(html|css|js|txt|xml|svg)$/.test(entry.name)) {
     const sourcePath = resolve(root, entry.name);
@@ -917,17 +917,27 @@ const deferBelowFoldProcessImages = html => html.replace(
   '$1 loading="lazy" decoding="async">'
 );
 
+const addAfterRenovationChecklistLink = (html, language) => {
+  const russian = language === "ru";
+  const section = russian
+    ? '<section class="section checklist-resource-link"><div class="container"><div class="service-content-card"><h2>Чек-лист для проверки уборки</h2><p>До начала работ отметьте согласованные задачи по комнатам, а после уборки проверьте их по тому же списку.</p><a class="text-link" href="ru/post-renovation-cleaning-checklist.html">Открыть чек-лист для печати →</a></div></div></section>'
+    : '<section class="section checklist-resource-link"><div class="container"><div class="service-content-card"><h2>Tozalashni qabul qilish ro‘yxati</h2><p>Ish boshlanishidan oldin kelishilgan vazifalarni xona bo‘yicha belgilang, tozalash tugagach esa shu ro‘yxat bilan tekshiring.</p><a class="text-link" href="post-renovation-cleaning-checklist.html">Chop etiladigan ro‘yxatni ochish →</a></div></div></section>';
+  return html.replace('<section class="section process compact">', `${section}<section class="section process compact">`);
+};
+
 for (const [slug, metadata] of Object.entries(canonicalServicePages)) {
   const service = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === slug);
   if (!service) throw new Error(`${slug} service data is missing`);
-  await writeFile(resolve(output, "client", metadata.file), deferBelowFoldProcessImages(renderServicePage(service, metadata)));
+  let page = deferBelowFoldProcessImages(renderServicePage(service, metadata));
+  if (slug === "after-renovation") page = addAfterRenovationChecklistLink(page, "uz");
+  await writeFile(resolve(output, "client", metadata.file), page);
 }
 
 const afterRenovationService = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === "after-renovation");
 await mkdir(resolve(output, "client", "ru"), { recursive: true });
 await writeFile(resolve(output, "client", "ru", "general-cleaning.html"), withRussianGuarantee(renderRussianGeneralPage()));
 await writeFile(resolve(output, "client", "ru", "search-general-cleaning.html"), withRussianGuarantee(renderRussianGeneralPage({ forSearchAds: true })));
-await writeFile(resolve(output, "client", "ru", "after-renovation-cleaning.html"), withRussianGuarantee(renderRussianAfterRenovationPage(afterRenovationService, canonicalServicePages["after-renovation"])));
+await writeFile(resolve(output, "client", "ru", "after-renovation-cleaning.html"), withRussianGuarantee(addAfterRenovationChecklistLink(renderRussianAfterRenovationPage(afterRenovationService, canonicalServicePages["after-renovation"]), "ru")));
 const furnitureService = dataContext.window.GOCLEAN_SERVICES.find(item => item.slug === "furniture-cleaning");
 await writeFile(
   resolve(output, "client", "ru", "furniture-cleaning.html"),
@@ -967,6 +977,10 @@ const seoPages = {
     canonical: "https://go-clean.uz/cleaning-preparation-guide.html",
     description: "Shaxsiy buyumlar, kerakli joylarga kirish va ishlar ro‘yxati: mutaxassis kelishidan oldingi amaliy tayyorgarlik qo‘llanmasi."
   },
+  "post-renovation-cleaning-checklist.html": {
+    canonical: "https://go-clean.uz/post-renovation-cleaning-checklist.html",
+    description: "Ta’mirdan keyingi tozalashni xona bo‘yicha kelishish va natijani tekshirish uchun chop etiladigan 8 bandli GoClean ro‘yxati."
+  },
   "about.html": {
     canonical: "https://go-clean.uz/about.html",
     description: "Goclean jamoasi, professional tozalash standartlari va Toshkentdagi uy hamda biznes xizmatlari haqida."
@@ -1005,6 +1019,9 @@ for (const [file, metadata] of Object.entries(seoPages)) {
     .replace('<div data-site-header></div>', `<div data-site-header>${sourceHeader}</div>`)
     .replace('<div data-site-footer></div>', `<div data-site-footer>${sourceFooter}</div>`)
     .replace('<div data-article-lead-form></div>', renderArticleLeadForm("uz"));
+  if (file === "post-renovation-cleaning-checklist.html") {
+    html = html.replace('data-service-name="General tozalash"', 'data-service-name="Ta’mirdan keyin tozalash"');
+  }
   if (file === "services.html") {
     const cards = dataContext.window.GOCLEAN_SERVICES.map(renderCatalogCard).join("");
     html = html.replace('<div class="catalog-grid" id="catalogGrid"></div>', `<div class="catalog-grid" id="catalogGrid">${cards}</div>`);
@@ -1152,6 +1169,13 @@ russianPreparationGuide = russianPreparationGuide
   .replace(/shared\.js\?v=\d+/g, `shared.js?v=${sharedAssetVersion}`)
   .replace('<div data-article-lead-form></div>', renderArticleLeadForm("ru"));
 await writeFile(resolve(output, "client", "ru", "cleaning-preparation-guide.html"), russianPreparationGuide);
+
+let russianPostRenovationChecklist = await readFile(resolve(root, "post-renovation-cleaning-checklist-ru.html"), "utf8");
+russianPostRenovationChecklist = russianPostRenovationChecklist
+  .replace(/shared\.js\?v=\d+/g, `shared.js?v=${sharedAssetVersion}`)
+  .replace('<div data-article-lead-form></div>', renderArticleLeadForm("ru"))
+  .replace('data-service-name="General tozalash"', 'data-service-name="Уборка после ремонта"');
+await writeFile(resolve(output, "client", "ru", "post-renovation-cleaning-checklist.html"), russianPostRenovationChecklist);
 
 const homeRussianDirectTranslations = {
   "Toshkent bo‘ylab har kuni 08:00–21:00": "По Ташкенту ежедневно",
