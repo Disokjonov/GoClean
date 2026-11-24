@@ -1,8 +1,17 @@
 (function(){
-  const dataLayer=window.dataLayer=window.dataLayer||[];
+  const analyticsMeasurementId='G-E2XMQ78J2J';
+  window.dataLayer=window.dataLayer||[];
+  window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};
+  window.gtag('js',new Date());
+  window.gtag('config',analyticsMeasurementId);
   document.addEventListener('click',event=>{
-    if(event.target?.closest?.('a[href^="tel:" i]'))dataLayer.push({event:'goclean_phone_click'});
+    if(event.target?.closest?.('a[href^="tel:" i]'))window.gtag('event','phone_click');
   },{capture:true});
+  const analyticsScript=document.createElement('script');
+  analyticsScript.async=true;
+  analyticsScript.src=`https://www.googletagmanager.com/gtag/js?id=${analyticsMeasurementId}`;
+  const loadAnalytics=()=>document.head.appendChild(analyticsScript);
+  if(document.readyState==='complete')loadAnalytics();else window.addEventListener('load',loadAnalytics,{once:true});
 
   const pageLanguage=document.body.dataset.pageLanguage;
   const russianPage=pageLanguage==='ru';
@@ -256,7 +265,7 @@
       catch{throw new Error(leadErrorText())}
       const result=await response.json().catch(()=>({}));
       if(!response.ok||!result.ok)throw new Error(currentLanguage==='ru'?leadErrorText():(result.message||leadErrorText()));
-      if(!payload.website.trim())dataLayer.push({event:'goclean_lead_success',lead_source:type});
+      if(!payload.website.trim())window.gtag('event','generate_lead',{lead_source:type});
       return result;
     }finally{if(button){button.disabled=false;button.removeAttribute('aria-busy');button.textContent=original}}
   }

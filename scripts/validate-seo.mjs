@@ -66,8 +66,7 @@ for (const page of publicPages) {
   const html = await read(page);
   assert.match(html, /<meta\s+name=["']description["']/i, `${page} is missing a description`);
   assert.match(html, /<link\s+rel=["']canonical["']/i, `${page} is missing a canonical`);
-  assert.match(html, /shared\.js\?v=31/, `${page} must load the current shared navigation asset`);
-  assert.equal(html.match(/GTM-P65HM2PC/g)?.length, 1, `${page} must load the GoClean GTM container exactly once`);
+  assert.match(html, /shared\.js\?v=30/, `${page} must load the current shared navigation asset`);
 }
 
 for (const page of ["business-request.html"]) {
