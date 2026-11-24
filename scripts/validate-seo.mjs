@@ -446,35 +446,30 @@ for (const page of ["index.html", "shared.js", "services.html"]) {
 
 const homeUz = await read("index.html");
 const homeRu = await read("ru/index.html");
-assert.match(homeUz, /<html lang="uz">/);
-assert.match(homeUz, /<link rel="canonical" href="https:\/\/go-clean\.uz\/"/);
-for (const [hreflang, href] of [["uz", "https://go-clean.uz/"], ["ru", "https://go-clean.uz/ru/"], ["x-default", "https://go-clean.uz/"]]) {
-  assert.ok(homeUz.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}"`), `UZ homepage is missing ${hreflang} hreflang`);
+for (const [page, html, lang, canonical, alternate] of [
+  ["index.html", homeUz, "uz", "https://go-clean.uz/", "ru/"],
+  ["ru/index.html", homeRu, "ru", "https://go-clean.uz/ru/", "/"]
+]) {
+  assert.match(html, new RegExp(`<html lang="${lang}">`), `${page} language is incorrect`);
+  assert.equal((html.match(/<link\s+rel="canonical"/g) || []).length, 1, `${page} must contain one canonical`);
+  assert.ok(html.includes(`<link rel="canonical" href="${canonical}"`), `${page} self-canonical is incorrect`);
+  for (const [hreflang, href] of [["uz", "https://go-clean.uz/"], ["ru", "https://go-clean.uz/ru/"], ["x-default", "https://go-clean.uz/"]]) {
+    assert.ok(html.includes(`<link rel="alternate" hreflang="${hreflang}" href="${href}"`), `${page} is missing ${hreflang} hreflang`);
+  }
+  assert.ok(html.includes(`id="langToggle" href="${alternate}"`), `${page} is missing a crawlable reciprocal language link`);
 }
-assert.match(homeUz, /id="langToggle" href="ru\/"/);
-assert.match(homeRu, /<html lang="ru">/);
-assert.equal((homeRu.match(/<link rel="canonical"/g) || []).length, 1);
-assert.match(homeRu, /<link rel="canonical" href="https:\/\/go-clean\.uz\/ru\/"/);
 assert.match(homeRu, /<title>Клининг в Ташкенте для дома и бизнеса — GoClean<\/title>/);
 assert.match(homeRu, /<meta name="description" content="Клининг в Ташкенте/);
-assert.match(homeRu, /<h1>Клининг в Ташкенте для дома и бизнеса<\/h1>/);
-assert.doesNotMatch(homeRu, /<base |hreflang=|id="langToggle"|Menyuni|MAXSUS|219 000|500 000/);
-assert.match(homeRu, /<form id="homeLeadForm"[^>]*>[\s\S]*?Получить расчёт[\s\S]*?<\/form>[\s\S]*?id="calculator"/);
-assert.match(homeRu, /Если результат генеральной уборки не устроит, уберём повторно бесплатно/);
-for (const [, href] of homeRu.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
-  if (href.startsWith("#")) {
-    assert.ok(homeRu.includes(`id="${href.slice(1)}"`), `Russian home fragment missing: ${href}`);
-  } else if (href.startsWith("/ru/")) {
-    assert.match(await read(href.slice(1)), /<html lang="ru">/, `Russian home destination is not Russian: ${href}`);
-  } else {
-    assert.match(href, /^(?:tel:|mailto:)/, `Russian home link leaves the Russian site: ${href}`);
-  }
-}
+assert.match(homeRu, /<h1 data-i18n="heroTitle">Клининг в Ташкенте для дома и бизнеса<\/h1>/);
+assert.match(homeRu, /<base href="\.\.\/"/);
+assert.equal((homeRu.match(/href="\/ru\/#top"/g) || []).length, 2, "Russian homepage must keep both brand links on /ru/#top");
+assert.equal((homeRu.match(/href="\/ru\/#how"/g) || []).length, 2, "Russian homepage must keep both how-it-works links on /ru/#how");
+assert.doesNotMatch(homeRu, /href="#(?:top|how)"/, "Russian homepage must not contain base-relative fragment links");
 const sharedClient = await read("shared.js");
 assert.ok(sharedClient.includes("const homeOfferHref=russianPage?'/ru/?offer=first-order':'/?offer=first-order'"), "shared navigation must define language-aware Home offer destinations");
 assert.ok(sharedClient.includes("cta.href=mode==='home'?homeOfferHref:'/business-request.html'"), "drawer modes must restore the language-aware Home destination and root Business destination");
-assert.ok(homeRu.includes('href="/ru/office-cleaning.html">Уборка офисов</a>'), "Russian homepage must link to the Russian office page");
-assert.ok(homeRu.includes('href="/ru/general-cleaning.html">Генеральная уборка</a>'), "Russian homepage must link to the Russian general page");
+assert.ok(homeRu.includes('href="ru/office-cleaning.html">Уборка офисов</a>'), "Russian homepage must link to the Russian office page");
+assert.ok(homeRu.includes('href="ru/general-cleaning.html">Генеральная уборка</a>'), "Russian homepage must link to the Russian general page");
 assert.ok(homeRu.includes("GoClean оказывает услуги уборки для квартир, домов, офисов и коммерческих объектов в Ташкенте."), "Russian homepage must contain useful source content");
 for (const fact of ["GoClean", "Ташкент", "+998 97 707 15 15", "hello@goclean.uz"]) assert.ok(homeRu.includes(fact), `Russian homepage is missing verified fact: ${fact}`);
 for (const unverified of ["4.9", "12 000+", "180+", "98%", "24 часа", "Гарантия качества", "бесплатно устраним"]) assert.ok(!homeRu.includes(unverified), `Russian homepage contains unverified claim: ${unverified}`);
@@ -613,7 +608,7 @@ assert.equal(afterRenovationRuService?.url, "https://go-clean.uz/ru/after-renova
 assert.equal(afterRenovationRuService?.description, serviceContent["after-renovation"].ru.intro);
 assert.deepEqual(afterRenovationRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), serviceContent["after-renovation"].ru.faqs);
 assert.ok(sitemap.includes("https://go-clean.uz/ru/after-renovation-cleaning.html"), "sitemap must include RU after-renovation");
-assert.ok(homeRu.includes('href="/ru/after-renovation-cleaning.html">Уборка после ремонта</a>'), "RU homepage must link to RU after-renovation");
+assert.ok(homeRu.includes('href="ru/after-renovation-cleaning.html">Уборка после ремонта</a>'), "RU homepage must link to RU after-renovation");
 
 const furnitureUz = await read("furniture-cleaning.html");
 const furnitureRu = await read("ru/furniture-cleaning.html");
@@ -655,7 +650,7 @@ assert.equal(furnitureRuService?.url, "https://go-clean.uz/ru/furniture-cleaning
 assert.equal(furnitureRuService?.description, serviceContent["furniture-cleaning"].ru.intro);
 assert.deepEqual(furnitureRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), serviceContent["furniture-cleaning"].ru.faqs);
 assert.ok(sitemap.includes("https://go-clean.uz/ru/furniture-cleaning.html"), "sitemap must include RU furniture");
-assert.ok(homeRu.includes('href="/ru/furniture-cleaning.html">Химчистка мебели</a>'), "RU homepage must link to RU furniture");
+assert.ok(homeRu.includes('href="ru/furniture-cleaning.html">Химчистка мебели</a>'), "RU homepage must link to RU furniture");
 
 const carpetUz = await read("carpet-cleaning.html");
 const carpetRu = await read("ru/carpet-cleaning.html");
@@ -691,7 +686,7 @@ assert.equal(carpetRuService?.url, "https://go-clean.uz/ru/carpet-cleaning.html"
 assert.equal(carpetRuService?.description, serviceContent["carpet-cleaning"].ru.intro);
 assert.deepEqual(carpetRuFaq?.mainEntity.map(item => [item.name, item.acceptedAnswer?.text]), serviceContent["carpet-cleaning"].ru.faqs);
 assert.ok(sitemap.includes("https://go-clean.uz/ru/carpet-cleaning.html"), "sitemap must include RU carpet");
-assert.ok(homeRu.includes('href="/ru/carpet-cleaning.html">Чистка ковров</a>'), "RU homepage must link to RU carpet");
+assert.ok(homeRu.includes('href="ru/carpet-cleaning.html">Чистка ковров</a>'), "RU homepage must link to RU carpet");
 
 const windowUz = await read("window-cleaning.html");
 const windowRu = await read("ru/window-cleaning.html");
@@ -723,7 +718,7 @@ assert.equal(windowRuNodes.filter(node => node["@type"] === "FAQPage").length, 0
 assert.equal(windowRuService?.url, "https://go-clean.uz/ru/window-cleaning.html");
 assert.equal(windowRuService?.description, serviceContent["window-cleaning"].ru.intro);
 assert.ok(sitemap.includes("https://go-clean.uz/ru/window-cleaning.html"), "sitemap must include RU window");
-assert.ok(homeRu.includes('href="/ru/window-cleaning.html">Мойка окон</a>'), "RU homepage must link to RU window");
+assert.ok(homeRu.includes('href="ru/window-cleaning.html">Мойка окон</a>'), "RU homepage must link to RU window");
 
 const curtainUz = await read("curtain-cleaning.html");
 const curtainRu = await read("ru/curtain-cleaning.html");
@@ -749,7 +744,7 @@ assert.equal(curtainRuNodes.filter(node => node["@type"] === "FAQPage").length, 
 assert.equal(curtainRuService?.url, "https://go-clean.uz/ru/curtain-cleaning.html");
 assert.equal(curtainRuService?.description, "GoClean определяет тип ткани, стирает шторы в подходящем режиме и по согласованию выполняет повторную установку.");
 assert.ok(sitemap.includes("https://go-clean.uz/ru/curtain-cleaning.html"), "sitemap must include RU curtain");
-assert.ok(homeRu.includes('href="/ru/curtain-cleaning.html">Стирка штор</a>'), "RU homepage must link to RU curtain");
+assert.ok(homeRu.includes('href="ru/curtain-cleaning.html">Стирка штор</a>'), "RU homepage must link to RU curtain");
 
 const blanketUz = await read("blanket-cleaning.html");
 const blanketRu = await read("ru/blanket-cleaning.html");
@@ -775,7 +770,7 @@ assert.equal(blanketRuNodes.filter(node => node["@type"] === "FAQPage").length, 
 assert.equal(blanketRuService?.url, "https://go-clean.uz/ru/blanket-cleaning.html");
 assert.equal(blanketRuService?.description, "GoClean предлагает стирку пледов в Ташкенте. Услуга включает определение материала, обработку пятен, стирку и сушку.");
 assert.ok(sitemap.includes("https://go-clean.uz/ru/blanket-cleaning.html"), "sitemap must include RU blanket");
-assert.ok(homeRu.includes('href="/ru/blanket-cleaning.html">Стирка пледов</a>'), "RU homepage must link to RU blanket");
+assert.ok(homeRu.includes('href="ru/blanket-cleaning.html">Стирка пледов</a>'), "RU homepage must link to RU blanket");
 
 const pavingUz = await read("paving-cleaning.html");
 const pavingRu = await read("ru/paving-cleaning.html");
@@ -801,7 +796,7 @@ assert.equal(pavingRuNodes.filter(node => node["@type"] === "FAQPage").length, 0
 assert.equal(pavingRuService?.url, "https://go-clean.uz/ru/paving-cleaning.html");
 assert.equal(pavingRuService?.description, "GoClean очищает брусчатку во дворах и на входных дорожках в Ташкенте. Услуга включает подготовку территории, мойку под высоким давлением, обработку пятен и финальную уборку.");
 assert.ok(sitemap.includes("https://go-clean.uz/ru/paving-cleaning.html"), "sitemap must include RU paving");
-assert.ok(homeRu.includes('href="/ru/paving-cleaning.html">Чистка брусчатки</a>'), "RU homepage must link to RU paving");
+assert.ok(homeRu.includes('href="ru/paving-cleaning.html">Чистка брусчатки</a>'), "RU homepage must link to RU paving");
 
 const marbleUz = await read("marble-cleaning.html");
 const marbleRu = await read("ru/marble-cleaning.html");
@@ -827,7 +822,7 @@ assert.equal(marbleRuNodes.filter(node => node["@type"] === "FAQPage").length, 0
 assert.equal(marbleRuService?.url, "https://go-clean.uz/ru/marble-cleaning.html");
 assert.equal(marbleRuService?.description, "GoClean очищает и полирует мраморные поверхности в Ташкенте. Услуга включает диагностику поверхности, специальные средства, механическую очистку и финальную полировку.");
 assert.ok(sitemap.includes("https://go-clean.uz/ru/marble-cleaning.html"), "sitemap must include RU marble");
-assert.ok(homeRu.includes('href="/ru/marble-cleaning.html">Чистка мрамора</a>'), "RU homepage must link to RU marble");
+assert.ok(homeRu.includes('href="ru/marble-cleaning.html">Чистка мрамора</a>'), "RU homepage must link to RU marble");
 
 const facadeUz = await read("facade-cleaning.html");
 const facadeRu = await read("ru/facade-cleaning.html");
@@ -911,8 +906,7 @@ for (const route of [
   "ru/window-cleaning.html", "ru/curtain-cleaning.html", "ru/blanket-cleaning.html", "ru/facade-cleaning.html", "ru/after-renovation-cleaning.html", "ru/office-cleaning.html", "ru/contact.html"
 ]) assert.ok(servicesRu.includes(`href="${route}"`), `RU services missing ${route}`);
 for (const page of publicPages.filter(page => page.startsWith("ru/") && !["ru/services.html", "ru/cleaning-preparation-guide.html"].includes(page))) {
-  const catalogHref = page === "ru/index.html" ? "/ru/services.html" : "ru/services.html";
-  assert.ok((await read(page)).includes(`href="${catalogHref}"`), `${page} must link to the Russian catalog`);
+  assert.ok((await read(page)).includes('href="ru/services.html"'), `${page} must link to the Russian catalog`);
 }
 assert.ok(sitemap.includes("https://go-clean.uz/ru/services.html"), "sitemap must include RU services");
 

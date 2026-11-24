@@ -1,22 +1,20 @@
-const russianHome=document.body.hasAttribute('data-ru-home');
-const state={rooms:2,property:'apartment',type:russianHome?'general':'standard',lang:window.getGoCleanLanguage?.()||'uz'};
+const state={rooms:2,property:'apartment',type:'standard',lang:window.getGoCleanLanguage?.()||'uz'};
 const prices={apartment:{base:99000,room:60000},house:{base:149000,room:72000},office:{base:199000,room:45000}};
 const multipliers={standard:1,general:1.8,repair:2.65};
 const fmt=n=>new Intl.NumberFormat(state.lang==='ru'?'ru-RU':'uz-UZ').format(Math.round(n/1000)*1000)+(state.lang==='ru'?' сум':' so‘m');
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
-function calculate(){const p=prices[state.property];const total=(p.base+state.rooms*p.room)*multipliers[state.type];$('#roomsValue').textContent=state.rooms;$('#totalPrice').textContent=russianHome?'Уточнит оператор':fmt(total);$('#orderLabel').textContent=state.lang==='ru'?'Оставьте номер для расчёта':'Aniq hisob-kitob uchun raqamingizni qoldiring';return total}
+function calculate(){const p=prices[state.property];const total=(p.base+state.rooms*p.room)*multipliers[state.type];$('#roomsValue').textContent=state.rooms;$('#totalPrice').textContent=fmt(total);$('#orderLabel').textContent=state.lang==='ru'?'Оставьте номер для точного расчёта':'Aniq hisob-kitob uchun raqamingizni qoldiring';return total}
 $$('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{const a=btn.dataset.action;if(a==='room-plus')state.rooms=Math.min(20,state.rooms+1);if(a==='room-minus')state.rooms=Math.max(1,state.rooms-1);calculate()}));
-$$('[data-property]').forEach(btn=>btn.addEventListener('click',()=>{if(btn.dataset.property==='office'){location.href=state.lang==='ru'?'/ru/office-cleaning.html':'/office-cleaning.html';return}$$('[data-property]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');state.property=btn.dataset.property;calculate()}));
+$$('[data-property]').forEach(btn=>btn.addEventListener('click',()=>{if(btn.dataset.property==='office'){location.href=state.lang==='ru'?'ru/office-cleaning.html':'office-cleaning.html';return}$$('[data-property]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');state.property=btn.dataset.property;calculate()}));
 $$('[data-type]').forEach(btn=>btn.addEventListener('click',()=>{$$('[data-type]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');state.type=btn.dataset.type;calculate()}));
-if(russianHome)$$('[data-type]').forEach(button=>button.classList.toggle('active',button.dataset.type===state.type));
 const modal=$('#orderModal');
 const propertyNames={uz:{apartment:'Kvartira',house:'Hovli',office:'Ofis'},ru:{apartment:'Квартира',house:'Дом',office:'Офис'}};
 const cleaningNames={uz:{standard:'Tozalash uchun yordamchi',general:'General tozalash',repair:'Ta’mirdan keyin'},ru:{standard:'Поддерживающая уборка',general:'Генеральная уборка',repair:'После ремонта'}};
-const showCalculatorModal=()=>{const lang=state.lang;$('#orderFormError').hidden=true;$('#modalSelection').textContent=`${propertyNames[lang][state.property]} · ${state.rooms} ${lang==='ru'?'комн.':'xona'} · ${cleaningNames[lang][state.type]}${russianHome?'':` · ${fmt(calculate())}`}`;modal.showModal()};
+const showCalculatorModal=()=>{const lang=state.lang;$('#orderFormError').hidden=true;$('#modalSelection').textContent=`${propertyNames[lang][state.property]} · ${state.rooms} ${lang==='ru'?'комн.':'xona'} · ${cleaningNames[lang][state.type]} · ${fmt(calculate())}`;modal.showModal()};
 $('#orderButton').addEventListener('click',showCalculatorModal);$('.modal-close')?.addEventListener('click',()=>modal.close());
 modal?.addEventListener('click',e=>{if(e.target===modal)modal.close()});
 const normalizeUzPhone=value=>{const digits=String(value||'').replace(/\D/g,'').replace(/^998/,'');return digits.length===9?`+998${digits}`:''};
-async function submitCallback(e){e.preventDefault();const form=e.currentTarget,data=Object.fromEntries(new FormData(form)),errorBox=$('#orderFormError'),name=String(data.customerName||'').trim(),phone=normalizeUzPhone(data.customerPhone);errorBox.hidden=true;if(name.length<2){errorBox.textContent=state.lang==='ru'?'Введите имя (минимум 2 буквы).':'Ismingizni to‘g‘ri kiriting (kamida 2 harf).';errorBox.hidden=false;form.elements.customerName.focus();return}if(!phone){errorBox.textContent=state.lang==='ru'?'Введите 9 цифр после +998.':'Telefon raqamni +998 dan keyin 9 ta raqam bilan kiriting.';errorBox.hidden=false;form.elements.customerPhone.focus();return}try{await window.GoCleanLeads.send('callback',{name,phone,property:propertyNames[state.lang][state.property],cleaningType:cleaningNames[state.lang][state.type],rooms:String(state.rooms),...(russianHome?{}:{total:fmt(calculate())})},form);if(modal.open)modal.close();form.reset();window.GoCleanLeads.showToast(state.lang==='ru'?'Спасибо! Мы скоро свяжемся с вами.':'Rahmat! Tez orada siz bilan bog‘lanamiz.')}catch(error){errorBox.textContent=error.message||window.GoCleanLeads.errorText();errorBox.hidden=false}}
+async function submitCallback(e){e.preventDefault();const form=e.currentTarget,data=Object.fromEntries(new FormData(form)),errorBox=$('#orderFormError'),name=String(data.customerName||'').trim(),phone=normalizeUzPhone(data.customerPhone);errorBox.hidden=true;if(name.length<2){errorBox.textContent=state.lang==='ru'?'Введите имя (минимум 2 буквы).':'Ismingizni to‘g‘ri kiriting (kamida 2 harf).';errorBox.hidden=false;form.elements.customerName.focus();return}if(!phone){errorBox.textContent=state.lang==='ru'?'Введите 9 цифр после +998.':'Telefon raqamni +998 dan keyin 9 ta raqam bilan kiriting.';errorBox.hidden=false;form.elements.customerPhone.focus();return}try{await window.GoCleanLeads.send('callback',{name,phone,property:propertyNames[state.lang][state.property],cleaningType:cleaningNames[state.lang][state.type],rooms:String(state.rooms),total:fmt(calculate())},form);if(modal.open)modal.close();form.reset();window.GoCleanLeads.showToast(state.lang==='ru'?'Спасибо! Мы скоро свяжемся с вами.':'Rahmat! Tez orada siz bilan bog‘lanamiz.')}catch(error){errorBox.textContent=error.message||window.GoCleanLeads.errorText();errorBox.hidden=false}}
 $('#orderForm')?.addEventListener('submit',submitCallback);$('#businessForm').addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget,data=Object.fromEntries(new FormData(form));window.GoCleanLeads.clearFormError(form);try{await window.GoCleanLeads.send('consultation',{name:data.name,phone:data.phone},form);form.reset();window.GoCleanLeads.showToast(state.lang==='ru'?'Заявка принята. Менеджер скоро свяжется с вами.':'Arizangiz qabul qilindi. Menejer tez orada bog‘lanadi.')}catch(error){window.GoCleanLeads.showFormError(form,error)}});
 const discountModal=$('#discountModal'),discountDismissedKey='gocleanSpecialOfferPopupDismissedAt',discountClaimedKey='gocleanSpecialOfferClaimed';
 let discountClaimed=false;
@@ -28,7 +26,7 @@ if(new URLSearchParams(location.search).get('offer')==='first-order')setTimeout(
 $('.discount-modal-close')?.addEventListener('click',()=>discountModal.close());
 discountModal?.addEventListener('click',event=>{if(event.target===discountModal)discountModal.close()});
 discountModal?.addEventListener('close',()=>{if(!discountClaimed&&!localStorage.getItem(discountClaimedKey))localStorage.setItem(discountDismissedKey,String(Date.now()))});
-if(!russianHome)setTimeout(()=>openDiscountModal(true),5000);
+setTimeout(()=>openDiscountModal(true),5000);
 const floatingContacts=document.querySelector('.floating-contact-actions'),calculator=document.querySelector('.calculator-card');
 if(floatingContacts&&calculator&&'IntersectionObserver'in window)new IntersectionObserver(entries=>floatingContacts.classList.toggle('is-suppressed',entries.some(entry=>entry.isIntersecting)),{threshold:.08}).observe(calculator);
 $('#discountForm')?.addEventListener('submit',async event=>{event.preventDefault();const form=event.currentTarget,data=Object.fromEntries(new FormData(form));window.GoCleanLeads.clearFormError(form);try{await window.GoCleanLeads.send('discount',{name:data.name,phone:data.phone,source:discountSource},form);discountClaimed=true;localStorage.setItem(discountClaimedKey,'SPECIAL');localStorage.removeItem(discountDismissedKey);form.reset();discountModal.close();window.GoCleanLeads.showToast(state.lang==='ru'?'Заявка на специальную скидку принята. Скоро мы свяжемся с вами.':'Maxsus chegirma uchun ariza qabul qilindi. Tez orada bog‘lanamiz.')}catch(error){window.GoCleanLeads.showFormError(form,error)}});
@@ -47,38 +45,6 @@ footerText:'Профессиональная уборка для дома и б�
 const directTextNode=el=>[...el.childNodes].find(node=>node.nodeType===Node.TEXT_NODE&&node.nodeValue.trim());
 const original={};$$('[data-i18n]').forEach(el=>{const node=directTextNode(el);original[el.dataset.i18n]=node?node.nodeValue.trim():el.textContent.trim()});
 function setLocalizedText(el,text){const node=directTextNode(el);if(node)node.nodeValue=node.nodeValue.replace(node.nodeValue.trim(),text);else el.textContent=text}
-function applyHomeLanguage(lang){state.lang=lang==='ru'?'ru':'uz';window.setGoCleanLanguage?.(state.lang);document.documentElement.lang=state.lang;const toggle=$('#langToggle');if(toggle)toggle.textContent=state.lang==='uz'?'RU':'UZ';$$('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;setLocalizedText(el,state.lang==='ru'?(ru[key]||original[key]):original[key])});calculate()}
-$('#langToggle')?.addEventListener('click',event=>{const link=event.currentTarget;if(link.tagName==='A'&&link.getAttribute('href')){window.setGoCleanLanguage?.(state.lang==='uz'?'ru':'uz');return}applyHomeLanguage(state.lang==='uz'?'ru':'uz')});
+function applyHomeLanguage(lang){state.lang=lang==='ru'?'ru':'uz';window.setGoCleanLanguage?.(state.lang);document.documentElement.lang=state.lang;$('#langToggle').textContent=state.lang==='uz'?'RU':'UZ';$$('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;setLocalizedText(el,state.lang==='ru'?(ru[key]||original[key]):original[key])});calculate()}
+$('#langToggle').addEventListener('click',event=>{const link=event.currentTarget;if(link.tagName==='A'&&link.getAttribute('href')){window.setGoCleanLanguage?.(state.lang==='uz'?'ru':'uz');return}applyHomeLanguage(state.lang==='uz'?'ru':'uz')});
 applyHomeLanguage(state.lang);
-const homeLead=$('#homeLeadForm');
-if(homeLead){
-  const leads=window.GoCleanLeads;
-  const success=homeLead.querySelector('[role="status"]');
-  homeLead.addEventListener('submit',async event=>{
-    event.preventDefault();
-    if(homeLead.dataset.submitting==='true')return;
-    homeLead.dataset.submitting='true';
-    success.hidden=true;
-    leads.clearFormError(homeLead);
-    const data=new FormData(homeLead);
-    try{
-      await leads.send('consultation',{name:data.get('name'),phone:data.get('phone')},homeLead);
-      homeLead.reset();
-      success.textContent='Заявка принята. Оператор свяжется с вами.';
-      success.hidden=false;
-    }catch(error){
-      leads.showFormError(homeLead,error);
-    }finally{
-      delete homeLead.dataset.submitting;
-    }
-  });
-  $$('.ru-home-privacy a,.footer-bottom a[href="#privacy"],.footer-bottom a[href="#terms"]').forEach(link=>{
-    link.addEventListener('click',()=>{
-      const section=document.getElementById(link.hash.slice(1));
-      if(section instanceof HTMLDetailsElement)section.open=true;
-    });
-  });
-  $$('#mobileDrawer a[href^="#"]').forEach(link=>{
-    link.addEventListener('click',()=>$('#mobileDrawer .drawer-close')?.click());
-  });
-}
