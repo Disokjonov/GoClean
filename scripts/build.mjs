@@ -1172,6 +1172,22 @@ russianHome = russianHome
   .replaceAll('href="#how"', 'href="/ru/#how"')
   .replace('<button type="button" data-property="office">', '<button type="button" data-property="office" data-russian-office-link="ru/office-cleaning.html">');
 await writeFile(resolve(output, "client", "ru", "index.html"), russianHome);
+
+// Render can still serve the retired page from an earlier deploy after deletion.
+await writeFile(resolve(output, "client", "ru", "search-general-cleaning.html"), `<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url=/ru/">
+  <title>GoClean — главная страница</title>
+</head>
+<body>
+  <main><a href="/ru/">Перейти на главную страницу GoClean</a></main>
+</body>
+</html>
+`);
 for (const entry of await readdir(resolve(output, "client", "ru"), { withFileTypes: true })) {
   if (!entry.isFile() || !entry.name.endsWith(".html") || entry.name === "contact.html") continue;
   const path = resolve(output, "client", "ru", entry.name);
