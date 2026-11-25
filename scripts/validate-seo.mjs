@@ -457,6 +457,11 @@ assert.ok(sharedClient.includes("const homeOfferHref=russianPage?'/ru/?offer=fir
 assert.ok(sharedClient.includes("cta.href=mode==='home'?homeOfferHref:'/business-request.html'"), "drawer modes must restore the language-aware Home destination and root Business destination");
 assert.ok(homeRu.includes('href="ru/office-cleaning.html">Уборка офисов</a>'), "Russian homepage must link to the Russian office page");
 assert.ok(homeRu.includes('href="ru/general-cleaning.html">Генеральная уборка</a>'), "Russian homepage must link to the Russian general page");
+assert.equal((homeRu.match(/href="ru\/furniture-cleaning\.html"/g) || []).length, 3, "Russian homepage furniture card, popular-services link and footer must use the Russian route");
+assert.equal((homeRu.match(/href="ru\/after-renovation-cleaning\.html"/g) || []).length, 2, "Russian homepage renovation card and popular-services link must use the Russian route");
+assert.equal((homeRu.match(/href="ru\/marble-cleaning\.html"/g) || []).length, 2, "Russian homepage marble shortcut and popular-services link must use the Russian route");
+assert.doesNotMatch(homeRu, /href="(?:furniture|after-renovation|marble)-cleaning\.html"/, "Russian homepage must not fall back to Uzbek service routes for localized services");
+assert.equal((homeRu.match(/href="business\.html"/g) || []).length, 1, "Russian homepage Business footer route must stay unchanged");
 assert.ok(homeRu.includes("GoClean оказывает услуги уборки для квартир, домов, офисов и коммерческих объектов в Ташкенте."), "Russian homepage must contain useful source content");
 for (const fact of ["GoClean", "Ташкент", "+998 97 707 15 15", "hello@goclean.uz"]) assert.ok(homeRu.includes(fact), `Russian homepage is missing verified fact: ${fact}`);
 for (const unverified of ["4.9", "12 000+", "180+", "98%", "24 часа", "Гарантия качества", "бесплатно устраним"]) assert.ok(!homeRu.includes(unverified), `Russian homepage contains unverified claim: ${unverified}`);
